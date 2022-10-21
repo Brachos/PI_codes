@@ -6,8 +6,8 @@ c_root=1.9; %m
 c_tip=0.57; %m
 cVT_init = 0.08;  %between 0.02-0.09
 cHT_init = 0.8; %between 0.5-1
-LVT = 1; %vertical distance
-LHT = 3; %horizontal distance
+LVT = 1; %vertical distance [m]
+LHT = 8; %horizontal distance [m]
 
 %% Calculations
 fun = @(x) (c_root + (c_tip-c_root)/bW*x).^2;
