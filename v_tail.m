@@ -9,6 +9,7 @@ cHT_init = 0.8; %between 0.5-1
 LVT = 1; %vertical distance [m]
 LHT = 8; %horizontal distance [m]
 %coucou
+%yolo
 %% Calculations
 fun = @(x) (c_root + (c_tip-c_root)/bW*2*x).^2;
 CW_bar = 2/SW * integral(fun,0,bW/2);
