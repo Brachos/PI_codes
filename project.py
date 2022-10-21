@@ -4,19 +4,19 @@ import numpy as np
 
 
 "Données"
-#Gamma #Dihedral of the V-tail
-#Cl_alpha_N #lift curve slope of the planform at a zero dihedral
-#tau #control effectiveness parameter
-#K #the ratio of sum of lifts obtained by equal and
-#opposite changes in angle-of-attack of two semispans
-#of tail to lift obtained by an equal change in
-#angle-of-attack for complete tail
+AR= 7
+SW=10.76 #m²
+bW=8.7 #m
+c_root=1.9 #m
+c_tip=0.57 #m
+cVT_init = 0.08  #between 0.02-0.09
+cHT_init = 0.75 #between 0.5-1
+CW_bar =
 
-"Lift curve slope of the V-tail"
-Cl_alpha_HT = Cl_alpha_N*(np.cos(Gamma))**2
-"Elevator authority of the V-tail"
-Cl_delta_e = Cl_alpha_N*tau*np.cos(Gamma)
-"Side force slope of the V-tail"
-CY_beta_r = -K*Cl_alpha_N*(np.sin(Gamma))**2
-"Rudder authority of the V-tail"
-CY_delta_r = K*Cl_alpha_N*np.sin(Gamma)
+
+
+
+"Calculations"
+SVT_init = cVT_init*bW*SW/SVT
+SHT_init = cHT_init*CW_bar*SW/LHT
+dihedral_angle_init = np.arctan(np.sqrt(SVT_init/SHT_init))
