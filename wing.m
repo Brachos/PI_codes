@@ -10,7 +10,7 @@ Mach  = 0.7;
 Vs    = 303.1;   % [m/s]   Sound speed at 30000 feet
 V_inf = Vs*Mach; % [m/s]   Freestream velocity
 
-%%
+
 AR  = 7;   % Aspect ratio = [5.5-8] for ultralight aircraft
            % Aspect ratio = [7-9] for light aircraft
 tap = 0.3; % Tapper ratio (lambda = c_tip/c_root) best value
