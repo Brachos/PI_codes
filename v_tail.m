@@ -1,7 +1,7 @@
 %% Données
 AR= 7;
 SW = 10.76; %m²
-bW = 8.7; %m
+bW = 10.8; %m
 c_root = 1.9; %m
 c_tip = 0.57; %m
 cVT_init = 0.06;  %between 0.02-0.09
@@ -17,3 +17,4 @@ SVT_init = cVT_init*bW*SW/LVT;
 SHT_init = cHT_init*CW_bar*SW/LHT;
 dihedral_angle_init = atan(sqrt(SVT_init/SHT_init));
 fprintf("L'angle initial dihedre est de %d degrés\n", dihedral_angle_init*180/2/pi)
+% choix a priori d'un profil NACA 0012
