@@ -2,13 +2,11 @@ function [b,S,c_root,c_tip] = wing(Mach,Altitude,Mass,AR)
 
 %% Data
 g     = 9.81;    % [m/s²]
-% m     = 4500;  % [kg]    Take off mass
 W     = Mass*g;  % [N]     Take off weight (= Lift at cruise)
 L     = W;
-% Mach  = 0.7;
-rho   = 0.4671;  % [kg/m³] Density at 30000 feet
-Vs    = 303.1;   % [m/s]   Sound speed at 30000 feet
-V_inf = Vs*Mach; % [m/s]   Freestream velocity
+
+[V_inf,rho] = speed(Altitude,Mach);
+% rho   = 0.4671;  % [kg/m³] Density at 30000 feet
 
 % AR  = 7;   % Aspect ratio = [5.5-8] for ultralight aircraft
              % Aspect ratio = [7-9] for light aircraft
@@ -31,7 +29,7 @@ Cl  = 0.25;     % Classical cruise lift coefficient according to D. Raymer
 
 S  = 2*L/(rho*V_inf^2*Cl);
 b  = sqrt(AR*S);
-Cd = 0.017+Cl^2/(0.8*pi*AR)
+Cd = 0.017+Cl^2/(0.8*pi*AR);
 D  = 0.5*Cd*rho*V_inf^2*S;
 c_root = 2*S/((1+tap)*b); % Because for trapez, S = (c_tip+c_root)*b/2
 c_tip  = tap*c_root;
