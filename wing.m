@@ -29,8 +29,8 @@ Cl  = 0.25;     % Classical cruise lift coefficient according to D. Raymer
 
 S  = 2*L/(rho*V_inf^2*Cl);
 b  = sqrt(AR*S);
-Cd = 0.017+Cl^2/(0.8*pi*AR)
-D  = 0.5*Cd*rho*V_inf^2*S
+Cd = 0.017+Cl^2/(0.8*pi*AR);
+D  = 0.5*Cd*rho*V_inf^2*S;
 c_root = 2*S/((1+tap)*b); % Because for trapez, S = (c_tip+c_root)*b/2
 c_tip  = tap*c_root;
 
