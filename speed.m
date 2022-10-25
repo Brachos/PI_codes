@@ -1,12 +1,21 @@
-function [speed] = speed(altitude,mach)
+function [speed,rho] = speed(altitude,mach)
 
 delta_T = altitude / 1000 * 2; %diminution de 2 degrés par 1000 ft
-T = 15 - delta_T + 273.15;
+K = 273.15;
+T = 15 - delta_T + K;
 R_s = 287.058; %[J/kg/K] constante spécifique de l'air sec
-gamma = 5/3; %hypothèse des gaz parfaits, coeff de Laplace
-
+gamma = 1.4; %hypothèse des gaz parfaits, coeff de Laplace
 speed = mach * sqrt(gamma * T * R_s);%vitesse [m/s]
-speed = speed * 3.6; %[km/h]
+
+R  = 8314.32;
+P0 = 101325;
+T0 = 15+K;
+g  = 9.81;
+z  = altitude*0.3048;
+Cp = 1006;
+P  = P0*exp(-7*g*z/(2*Cp*T0));
+
+rho = P*28.9644/(R*T); % Gaz parfait
 
 end
 
