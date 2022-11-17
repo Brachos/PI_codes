@@ -7,18 +7,38 @@
 %et dynamique.
 
 %% Data required
-% - c_bar
-% - AR
-% - S
-% - ro
-% - h_o ~ [0.2;0.25]
-% - C_maf
-% - gamma
-% - alpha_t
-% - W_avg
-% - V_c
+% - m
+m = 5000;
 % - D_f
-
+D_f = 0.82;
+% - V_c
+V_c = 212;
+% - alpha_f
+% - c_bar
+c_bar = 1.44;
+% - AR
+AR = 7;
+% - lambda
+lambda = 0.3;
+% - i_w
+i_w = -0.5;
+% - alpha_twist
+alpha_twist = -2;
+% - Lambda_LE
+Lambda_LE  = 36.34;
+% - Gamma
+% - airfoyl profile
+ac = 0.365;
+% - C_L_alpha
+C_L_alpha = 9.8;
+% - ro
+rho = 0.46;
+lambda_h = 0.5;
+% - C_maf
+% - cg_pos
+% - h_o
+S = 12.07;
+Lambda_T = Lambda_LE + 5;
 %% Longitudinal trim
 % Comme présenté sur la figure 6.3 e l'ouvrage et dans l'équation 6.9, on a
 % l'équation d'équilibre suivante : M_owf + M_Lwf + M_Lh = 0 
@@ -39,15 +59,15 @@
 % important dans la stabilité longitutinale de l'appareil. Après avoir
 % consulté plusieur sources statistiques, ce cefficient sera fixé à une
 % première valeur de 1;
-V_h_bar = 1;
+V_h_bar = 0.75;
 % Dans l'équation (1), on peut trouver les autres coefficients comme suit :
-C_mo_wf = C_maf*(AR*cos(gamma)^2)/(AR + 2*cos(gamma)) + 0.01*alpha_t;
+% C_mo_wf = C_maf*(AR*cos(Alpha)^2)/(AR + 2*cos(Alpha)) + 0.01*alpha_t;
 % où :
 % - C_maf est le 'wing airfoil section pitching moment coefficient'
 % - AR, l'aspect ratio des ailes
 % - gamma, le sweep angle des ailes
 % - alpha_t, le 'wing twist angle (in degrees)'
-C_L = 2*W_avg/(ro*V_c^2*S);
+% C_L = 2*W_avg/(ro*V_c^2*S);
 % où :
 % - W_avg est le poids moyen pendant le 'cruising flight'
 % - V_c est la vitesse de croisière
@@ -58,7 +78,27 @@ C_L = 2*W_avg/(ro*V_c^2*S);
 %Nous choisirons une valeur d'efficacité moyenne de 0.9;
 eta_h = 0.9;
 % On prend également h = 0.25, valeur classique
-h = 0.25;
+% h = 0.25;
+
+K_c = 1.1; % voir livre page 300)
+l = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
+% Ratio des longueur (voir page 276)
+l_ratio = 0.45;
+L_f = l/l_ratio;
+% Ainsi, on peut maintenant détemriner S_h :
+S_h = V_h_bar*c_bar*S/l;
+C_L = 2*m*9.81/(rho*V_c^2*S);
+
+% Selon le profil de l'aile, on a le pourcentage de la longueur auquel se
+% trouve le aerodynamic center (ex. 32% of the MAC)
+% Selon le centre de gravité du fuselage, en pourcentage de la longueur du
+% fuselage, on peut trouver X_apex
+% cg_pos est la poition du centre de gravité par rapport à la position au
+% centre aérodynamique
+X_apex = -h_o*c_bar + 0.32*L_f + cg_pos; %!!!!!!! revoir les valeurs 0.23 et 0.32 !!!!
+X_cg = h_o*c_bar - cg_pos;
+h = X_cg/c_bar;
+
 %Admettons que h_o soit connu par l'étude de l'airfoyl, on peut donc
 %trouver C_Lh.
 C_Lh = (C_mo_wf + C_L*(h-h_o))/(eta_h*V_h_bar); %(3)
@@ -69,9 +109,6 @@ C_Lh = (C_mo_wf + C_L*(h-h_o))/(eta_h*V_h_bar); %(3)
 % livre, on donne l/L = 0.5
 % Cependant, connaissant le diamètre maximal du fuselage, S, c_bar et
 % V_h_bar, on peut déterminer la longueur l optimale.
-K_c = 1.1; % voir livre page 300)
-l = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
-% Ainsi, on peut maintenant détemriner S_h :
-S_h = V_h_bar*c_bar*S/l;
+
 % L'AR de la tail est déterminé selon la formule (6.59)
 AR_h = 2/3 * AR;
