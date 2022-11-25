@@ -10,18 +10,19 @@
 % - m
 m = 5000;
 % - D_f
-D_f = 0.82;
+D_f = 0.84;
+h_f_max = D_f;
 % - V_c
 V_c = 212;
 % - alpha_f
 % - c_bar
 c_bar = 1.44;
 % - AR
-AR = 7;
+AR = 7; % fixed
 % - lambda
-lambda = 0.3;
+lambda = 0.3; % fixed
 % - i_w
-i_w = -0.5;
+i_w = 0.75;
 % - alpha_twist
 alpha_twist = -2;
 % - Lambda_LE
@@ -34,11 +35,13 @@ C_L_alpha = 9.8;
 % - ro
 rho = 0.46;
 lambda_h = 0.5;
+lambda_v = 0.9;
 % - C_maf
 % - cg_pos
 % - h_o
 S = 12.07;
 Lambda_T = Lambda_LE + 5;
+
 %% Longitudinal trim
 % Comme présenté sur la figure 6.3 e l'ouvrage et dans l'équation 6.9, on a
 % l'équation d'équilibre suivante : M_owf + M_Lwf + M_Lh = 0 
@@ -95,6 +98,7 @@ C_L = 2*m*9.81/(rho*V_c^2*S);
 % fuselage, on peut trouver X_apex
 % cg_pos est la poition du centre de gravité par rapport à la position au
 % centre aérodynamique
+cg_pos = 2;
 X_apex = -h_o*c_bar + 0.32*L_f + cg_pos; %!!!!!!! revoir les valeurs 0.23 et 0.32 !!!!
 X_cg = h_o*c_bar - cg_pos;
 h = X_cg/c_bar;
@@ -112,3 +116,26 @@ C_Lh = (C_mo_wf + C_L*(h-h_o))/(eta_h*V_h_bar); %(3)
 
 % L'AR de la tail est déterminé selon la formule (6.59)
 AR_h = 2/3 * AR;
+b_h = sqrt(S_h*AR_h);
+
+l_f = 5.9;
+l_cg = 2;%first guess
+K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
+S_fs = l_f*h_f_max;
+CN_beta_f = -K_beta*S_fs*l_f/S/b;
+CN_beta_i = -0.017; %because high wing
+CN_tot = CN_beta_f + CN_beta_i;
+% voir graphique slide 57
+V_v = 0.04; % avec V_v = S_F*l_F/(S*b)
+l_F = l; % first guess, distance between cg and fin ac
+S_v = V_v*S*b/l_F;
+AR_v = 1;
+b_v = sqrt(S_v*AR_v);
+
+angle = atan(sqrt(S_v/S_h));
+% chords horizontal
+c_root_h = 2*S_h/(b_h*(1+lambda_h));
+c_tip_h = lambda_h*c_root_h;
+% chords vertical
+c_root_v = 2*S_v/(b_v*(1+lambda_v));
+c_tip_v = lambda_v*c_root_v;
