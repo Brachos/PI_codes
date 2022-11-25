@@ -49,6 +49,7 @@ theta_tip = -2*pi/180; % [rad] Twist angle
 alpha_L0  = alpha_l0 + alpha_01*theta_tip;
 k  = beta*cl_alpha/(2*pi);
 a  = 2*pi/(2/(beta*AR)+sqrt((1/(k*cos(L_beta)))^2+(2/(beta*AR))^2))/beta;
+CL_alpha = a;
 
 CL = a*(AOA-alpha_L0);
 % CD = 0.017+CL^2/(0.8*pi*AR);
@@ -88,5 +89,5 @@ V_fuel = (A_root+A_tip)*b/2;                         % [m³] volume of wings
 % xlabel('x/c [m]')
 % ylabel('z/c [m]')
 % axis equal
-
+%
 end
