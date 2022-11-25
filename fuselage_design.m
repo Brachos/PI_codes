@@ -17,7 +17,7 @@ M_fuel=1000;%[kg]
 M_payload=M_sensors+M_mission+M_subsystems+M_fuel;
 M_empty=2250;%[kg]
 %MTOW=M_payload+M_empty;
-MTOW=5074;%[kg], first estimation.
+MTOW=4471;%[kg], first estimation.
 %%
 %volume of the payload
 % V_sensors=;
@@ -54,16 +54,17 @@ L_f(2)=L_sec_guess;
 D_f(1)=D_m_first_guess;
 D_f(2)=D_sec_guess;
 i=2;
-while abs(L_f(i)-L_f(i-1))>0.01 || abs(D_f(i)-D_f(i-1))>0.001
+while abs(L_f(i)-L_f(i-1))>0.01 && abs(D_f(i)-D_f(i-1))>0.001
     L_f(i+1)=f*D_f(i);
     D_f(i+1)=2*sqrt(V_f/(pi*L_f(i+1)));
     i=i+1;
 end
 fprintf('The final length of the fuselage is equal to %d m \n',L_f(i));
-fprintf('The final maximum diameter of the fuselage is equal to %d m \n',D_f(i));
-
-%%
-%length of the nose.
-N_f=0.5;%minimizes drag and no need of pressurization.
-L_n=N_f*D_f(i);
-fprintf('The length of the nose is equal to %d m \n',L_n);
+fprintf('The final equivalent diameter of the fuselage is equal to %d m \n',D_f(i));
+a=D_f(i)/sqrt(2);
+b=a/2;
+A_f=a*b*pi;
+V_f=A_f*L_f(i);
+fprintf('Dimensions of the elliptical cross-section: a=%d m and b=%d m \n',a,b);
+fprintf('The area of the elliptical cross-section is equal to %d m^2 \n',A_f);
+fprintf('Volume of the fuselage: V=%d m^3 \n',V_f);
