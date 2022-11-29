@@ -49,7 +49,7 @@ xw_cg = 0.4*cw_AC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% V-Tail
 
-[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle] = v_tail(MTOW,...
+[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l] = v_tail(MTOW,...
     D_f_max,h_f_max,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -71,6 +71,7 @@ xw_cg = 0.4*cw_AC;  %for the wing [35%wMAC;42%wMAC] [m]
 % c_root_v  = chord at the root of vertical tail
 % c_tip_v   = chord at the tip of vertical tail
 % angle     = dihedral angle of the v-tail
+% l         = length between wing ac and tail ac
 
 S_T = S_h; %Tailplane area
 l_T = l; %Tail moment arm
