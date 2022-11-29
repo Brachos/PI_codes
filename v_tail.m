@@ -1,3 +1,5 @@
+function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle] = v_tail(Mass,...
+    D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S, cg_pos,l_f,l_cg)
 %Code destiné à obtenir les principaux paramètres géométrique de la tail en
 %fonction des caractéristiques des ailes. Cette méthode est basée sur
 %l'ouvrage de référence "Aircraft design, A Systems Engineering Approach"
@@ -8,38 +10,41 @@
 
 %% Data required
 % - m
-m = 5000;
+% m = 5000;
+m = Mass;
 % - D_f
-D_f = 0.84;
-h_f_max = D_f;
+% D_f = 0.84;
+D_f = D_f_max;
+% h_f_max = D_f;
 % - V_c
-V_c = 212;
+% V_c = 212;
 % - alpha_f
 % - c_bar
-c_bar = 1.44;
+% c_bar = 1.44;
+c_bar = c_chord;
 % - AR
 AR = 7; % fixed
 % - lambda
 lambda = 0.3; % fixed
 % - i_w
-i_w = 0.75;
+% i_w = 0.75;
 % - alpha_twist
-alpha_twist = -2;
+% alpha_twist = -2;
 % - Lambda_LE
-Lambda_LE  = 36.34;
+% Lambda_LE  = 36.34;
 % - Gamma
 % - airfoyl profile
-ac = 0.365;
+% ac = 0.365;
 % - C_L_alpha
-C_L_alpha = 9.8;
+% C_L_alpha = 9.8;
 % - ro
 rho = 0.46;
-lambda_h = 0.5;
-lambda_v = 0.9;
+lambda_h = 0.5; % fixed
+lambda_v = 0.9; % ficed
 % - C_maf
 % - cg_pos
 % - h_o
-S = 12.07;
+% S = 12.07;
 Lambda_T = Lambda_LE + 5;
 
 %% Longitudinal trim
@@ -98,7 +103,7 @@ C_L = 2*m*9.81/(rho*V_c^2*S);
 % fuselage, on peut trouver X_apex
 % cg_pos est la poition du centre de gravité par rapport à la position au
 % centre aérodynamique
-cg_pos = 2;
+% cg_pos = 2;
 X_apex = -h_o*c_bar + 0.32*L_f + cg_pos; %!!!!!!! revoir les valeurs 0.23 et 0.32 !!!!
 X_cg = h_o*c_bar - cg_pos;
 h = X_cg/c_bar;
@@ -118,8 +123,8 @@ C_Lh = (C_mo_wf + C_L*(h-h_o))/(eta_h*V_h_bar); %(3)
 AR_h = 2/3 * AR;
 b_h = sqrt(S_h*AR_h);
 
-l_f = 5.9;
-l_cg = 2;%first guess
+% l_f = 5.9;
+% l_cg = 2;%first guess
 K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
 S_fs = l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
@@ -132,7 +137,7 @@ S_v = V_v*S*b/l_F;
 AR_v = 1;
 b_v = sqrt(S_v*AR_v);
 
-angle = atan(sqrt(S_v/S_h));
+angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
 % chords horizontal
 c_root_h = 2*S_h/(b_h*(1+lambda_h));
 c_tip_h = lambda_h*c_root_h;
