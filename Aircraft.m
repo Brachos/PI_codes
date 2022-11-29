@@ -49,15 +49,35 @@ xw_cg = 0.4*cw_AC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% V-Tail
 
-%[] = v_tail();
+[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle] = v_tail(MTOW,...
+    D_f_max,h_f_max,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
+%%%%%%%%% ENTRY %%%%%%%%%%
+% MTOW      = Mass of airplane
+% D_f_max   = maximal diameter of fuselage
+% h_f_max   = hight of airplaine fuselage (side view)
+% V_c       = cruise speed
+% cw_MAC    = mean aerodynamic chord
+% Lambda_LE = sweep angle of leading edge of the wings
+% Sw        = surface of the wings
+% cg_pos    = position of center of gravity
+% l_f       = fuselage length
+% l_cg      = length between center of gravity and nose
+% bw        = wing span
+%%%%%%%%%% EXIT %%%%%%%%%%%
+% S_h       = horizontal surface of the tail
+% S_v       = vertical surface of the tail
+% c_root_h  = chord at the root of horizontal tail
+% c_tip_h   = chord at the tip of horizontal tail
+% c_root_v  = chord at the root of vertical tail
+% c_tip_v   = chord at the tip of vertical tail
+% angle     = dihedral angle of the v-tail
 
-
-S_T = 0; %Tailplane area
-l_T = 0; %Tail moment arm
+S_T = S_h; %Tailplane area
+l_T = l; %Tail moment arm
 x_wv = 4.95; %distance between the wac and the vac
-vrc = 0; %v-tail root chord
-vtc = 0; %v-tail tip chord 
-vTR = 0; %v-tail taper ratio
+vrc = c_root_h; %v-tail root chord
+vtc = c_tip_h; %v-tail tip chord 
+vTR = c_tip_h/c_root_h; %v-tail taper ratio
 vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %V-Tail Main Aerodynamic Chord
 V_T = S_T*l_T/S*vMAC; %Tail volume ratio
 xcg_v = 0.3*vMAC; %for the v-tail [m]

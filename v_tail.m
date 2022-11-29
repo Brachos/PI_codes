@@ -1,5 +1,5 @@
-function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle] = v_tail(Mass,...
-    D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S, cg_pos,l_f,l_cg)
+function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle,l] = v_tail(Mass,...
+    D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S, cg_pos,l_f,l_cg,b)
 %Code destiné à obtenir les principaux paramètres géométrique de la tail en
 %fonction des caractéristiques des ailes. Cette méthode est basée sur
 %l'ouvrage de référence "Aircraft design, A Systems Engineering Approach"
