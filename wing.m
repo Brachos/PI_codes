@@ -1,4 +1,4 @@
-function [b,S,CL_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel] = wing(Mach,Altitude,Mass)
+function [b,S,CL_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta] = wing(Mach,Altitude,Mass)
 
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
@@ -14,12 +14,12 @@ curve   = [c_upper;c_lower(end:-1:1,:)];
 % Mass     = 5080;  % [kg]
 % Altitude = 30000; % [feet]
 
-g  = 9.81;   % [m/s²]
+g  = 9.81;   % [m/s?]
 W  = Mass*g; % [N] Take off weight (= Lift at cruise)
 L  = W;
 
 [V_inf,rho] = speed(Altitude,Mach);     % 30 000 ft = 9 144 m 
-rho = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m³]  Density at 30 000 ft
+rho = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m?]  Density at 30 000 ft
 mu  = (1.458+(1.458-1.493)*0.144)*1e-5; % [kg/m.s] Dynamic viscosity 
 
 AR  = 7;   % Aspect ratio = [5.5-8] for ultralight aircraft
@@ -78,9 +78,9 @@ x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR
 
 %% Computation of fuel volume in the wings
 
-A_tip  = trapz(c_tip*curve(:,1),c_tip*curve(:,2));   % [m²] Area of airfoil
-A_root = trapz(c_root*curve(:,1),c_root*curve(:,2)); % [m²] Area of airfoil
-V_fuel = (A_root+A_tip)*b/2;                         % [m³] volume of wings
+A_tip  = trapz(c_tip*curve(:,1),c_tip*curve(:,2));   % [m?] Area of airfoil
+A_root = trapz(c_root*curve(:,1),c_root*curve(:,2)); % [m?] Area of airfoil
+V_fuel = (A_root+A_tip)*b/2;                         % [m?] volume of wings
 
 %% Plot of airfoil profil
 % 

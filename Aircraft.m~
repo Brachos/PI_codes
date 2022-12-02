@@ -13,7 +13,7 @@ l_F = 0; %Fin moment arm
 le = 0.7; %length of the engine
 MT = zeros(3,1); %vector of the total moment 3 different directions for the max weight
 Mt = zeros(3,1); %vector of the total moment 3 different directions for the min weight
-x_e = 4; %position of the engine inlet
+x_e = 0; %position of the engine inlet
 Nelem = 8; % number of differents elements, of different mass
            % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
            % 6.Payload;7.Fuel;8.Installed weight)
@@ -116,7 +116,7 @@ x_wLE = x_w+sin(Lambda_LE)*y_wmac; %position of the wing leading edge at the mac
 x_tLE = x_t+sin(angle)*y_tmac;
 thick = 0; %thickness of the plane
 zcg_w = 0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
-xarm = [xw_cg+x_wLE;xcg_f;xcg_h+x_tLE;xcg_e+x_e;xcg_l;xcg_p;0;0];
+xarm = [xw_cg+x_wLE;xcg_f;xcg_h+;xcg_e+x_e;xcg_l;xcg_p;0;0];
 yarm = [0;0;0;0;0;0;0;0]; %symetric
 zarm = [zcg_w;0;0;0;0;0;0;0];
 % vector of all the different arms corresponding to the different
@@ -127,14 +127,14 @@ cgt = zeros(3,1); %coordinates of the center of gravity minimum weight
 X_cg=0;
 for i=1:Nelem
     MT(1) = MT(1) +(W(i)*xarm(i));
-    MT(2) = MT(2) +(W(i)*yarm(i));
-    MT(3) = MT(3) +(W(i)*zarm(i));
+    MT(2) = MT(2) +(W(i)*xarm(i));
+    MT(3) = MT(3) +(W(i)*xarm(i));
     if(i==6||i==7)
         continue;
     else
         Mt(1) = Mt(1) +(W(i)*xarm(i));
-        Mt(2) = Mt(2) +(W(i)*yarm(i));
-        Mt(3) = Mt(3) +(W(i)*zarm(i));
+        MT(2) = MT(2) +(W(i)*xarm(i));
+        MT(3) = MT(3) +(W(i)*xarm(i));
     end
 end
 for i=1:3
