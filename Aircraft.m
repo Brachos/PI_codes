@@ -47,7 +47,11 @@ l_f = 5.723540e+00; %[m]
 % Vw_fuel   = fuel volume that can be stocked in the wings [l]
 
 xw_cg = 0.4*cw_AC;  %for the wing [35%wMAC;42%wMAC] [m]
+%% Fuselage
+[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
 
+% a and b are the dimensions of the elliptical cross-section. V_f is the
+% volume of the fuselage. 
 %% V-Tail
 cg_pos = 2;
 l_cg = cg_pos;
