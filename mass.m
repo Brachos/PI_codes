@@ -1,4 +1,4 @@
-function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT)
+function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 %% Wing 
@@ -71,8 +71,8 @@ W_E = 140; %[kg] weight of each engine
 W_installed_weight = K_E*N_E*W_E^0.9;
 %% Fuel system weight for transport and fighter aircraft 
 %equipped with integral fuel tanks
-[W_fuel] = fuel_weight();
-W_fuel = W_fuel*2.20462262; %[lbs] total fuel weight
+[W_mass] = fuel_weight();
+W_fuel = W_mass*2.20462262; %[lbs] total fuel weight
 rho_f = 5.87; %[lb/gal] fuel density
 N_E = 1; % nbre of engines
 N_t = 3; % 2 wings + tank inside fuselage = nbre of separated fuel tanks
@@ -83,5 +83,5 @@ W_FS = W_FS/2.20462262; %[kg]
 W_payload = 205.0237512;
 
 %% Total mass
-W_tot = W_landing_gear + W_fuselage + W_FS + W_payload + W_installed_weight + W_V + W_wing + 2221.2; %add the fuel weight
+W_tot = W_landing_gear + W_fuselage + W_FS + W_payload + W_installed_weight + W_V + W_wing + W_mass; %add the fuel weight
 end

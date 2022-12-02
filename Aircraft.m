@@ -46,7 +46,7 @@ l_f = 5.723540e+00; %[m]
 % yw_AC     = wing y-coordinate of the Aerodynamic Centre [m]
 % Vw_fuel   = fuel volume that can be stocked in the wings [l]
 
-xw_cg = 0.4*cw_AC;  %for the wing [35%wMAC;42%wMAC] [m]
+xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
 
@@ -99,9 +99,9 @@ xcg_v = 0.3*vMAC; %for the vertical tail [m]
 %V_F = S_F*l_F/S*c__; %fin volume ratio
 
 %% Weight
-[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT);
+[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_fuel, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT);
 W_engine = 140;
-W = [W_wing;W_fuselage;W_V;W_engine;W_landing_gear;W_payload;W_FS;W_installed_weight]; %vector of all the different weights (or mass)
+W = [W_wing;W_fuselage;W_V;W_engine;W_landing_gear;W_payload;W_FS+W_fuel;W_installed_weight]; %vector of all the different weights (or mass)
                        % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
                        % 6.Payload;7.Fuel?)
 minW = sum(W)-W(6)-W(7); %minimum weight (or minimum mass)
@@ -118,9 +118,10 @@ y_wmac = 2; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 x_wLE = x_w+sin(Lambda_LE)*y_wmac; %position of the wing leading edge at the mac
 x_tLE = x_t+sin(angle)*y_tmac;
+xcg_fuel = 2;
 thick = 0; %thickness of the plane
 zcg_w = 0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
-xarm = [xw_cg+x_wLE;xcg_f;xcg_h+x_tLE;xcg_e+x_e;xcg_l;xcg_p;0;0];
+xarm = [xw_cg+x_wLE;xcg_f;xcg_h+x_tLE;xcg_e+x_e;xcg_l;xcg_p;xcg_fuel;0];
 yarm = [0;0;0;0;0;0;0;0]; %symetric
 zarm = [zcg_w;0;0;0;0;0;0;0];
 % vector of all the different arms corresponding to the different
@@ -129,6 +130,8 @@ zarm = [zcg_w;0;0;0;0;0;0;0];
 cgT = zeros(3,1); %coordinates of the center of gravity maximum weight
 cgt = zeros(3,1); %coordinates of the center of gravity minimum weight
 X_cg=0;
+MT = zeros(1,3);
+Mt = zeros(1,3);
 for i=1:Nelem
     MT(1) = MT(1) +(W(i)*xarm(i));
     MT(2) = MT(2) +(W(i)*yarm(i));
@@ -152,7 +155,7 @@ end
 %% Neutral point
 lwt = 4.95; %Horizontal distance between the wing ac and the tail ac
 zwt = 1; %Vertical distance bewteen the wing ac and the tail ac
-h0 = 0; %Position of the aerodynamic center
+h0 = 2; %Position of the aerodynamic center
 CL = 0;
 a = CLw_alpha; %CL_alpha wing
 a1 = 0; %CL_alpha tail

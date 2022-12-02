@@ -3,12 +3,16 @@ function [fuel_mass] = fuel_weight()
 
 ingress_range = 850 * 1.852; % [nm] to [km] at 30 000 ft % KPP02 O
 ingress_speed = speed(30000,0.7); %[mach] to [km/h] at 30 000ft %KPP03 T
+ingress_speed = ingress_speed*3.6;
 loiter_time = 5;% [hours] at 30 000 ft and 0.7 mach %KPP4 O
-[loiter1_speed,rho1] = speed(30000,0.7);
+loiter1_speed = speed(30000,0.7);
+loiter1_speed = loiter1_speed*3.6; %from m/s to km/h
 egress_range = 2000 * 1.852; % [nm] to [km] at 30 000 ft % KPP05 O
-[egress_speed,rho2] = speed(30000, 0.7); %[mach] to [km/h] at 30 000ft %KPP06 T
+egress_speed = speed(30000, 0.7); %[mach] to [km/h] at 30 000ft %KPP06 T
+egress_speed = egress_speed*3.6;
 loiter_time_landing = 0.75; %[hours] %KPP10 O
-[loiter2_speed,rho3] = speed(30000,0.7);
+loiter2_speed = speed(30000,0.7);
+loiter2_speed = loiter2_speed*3.6;
 TSFC = 0.486 *0.45 / 4.49; %[lb/lbf/h] to [kg/h/N]
 net_thrust = 3600;%[N]
 
