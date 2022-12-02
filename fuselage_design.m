@@ -1,70 +1,80 @@
-clear all
-clc
-%% 
-%conditions of flight
-M_cruise=0.7;%Mach number at cruise, threshold.
-Endurance=10.5;%[h], threshold.
-Alt=9144;%[m], flight altitude for cruise (30 000 ft).
-V_cruise=300*M_cruise;%[m/s], cruise speed.
-g=9.81;%[kg*m/s^2], gravity constant.
-rho_cruise=1.123;%[kg/m^3], density of the air at cruise altitude.
-%%
-%mass of the payload
-M_sensors=103.419;%[kg]
-M_subsystems=100.698;%[kg]
-M_mission=200;%[kg], water + radio
-M_fuel=1000;%[kg]
-M_payload=M_sensors+M_mission+M_subsystems+M_fuel;
-M_empty=2250;%[kg]
-%MTOW=M_payload+M_empty;
-MTOW=4471;%[kg], first estimation.
-%%
+function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
 %volume of the payload
-% V_sensors=;
-% V_subsystems=;
+V_sensors=1;%[m^3]
+V_subsystems=1;%[m^3]
 V_mission=0.15;%[m^3]
-f=0;%fraction of fuel in the fuselage
-% V_fuel=;
+m_fuel=2221.2;%[kg]
+V_tot_fuel=m_fuel/800;%hypothesis: kerozen is used as the fuel.
+Vf_fuel=V_tot_fuel-Vw_fuel;
 % V_landing_gear=;
-%V_int_fuselage=V_sensors+V_subsystems+V_mission+V_fuel+V_landing_gear;
+V_f_real=V_sensors+V_subsystems+V_mission+Vf_fuel;%+V_landing_gear;
 %%
 %first estimation using statistical relations.
 %MTOW and empty weight comparable to a jet trainer (resp. 3500kg and 2500kg).
-a=0.333;
+A=0.333;
 C=0.41;
-L_first_guess=a*MTOW^C;%[m], length of the fuselage.
+L_first_guess=A*MTOW^C;%[m], length of the fuselage.
 %%
 %Volume of the fuselage, kept constant through the iterations. 
 %IMPORTANT: fuselage is first considered to be cylindrical and will later
 %be streamlined.
 %The volume used here corresponds to the volume necessary to store all the
 %payload+the subsystems+the sensors+the landing gears+fuel.
-V_f=3;%[m^3]
+V_f=V_f_real+0.1*V_f_real;%[m^3], take a margin to ensure that the volume is still sufficient even after streamlining.
 f=7;%optimum fineness ratio of the fuselage to minimize drag (for a constant volume):[6;8].
-%first estimation of the diameter
-D_m_first_guess=2*sqrt(V_f/(pi*L_first_guess));
+%the payload is stored in a rectangle of volume V_f. The width is considered to be 1.5 larger than the height of the rectangle.
+w_first_guess=sqrt(V_f/(2/3*L_first_guess));
+h_first_guess=w_first_guess*2/3;
+%the dimensions of the ellipse containing this rectangle:
+a_first_guess=w_first_guess/2*sqrt(2);
+b_first_guess=h_first_guess/2*sqrt(2);
+%equivalent diameter of the ellipse:
+Deq_first_guess=sqrt(4*a_first_guess*b_first_guess);
 %second estimation
-L_sec_guess=f*D_m_first_guess;
-D_sec_guess=2*sqrt(V_f/(pi*L_sec_guess));
+L_sec_guess=f*Deq_first_guess;
+w_sec_guess=sqrt(V_f/(2/3*L_sec_guess));
+h_sec_guess=w_sec_guess*2/3;
+%the dimensions of the ellipse containing this rectangle:
+a_sec_guess=w_sec_guess/2*sqrt(2);
+b_sec_guess=h_sec_guess/2*sqrt(2);
+%equivalent diameter of the ellipse:
+Deq_sec_guess=sqrt(4*a_sec_guess*b_sec_guess);
 %iterations to get the final length and diameter of the fuselage.
 L_f=zeros(2,1);
-D_f=zeros(2,1);
+Deq=zeros(2,1);
+w=zeros(2,1);
+h=zeros(2,1);
+a=zeros(2,1);
+b=zeros(2,1);
 L_f(1)=L_first_guess;
 L_f(2)=L_sec_guess;
-D_f(1)=D_m_first_guess;
-D_f(2)=D_sec_guess;
+w(1)=w_first_guess;
+w(2)=w_sec_guess;
+h(1)=h_first_guess;
+h(2)=h_sec_guess;
+a(1)=a_first_guess;
+a(2)=a_sec_guess;
+b(1)=b_first_guess;
+b(2)=b_sec_guess;
+Deq(1)=Deq_first_guess;
+Deq(2)=Deq_sec_guess;
 i=2;
-while abs(L_f(i)-L_f(i-1))>0.01 && abs(D_f(i)-D_f(i-1))>0.001
-    L_f(i+1)=f*D_f(i);
-    D_f(i+1)=2*sqrt(V_f/(pi*L_f(i+1)));
+while abs(L_f(i)-L_f(i-1))>0.01 && abs(Deq(i)-Deq(i-1))>0.001
+    L_f(i+1)=f*Deq(i);
+    w(i+1)=sqrt(V_f/(2/3*L_f(i+1)));
+    h(i+1)=w(i+1)*2/3;
+    a(i+1)=w(i+1)/2*sqrt(2);
+    b(i+1)=h(i+1)/2*sqrt(2);
+    Deq(i+1)=sqrt(4*a(i+1)*b(i+1));
     i=i+1;
 end
-fprintf('The final length of the fuselage is equal to %d m \n',L_f(i));
-fprintf('The final equivalent diameter of the fuselage is equal to %d m \n',D_f(i));
-a=D_f(i)/sqrt(2);
-b=a/2;
-A_f=a*b*pi;
-V_f=A_f*L_f(i);
-fprintf('Dimensions of the elliptical cross-section: a=%d m and b=%d m \n',a,b);
-fprintf('The area of the elliptical cross-section is equal to %d m^2 \n',A_f);
-fprintf('Volume of the fuselage: V=%d m^3 \n',V_f);
+a_val=a(i);
+b_val=b(i);
+L_f_val=L_f(i);
+Deq_val=Deq(i);
+% fprintf('The final length of the fuselage is equal to %d m \n',L_f(i));
+% fprintf('The final equivalent diameter of the fuselage is equal to %d m \n',Deq(i));
+% fprintf('The final width of the rectangle is equal to %d m \n',w(i));
+% fprintf('The final height is equal to %d m \n',h(i));
+% fprintf('The final dimensions of the elliptical cross-section equal to a=%d m and b=%d m\n',a(i),b(i));
+end

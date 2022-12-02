@@ -46,7 +46,11 @@ MTOW = 5000; %sum(W); %Maximum Take-Off Weight
 % Vw_fuel   = fuel volume that can be stocked in the wings [l]
 
 xw_cg = 0.4*cw_AC;  %for the wing [35%wMAC;42%wMAC] [m]
+%% Fuselage
+[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
 
+% a and b are the dimensions of the elliptical cross-section. V_f is the
+% volume of the fuselage. 
 %% V-Tail
 
 [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l] = v_tail(MTOW,...
