@@ -24,8 +24,10 @@ MTOW = 4471; %sum(W); %Maximum Take-Off Weight
 V_c = speed;
 
 %% Fuselage
+[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
 
-D_f_max = 8.169271e-01; %[m]
+% a and b are the dimensions of the elliptical cross-section. V_f is the
+% volume of the fuselage. 
 h_f_max = 2.888274e-01; %[m]
 l_f = 5.723540e+00; %[m]
 
