@@ -1,6 +1,6 @@
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
-
+clear all;
 %% Parameters
 AOA = 0.75*pi/180; %angle of attack
 ARw = 7; %Wing Aspect ratio
@@ -24,6 +24,7 @@ MTOW = 4471; %sum(W); %Maximum Take-Off Weight
 V_c = speed;
 
 %% Fuselage
+Vw_fuel = 2.7; %volume of the fuel
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
 
 % a and b are the dimensions of the elliptical cross-section. V_f is the
@@ -168,11 +169,11 @@ X_np = h0 + V_hT*a1/a*(1-(de_dAOA));
 
 %% Aerodynamic center
 D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
-X_c4 = 1/4*cw_AC; %position of the quarter-chord
-X_ac = X_c4 + D_ac*sqrt(S);
+X_c4 = 1/4*cw_MAC; %position of the quarter-chord
+X_ac = X_c4 + D_ac*sqrt(Sw);
 
 %% Static margin
-k = X_np - X_cg;
+k = X_np - cgT(1);
 %K = -dC_m/dC_Lw;
 
 % -dC_m/dalpha ; static margin is the difference between the position of 
