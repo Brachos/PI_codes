@@ -154,18 +154,19 @@ for i=1:3
     % the lower weight and the greater weight different coordinates of the 
     % cg for the max weight
 end
+h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg
 
 %% Neutral point
 lwt = 4.95; %Horizontal distance between the wing ac and the tail ac
 zwt = 1; %Vertical distance bewteen the wing ac and the tail ac
-h0 = 2; %Position of the aerodynamic center
+h0 = 0.37; %Position of the aerodynamic center
 CL = 0;
 a = CLw_alpha; %CL_alpha wing
 a1 = 0; %CL_alpha tail
 r = lwt/(bw/2); 
 m = zwt/(bw/2);
 de_dAOA = 0.4; %Variation de l'angle epsilon en fonction de l'angle d'attaque
-X_np = h0 + V_hT*a1/a*(1-(de_dAOA));
+hn = h0 + V_hT*a1/a*(1-(de_dAOA));
 
 %% Aerodynamic center
 D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
@@ -173,7 +174,7 @@ X_c4 = 1/4*cw_MAC; %position of the quarter-chord
 X_ac = X_c4 + D_ac*sqrt(Sw);
 
 %% Static margin
-k = X_np - cgT(1);
+k = hn - h;
 %K = -dC_m/dC_Lw;
 
 % -dC_m/dalpha ; static margin is the difference between the position of 
