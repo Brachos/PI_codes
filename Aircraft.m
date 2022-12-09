@@ -13,7 +13,7 @@ l_F = 0; %Fin moment arm
 le = 0.7; %length of the engine
 MT = zeros(3,1); %vector of the total moment 3 different directions for the max weight
 Mt = zeros(3,1); %vector of the total moment 3 different directions for the min weight
-x_e = 4; %position of the engine inlet
+x_e = 5; %position of the engine inlet
 Nelem = 8; % number of differents elements, of different mass
            % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
            % 6.Payload;7.Fuel;8.Installed weight)
@@ -34,7 +34,7 @@ l_f = 5.723540e+00; %[m]
 
 %% Wing
 
-[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE] = wing(M,Altitude,MTOW);
+[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,MTOW);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -90,6 +90,8 @@ hTR = c_tip_h/c_root_h; %horizontal tail taper ratio
 hMAC = hrc*(2/3)*((1+hTR+hTR^2)/(1+hTR)); %Horizontal Tail Main Aerodynamic Chord
 V_hT = S_h*l_T/Sw*hMAC; %Tail volume ratio
 xcg_h = 0.3*hMAC; %for the horizontal tail [m]
+xac_h = 0.365*hMAC;
+bh = 4;
 
 vrc = c_root_v; %vertical tail root chord
 vtc = c_tip_v; %vertical tail tip chord 
@@ -97,6 +99,8 @@ vTR = c_tip_v/c_root_v; %vertical tail taper ratio
 vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
 V_vT = S_v*l_T/Sw*vMAC; %Tail volume ratio
 xcg_v = 0.3*vMAC; %for the vertical tail [m]
+xac_v = 0.365*vMAC; 
+bv = 2;
 
 %% 
 %V_F = S_F*l_F/S*c__; %fin volume ratio
@@ -110,17 +114,22 @@ W = [W_wing;W_fuselage;W_V;W_engine;W_landing_gear;W_payload;W_FS+W_fuel;W_insta
 minW = sum(W)-W(6)-W(7); %minimum weight (or minimum mass)
 MTOW = sum(W);
 %% Center of gravity
-x_wv = 4.95; %distance between the wac and the vac
+x_wv = l; %distance between the wac and the vac
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l= 2; %for the landing gears
 xcg_p = 2; %for the payload
-x_w = 2; %position of the wings
+x_w = 2.2; %position of the wings
 x_t = 5;
-y_wmac = 2; %position of the wing mac along y
+y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
+syms y
+y_hmac = double(2/S_h*int(c*y,0,bh/2));
+y_vmac = double(2/S_v*int(c*y,0,bv/2));
 x_wLE = x_w+sin(Lambda_LE)*y_wmac; %position of the wing leading edge at the mac
 x_tLE = x_t+sin(angle)*y_tmac;
+x_hLE = x_t+sin(angle)*y_hmac;
+x_vLE = x_t+sin(angle)*y_vmac;
 xcg_fuel = 2;
 thick = 0; %thickness of the plane
 zcg_w = 0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
@@ -157,12 +166,12 @@ end
 h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg
 
 %% Neutral point
-lwt = 4.95; %Horizontal distance between the wing ac and the tail ac
+lwt = l; %Horizontal distance between the wing ac and the tail ac
 zwt = 1; %Vertical distance bewteen the wing ac and the tail ac
 h0 = 0.37; %Position of the aerodynamic center
 CL = 0;
 a = CLw_alpha; %CL_alpha wing
-a1 = 0; %CL_alpha tail
+a1 = 0.05; %CL_alpha tail
 r = lwt/(bw/2); 
 m = zwt/(bw/2);
 de_dAOA = 0.4; %Variation de l'angle epsilon en fonction de l'angle d'attaque
@@ -172,10 +181,17 @@ hn = h0 + V_hT*a1/a*(1-(de_dAOA));
 D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
 X_c4 = 1/4*cw_MAC; %position of the quarter-chord
 X_ac = X_c4 + D_ac*sqrt(Sw);
+wAC = xw_AC + x_wLE; %Position of the wing aerodynamic center from nose
+hAC = xac_h + x_hLE;
+vAC = xac_v + x_vLE;
+
+%% Pitching moment equation
+static_stability = (h - h0)-V_hT*a1/a*(1-(de_dAOA));
 
 %% Static margin
 k = hn - h;
 %K = -dC_m/dC_Lw;
+%K = -static_stability
 
 % -dC_m/dalpha ; static margin is the difference between the position of 
 % the neutral point and the position of the cg or the derivative of the 
