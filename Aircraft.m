@@ -49,11 +49,7 @@ aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
 % Vw_fuel   = fuel volume that can be stocked in the wings [l]
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
-%% Fuselage
-%[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
-%disp(l_f);
-% a and b are the dimensions of the elliptical cross-section. V_f is the
-% volume of the fuselage. 
+
 %% V-Tail
 cg_pos = 2;
 l_cg = cg_pos;
