@@ -101,7 +101,7 @@ bv = 2;
 %V_F = S_F*l_F/S*c__; %fin volume ratio
 
 %% Weight
-[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_fuel, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT);
+[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_fuel, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l);
 W_engine = 140;
 W = [W_wing;W_fuselage;W_V;W_engine;W_landing_gear;W_payload;W_FS+W_fuel;W_installed_weight]; %vector of all the different weights (or mass)
                        % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
@@ -201,7 +201,7 @@ k2 = hn - h2;
 %% Polar CD_vs_CL
 AOA_vector = -18:18;
 for i=1:length(AOA_vector)
-[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,MTOW,AOA_vector(i));
+[~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
 CL_vector(i) = CLw;
 CD_vector(i) = CD;
 CL_CD(i) = CL_vector(i)/CD_vector(i);
