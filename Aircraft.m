@@ -30,7 +30,7 @@ Vw_fuel = 2.7; %volume of the fuel
 % a and b are the dimensions of the elliptical cross-section. V_f is the
 % volume of the fuselage. 
 h_f_max = 2.888274e-01; %[m]
-l_f = 5.723540e+00; %[m]
+%l_f = 5.723540e+00; %[m]
 
 %% Wing
 
@@ -50,11 +50,7 @@ l_f = 5.723540e+00; %[m]
 % Vw_fuel   = fuel volume that can be stocked in the wings [l]
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
-%% Fuselage
-[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
 
-% a and b are the dimensions of the elliptical cross-section. V_f is the
-% volume of the fuselage. 
 %% V-Tail
 cg_pos = 2;
 l_cg = cg_pos;
@@ -63,7 +59,7 @@ l_cg = cg_pos;
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
-% h_f_max   = hight of airplaine fuselage (side view)
+% h_f_max   = height of airplaine fuselage (side view)
 % V_c       = cruise speed
 % cw_MAC    = mean aerodynamic chord
 % Lambda_LE = sweep angle of leading edge of the wings
