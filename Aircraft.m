@@ -1,4 +1,4 @@
-% Script that couple all codes together and determine if the aircraft is
+ % Script that couple all codes together and determine if the aircraft is
 % stable or not
 clear all;
 %% Parameters
@@ -13,7 +13,7 @@ l_F = 0; %Fin moment arm
 le = 0.7; %length of the engine
 MT = zeros(3,1); %vector of the total moment 3 different directions for the max weight
 Mt = zeros(3,1); %vector of the total moment 3 different directions for the min weight
-x_e = 5; %position of the engine inlet
+x_e = 4; %position of the engine inlet
 Nelem = 8; % number of differents elements, of different mass
            % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
            % 6.Payload;7.Fuel;8.Installed weight)
@@ -26,15 +26,14 @@ V_c = speed;
 %% Fuselage
 Vw_fuel = 2.7; %volume of the fuel
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
-
 % a and b are the dimensions of the elliptical cross-section. V_f is the
 % volume of the fuselage. 
 h_f_max = 2.888274e-01; %[m]
 %l_f = 5.723540e+00; %[m]
 
 %% Wing
-
-[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,MTOW);
+aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
+[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -54,7 +53,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% V-Tail
 cg_pos = 2;
 l_cg = cg_pos;
-[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l] = v_tail(MTOW,...
+[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l, C_L] = v_tail(MTOW,...
     D_f_max,h_f_max,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -107,15 +106,17 @@ W_engine = 140;
 W = [W_wing;W_fuselage;W_V;W_engine;W_landing_gear;W_payload;W_FS+W_fuel;W_installed_weight]; %vector of all the different weights (or mass)
                        % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
                        % 6.Payload;7.Fuel?)
+disp(W_V);
 minW = sum(W)-W(6)-W(7); %minimum weight (or minimum mass)
 MTOW = sum(W);
+
 %% Center of gravity
 x_wv = l; %distance between the wac and the vac
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l= 2; %for the landing gears
 xcg_p = 2; %for the payload
-x_w = 2.2; %position of the wings
+x_w = 2; %position of the wings
 x_t = 5;
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
@@ -159,7 +160,8 @@ for i=1:3
     % the lower weight and the greater weight different coordinates of the 
     % cg for the max weight
 end
-h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg
+h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the MTOW
+h2 = (cgt(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the empty aircraft
 
 %% Neutral point
 lwt = l; %Horizontal distance between the wing ac and the tail ac
@@ -171,7 +173,7 @@ a1 = 0.05; %CL_alpha tail
 r = lwt/(bw/2); 
 m = zwt/(bw/2);
 de_dAOA = 0.4; %Variation de l'angle epsilon en fonction de l'angle d'attaque
-hn = h0 + V_hT*a1/a*(1-(de_dAOA));
+hn = h0 + V_hT*a1/a*(1-(de_dAOA)); %position of the neutral point in %MAC
 
 %% Aerodynamic center
 D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
@@ -182,10 +184,12 @@ hAC = xac_h + x_hLE;
 vAC = xac_v + x_vLE;
 
 %% Pitching moment equation
-static_stability = (h - h0)-V_hT*a1/a*(1-(de_dAOA));
+static_stability = (h - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the MTOW
+static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty aircraft
 
 %% Static margin
 k = hn - h;
+k2 = hn - h2;
 %K = -dC_m/dC_Lw;
 %K = -static_stability
 
@@ -193,3 +197,23 @@ k = hn - h;
 % the neutral point and the position of the cg or the derivative of the 
 % coefficient of the total moment ; -C_malpha/C_Lalpha
 % 'Certification authorities specify that k >= 0.05
+
+%% Polar CD_vs_CL
+AOA_vector = -18:18;
+for i=1:length(AOA_vector)
+[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,MTOW,AOA_vector(i));
+CL_vector(i) = CLw;
+CD_vector(i) = CD;
+CL_CD(i) = CL_vector(i)/CD_vector(i);
+end
+figure;
+p1=plot(CD_vector,CL_vector);
+xlabel('CD')
+ylabel('CL')
+figure;
+p2=plot(AOA_vector,CL_CD);
+xlabel('AOA')
+ylabel('CL/CD')
+
+
+%%

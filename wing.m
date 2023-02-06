@@ -1,4 +1,4 @@
-function [b,S,CL_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,Mass)
+function [b,S,CL_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,Mass,aofa)
 
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
@@ -29,7 +29,7 @@ tap = 0.3; % Tapper ratio (lambda = c_tip/c_root) best value
 %% cl and AOA depending on airfoil profil (NASA SC(2)-0714)
 % Hypothesis: classical fuselage 
                                            
-AOA = 0.75*pi/180; % AOA where the drag is minimum or cl/cd is maximum 
+AOA = aofa*pi/180; % AOA where the drag is minimum or cl/cd is maximum 
 cd  = 0.012;
 cl  = 0.7;
 
