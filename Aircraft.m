@@ -58,7 +58,7 @@ l_cg = cg_pos;
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
-% h_f_max   = hight of airplaine fuselage (side view)
+% h_f_max   = height of airplaine fuselage (side view)
 % V_c       = cruise speed
 % cw_MAC    = mean aerodynamic chord
 % Lambda_LE = sweep angle of leading edge of the wings
