@@ -10,8 +10,9 @@ curve   = [c_upper;c_lower(end:-1:1,:)];
 
 %% Data
 
+% aofa = 0.75;
 % Mach     = 0.7;   % [-]
-% Mass     = 5080;  % [kg]
+% Mass     = 4471;  % [kg]
 % Altitude = 30000; % [feet]
 
 g  = 9.81;   % [m/s?]
@@ -90,5 +91,5 @@ V_fuel = (A_root+A_tip)*b/2;                         % [m?] volume of wings
 % xlabel('x/c [m]')
 % ylabel('z/c [m]')
 % axis equal
-%
+
 end

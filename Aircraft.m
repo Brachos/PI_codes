@@ -1,4 +1,4 @@
- % Script that couple all codes together and determine if the aircraft is
+% Script that couple all codes together and determine if the aircraft is
 % stable or not
 clear all;
 %% Parameters
@@ -201,7 +201,7 @@ k2 = hn - h2;
 %% Polar CD_vs_CL
 AOA_vector = -18:18;
 for i=1:length(AOA_vector)
-[bw,Sw,CLw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,MTOW,AOA_vector(i));
+[~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
 CL_vector(i) = CLw;
 CD_vector(i) = CD;
 CL_CD(i) = CL_vector(i)/CD_vector(i);
