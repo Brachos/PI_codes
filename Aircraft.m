@@ -58,7 +58,7 @@ l_cg = cg_pos;
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
-% h_f_max   = hight of airplaine fuselage (side view)
+% h_f_max   = height of airplaine fuselage (side view)
 % V_c       = cruise speed
 % cw_MAC    = mean aerodynamic chord
 % Lambda_LE = sweep angle of leading edge of the wings
@@ -101,7 +101,7 @@ bv = 2;
 %V_F = S_F*l_F/S*c__; %fin volume ratio
 
 %% Weight
-[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_fuel, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT);
+[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_fuel, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l);
 W_engine = 140;
 W = [W_wing;W_fuselage;W_V;W_engine;W_landing_gear;W_payload;W_FS+W_fuel;W_installed_weight]; %vector of all the different weights (or mass)
                        % (1.Wing;2.Fuselage;3.Tail;4.Engines;5.Landing gears;
