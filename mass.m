@@ -2,16 +2,52 @@ function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
+pound = 2.20462262; % kg to lbs
+feet = 3.28; % m to ft
 %% Fuel system weight for transport and fighter aircraft 
 %equipped with integral fuel tanks
 [W_mass] = fuel_weight();
-W_fuel = W_mass*2.20462262; %[lbs] total fuel weight
+W_fuel = W_mass*pound; %[lbs] total fuel weight
 rho_f = 5.87; %[lb/gal] fuel density
 N_E = 1; % nbre of engines
 N_t = 3; % 2 wings + tank inside fuselage = nbre of separated fuel tanks
 
 W_FS = 15*N_t^0.5 * (W_fuel/rho_f)^0.333 + 80*(N_E + N_t -1);
-W_FS = W_FS/2.20462262; %[kg]
+W_FS = W_FS/pound; %[kg]
+
+%% Wing (Raymer formula) (british units)
+
+[~,S_w,~,~,~,~,~,~,~,~,~,~,~,~] = wing(Mach,30000,MTOW,0.75);
+
+K_dw = 1;
+K_vs = 1;
+W_dg = MTOW*pound - 0.45*W_fuel;
+N_z = 1.5*3; %Ultimate load factor = 1.5*limit load factor
+S_w = S_w*feet^2; %[ft^2]
+AR_w = 7;
+tc_root = 0.14;
+lambda_w = 0.3; % Tapper ratio
+Lambda_w = 36.34*pi/180; % Sweep angle
+S_csw = 0.2*S_w;
+% Fighter
+W_wing = 0.0103*K_dw*K_vs*(W_dg*N_z)^0.5*S_w^0.622*AR_w^0.785*tc_root*(1+lambda_w)^0.05*cos(Lambda_w)^-1*S_csw^0.04;
+% General aviation 
+W_fw = 0.5*W_fuel;
+q = 360;
+W_wing = 0.036*S_w^0.758*W_fw^0.0035*(AR_w/cos(Lambda_w)^2)^0.6*q^0.006*lambda_w^0.04*(100*tc_root/cos(Lambda_w))^-0.3*(N_z*W_dg)^0.49;
+%% Tail (Raymer formula)
+
+Fw = 1; % [ft] Fuselage width at horizontal tail interserction
+
+% Fighter
+W_htail = 3.316*(1+F_w/B_h)^-2*(W_dg*N_z/1000)^0.260*S_ht^0.806;
+W_vtail = 0.452*K_rht*(1+H_t/H_v)^0.5*(W_dg*N_z)^0.488*S_vt^0.718*Mach^0.341...
+    *L_t^-1*(1+S-r/S_vt)^0.348*AR_vt^0.223*(1+lambda_t)^0.25*cos(Lambda_t)^-0.323;
+% General aviation
+W_htail = 0.016*(N_z*W_dg)^0.414*q^0.168*S_ht^0.896*(100*tc_root/cos(Lambda_w))^-0.12;
+
+
+%%
 
 %% Wing 
 % assumption : Remote-controlled model
