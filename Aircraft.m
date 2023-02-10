@@ -1,4 +1,4 @@
- % Script that couple all codes together and determine if the aircraft is
+% Script that couple all codes together and determine if the aircraft is
 % stable or not
 clear all;
 %% Parameters
