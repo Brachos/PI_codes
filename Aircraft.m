@@ -51,10 +51,10 @@ aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% V-Tail
-cg_pos = 2;
+cg_pos = 3.4;% à revoir absolument !!!!
 l_cg = cg_pos;
-[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l, C_L, b_h, b_v] = v_tail(MTOW,...
-    D_f_max,h_f_max,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
+[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l, C_L, Lambda_T] = v_tail(MTOW,...
+    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
@@ -76,6 +76,7 @@ l_cg = cg_pos;
 % c_tip_v   = chord at the tip of vertical tail
 % angle     = dihedral angle of the v-tail
 % l         = length between wing ac and tail ac
+% Lambda_T  = sweep angle of the tail
 
 % S_T = S_h; %Tailplane area
 % l_T = l; %Tail moment arm
@@ -98,13 +99,12 @@ l_cg = cg_pos;
 % bv = b_v;
 AR = 3.5;
 S_tail = S_h + S_v;
-b_tail = sqrt(3.5*S_tail/2);% span along the tail (one side)
-b_h = sin(angle)*b_tail*2;
-b_v = cos(angle)*b_tail;
+b_tail = sqrt(3.5*S_tail);% span along the tail (one side)
+b_h = sin(angle)*b_tail;
+b_v = cos(angle)*b_tail/2;
 alpha = 0.5;
 c_root_tail = S_tail/b_tail/(1+alpha);
 c_tip_tail = alpha * c_root_tail;
-Gamma = 41.34; %degrees
 
 %% 
 %V_F = S_F*l_F/S*c__; %fin volume ratio

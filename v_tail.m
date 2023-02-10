@@ -1,4 +1,4 @@
-function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle,l,C_L,b_v,b_h] = v_tail(Mass,...
+function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle,l,C_L,Lambda_T] = v_tail(Mass,...
     D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S, cg_pos,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
@@ -63,10 +63,10 @@ Lambda_T = Lambda_LE + 5;
 % l'?quation : C_mo_wf + C_L*(h-h_o) - (l/c_bar * S_h/S) * C_Lh = 0 (2)
 
 % Le coefficient (l/c_bar * S_h/S)=:V_h_bar  est tr?s important et est
-% appel? "horizontal tail volume coefficient". Il joue un r?le tr?s
+% appel? "horizontal tail volume coefficient". Il joue un role tr?s
 % important dans la stabilit? longitutinale de l'appareil. Apr?s avoir
 % consult? plusieur sources statistiques, ce cefficient sera fix? ? une
-% premi?re valeur de 1;
+% premi?re valeur de 0.75;
 V_h_bar = 0.75;
 % Dans l'?quation (1), on peut trouver les autres coefficients comme suit :
 % C_mo_wf = C_maf*(AR*cos(Alpha)^2)/(AR + 2*cos(Alpha)) + 0.01*alpha_t;
@@ -89,11 +89,11 @@ eta_h = 0.9;
 % h = 0.25;
 
 K_c = 1.1; % voir livre page 300)
-l = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
-l = l_f;
+l_opt = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
+disp(l_opt);
 % Ratio des longueur (voir page 276)
-l_ratio = 0.45;
-L_f = l/l_ratio;
+l_ratio = 0.55; %0.55 un peu trop élevé
+l = l_f*l_ratio;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*S/l;
 C_L = 2*m*9.81/(rho*V_c^2*S);
@@ -111,7 +111,7 @@ C_L = 2*m*9.81/(rho*V_c^2*S);
 
 %Admettons que h_o soit connu par l'?tude de l'airfoyl, on peut donc
 %trouver C_Lh.
-%C_Lh = (C_mo_wf + C_L*(h-h_o))/(eta_h*V_h_bar); %(3)
+%C_Lh = (C_mo_wf + C_L*(h-h_o))²/(eta_h*V_h_bar); %(3)
 % L'?quation (3) est particuli?rement importante dans le design de la tail
 % La longueur l (distance entre le centre a?rodynamique de l'aile et le
 % centre a?rdynamique de la tail) est correl? ? la taille totale du
@@ -127,15 +127,16 @@ b_h = sqrt(S_h*AR_h);
 % l_f = 5.9;
 % l_cg = 2;%first guess
 K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
-S_fs = l_f*h_f_max;
+S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
-CN_beta_i = -0.017; %because high wing
+CN_beta_i = 0.012; %because mid wing
 CN_tot = CN_beta_f + CN_beta_i;
+disp(CN_tot);
 % voir graphique slide 57
-V_v = 0.04; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.02; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
-AR_v = 1;
+AR_v = 0.7;
 b_v = sqrt(S_v*AR_v);
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
