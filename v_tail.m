@@ -1,4 +1,4 @@
-function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle,l,C_L] = v_tail(Mass,...
+function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle,l,C_L,b_v,b_h] = v_tail(Mass,...
     D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S, cg_pos,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
@@ -90,6 +90,7 @@ eta_h = 0.9;
 
 K_c = 1.1; % voir livre page 300)
 l = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
+l = l_f;
 % Ratio des longueur (voir page 276)
 l_ratio = 0.45;
 L_f = l/l_ratio;
