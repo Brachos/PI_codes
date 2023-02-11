@@ -1,4 +1,4 @@
-function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l)
+function [W_wing, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
@@ -43,24 +43,24 @@ W_wing = 0.036*S_w^0.758*W_fw^0.0035*(AR_w/cos(Lambda_w)^2)^0.6*q^0.006*lambda_w
 W_wing = W_wing/pound;
 
 %% Tail (Raymer formula)
-AR_HT = 4.7; %HT aspect ratio
-AR_VT = AR_HT; %VT aspect ratio
-Fw = 1; % [ft] Fuselage width at horizontal tail interserction
-K_rht = 1;
-Ht_Hv = 1;
-L_t = l;
-S_r = 0;
-Lambda_VT = angle; %VT quarter chord sweep angle
-lambda_VT = 0.3; %VT taper ratio
-Lambda_HT = angle; %HT quarter chord sweep angle
-lambda_HT = 0.5; %HT taper ratio
-% Fighter
-W_htail = 3.316*(1+Fw/bh)^-2*(W_dg*N_z/1000)^0.260*S_h^0.806;
-W_vtail = 0.452*K_rht*(1+Ht_Hv)^0.5*(W_dg*N_z)^0.488*S_v^0.718*Mach^0.341...
-    *L_t^-1*(1+S_r/S_v)^0.348*AR_VT^0.223*(1+lambda_VT)^0.25*cos(Lambda_VT)^-0.323;
-% General aviation
-W_htail = 0.016*(N_z*W_dg)^0.414*q^0.168*S_h^0.896*(100*tc_root/cos(Lambda_HT))^-0.12*(AR_HT/cos(Lambda_HT)^2)^0.043*lambda_HT^-0.02;
-W_V = W_htail/pound;
+% AR_HT = 4.7; %HT aspect ratio
+% AR_VT = AR_HT; %VT aspect ratio
+% Fw = 1; % [ft] Fuselage width at horizontal tail interserction
+% K_rht = 1;
+% Ht_Hv = 1;
+% L_t = l;
+% S_r = 0;
+% Lambda_VT = angle; %VT quarter chord sweep angle
+% lambda_VT = 0.3; %VT taper ratio
+% Lambda_HT = angle; %HT quarter chord sweep angle
+% lambda_HT = 0.5; %HT taper ratio
+% % Fighter
+% W_htail = 3.316*(1+Fw/bh)^-2*(W_dg*N_z/1000)^0.260*S_h^0.806;
+% W_vtail = 0.452*K_rht*(1+Ht_Hv)^0.5*(W_dg*N_z)^0.488*S_v^0.718*Mach^0.341...
+%     *L_t^-1*(1+S_r/S_v)^0.348*AR_VT^0.223*(1+lambda_VT)^0.25*cos(Lambda_VT)^-0.323;
+% % General aviation
+% W_htail = 0.016*(N_z*W_dg)^0.414*q^0.168*S_h^0.896*(100*tc_root/cos(Lambda_HT))^-0.12*(AR_HT/cos(Lambda_HT)^2)^0.043*lambda_HT^-0.02;
+% W_V = W_htail/pound;
 
 %% Wing (1)
 % % assumption : Remote-controlled model
@@ -170,5 +170,5 @@ IESeP = 228/pound; % Initial Estimated Sensors Payload
 W_syst = IESuP+IESeP;
 
 %% Total mass
-W_tot = W_landing_gear + W_fuselage + W_FS + W_payload + W_installed_weight + W_V + W_wing + W_mass; %add the fuel weight
+W_tot = W_landing_gear + W_fuselage + W_FS + W_payload + W_installed_weight + W_wing + W_mass; %add the fuel weight
 end

@@ -15,7 +15,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4471; %sum(W); %Maximum Take-Off Weight (first approximation)
+MTOW = 3930; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -51,8 +51,8 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% V-Tail
 cg_pos = 3.4;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l, C_L, Lambda_T] = v_tail(MTOW,...
-    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
+[S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
+    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
@@ -78,18 +78,18 @@ l_cg = cg_pos;
 
 S_T = S_h; %Tailplane area
 l_T = l; %Tail moment arm
-hrc = c_root_h; %horizontal tail root chord
-htc = c_tip_h; %horizontal tail tip chord 
-hTR = c_tip_h/c_root_h; %horizontal tail taper ratio
+hrc = c_root_tail; %horizontal tail root chord
+htc = c_tip_tail; %horizontal tail tip chord 
+hTR = c_tip_tail/c_root_tail; %horizontal tail taper ratio
 hMAC = hrc*(2/3)*((1+hTR+hTR^2)/(1+hTR)); %Horizontal Tail Main Aerodynamic Chord
 V_hT = S_h*l_T/Sw*hMAC; %Tail volume ratio
 xcg_h = 0.3*hMAC; %for the horizontal tail [m]
 xac_h = 0.365*hMAC;
 
 % 
-vrc = c_root_v; %vertical tail root chord
-vtc = c_tip_v; %vertical tail tip chord 
-vTR = c_tip_v/c_root_v; %vertical tail taper ratio
+vrc = c_root_tail; %vertical tail root chord
+vtc = c_tip_tail; %vertical tail tip chord 
+vTR = c_tip_tail/c_root_tail; %vertical tail taper ratio
 vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
 V_vT = S_v*l_T/Sw*vMAC; %Tail volume ratio
 xcg_v = 0.3*vMAC; %for the vertical tail [m]
@@ -110,13 +110,13 @@ c_tip_tail = alpha * c_root_tail;
 %V_F = S_F*l_F/S*c__; %fin volume ratio
 
 %% Weight
-[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l);
-W = [W_fuselage;W_wing;W_V;W_installed_engine;W_landing_gear;
+[W_wing, W_fuselage, W_landing_gear, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l);
+W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear;
     2*W_landing_gear;W_payload;W_FS+W_fuel;W_system]; 
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-disp(W_V);
+disp(W_tail);
 minW = sum(W)-W(7)+W_FS-W(8); %minimum weight (or minimum mass)
 MTOW = sum(W);
 
@@ -135,8 +135,8 @@ x_t = 5;
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
-y_hmac = double(2/S_h*int(c*y,0,bh/2));
-y_vmac = double(2/S_v*int(c*y,0,bv/2));
+y_hmac = double(2/S_h*int(c*y,0,b_h/2));
+y_vmac = double(2/S_v*int(c*y,0,b_v/2));
 x_wLE = x_w+sin(Lambda_LE)*y_wmac; %position of the wing leading edge at the mac
 x_tLE = x_t+sin(angle)*y_tmac;
 x_hLE = x_t+sin(angle)*y_hmac;
