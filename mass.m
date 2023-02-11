@@ -1,4 +1,5 @@
-function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l)
+function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_tot] ...
+    = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
@@ -44,7 +45,8 @@ W_htail = 3.316*(1+F_w/B_h)^-2*(W_dg*N_z/1000)^0.260*S_ht^0.806;
 W_vtail = 0.452*K_rht*(1+H_t/H_v)^0.5*(W_dg*N_z)^0.488*S_vt^0.718*Mach^0.341...
     *L_t^-1*(1+S-r/S_vt)^0.348*AR_vt^0.223*(1+lambda_t)^0.25*cos(Lambda_t)^-0.323;
 % General aviation
-W_htail = 0.016*(N_z*W_dg)^0.414*q^0.168*S_ht^0.896*(100*tc_root/cos(Lambda_w))^-0.12;
+W_htail = 0.016*(N_z*W_dg)^0.414*q^0.168*S_ht^0.896*...
+    (100*tc_root/cos(Lambda_w))^-0.12*(A/(cos(Lambda_T))^2)^(0.043)*lambda_h*^(-0.02);
 
 
 %%

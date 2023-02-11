@@ -1,5 +1,5 @@
-function [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle,l,C_L,Lambda_T] = v_tail(Mass,...
-    D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S, cg_pos,l_f,l_cg,b)
+function [S_tail,S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h] = v_tail(Mass,...
+    D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
 %l'ouvrage de r?f?rence "Aircraft design, A Systems Engineering Approach"
@@ -89,14 +89,15 @@ eta_h = 0.9;
 % h = 0.25;
 
 K_c = 1.1; % voir livre page 300)
-l_opt = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
-disp(l_opt);
+% l_opt = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
+% disp(l_opt);
 % Ratio des longueur (voir page 276)
-l_ratio = 0.55; %0.55 un peu trop élevé
+l_ratio = 0.50; %0.55 un peu trop élevé
 l = l_f*l_ratio;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*S/l;
 C_L = 2*m*9.81/(rho*V_c^2*S);
+fprintf("Lift coefficient of the tail = %d\n",C_L);
 
 % Selon le profil de l'aile, on a le pourcentage de la longueur auquel se
 % trouve le aerodynamic center (ex. 32% of the MAC)
@@ -124,8 +125,6 @@ C_L = 2*m*9.81/(rho*V_c^2*S);
 AR_h = 2/3 * AR;
 b_h = sqrt(S_h*AR_h);
 
-% l_f = 5.9;
-% l_cg = 2;%first guess
 K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
 S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
@@ -136,13 +135,42 @@ disp(CN_tot);
 V_v = 0.02; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
-AR_v = 0.7;
-b_v = sqrt(S_v*AR_v);
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
-% chords horizontal
-c_root_h = 2*S_h/(b_h*(1+lambda_h));
-c_tip_h = lambda_h*c_root_h;
-% chords vertical
-c_root_v = 2*S_v/(b_v*(1+lambda_v));
-c_tip_v = lambda_v*c_root_v;
+
+AR = 3.5;
+S_tail = S_h + S_v;
+b_tail = sqrt(AR*S_tail);% span along the tail (one side)
+b_h = sin(angle)*b_tail;
+b_v = cos(angle)*b_tail/2;
+lambda_t = 0.5;
+c_root_tail = S_tail/b_tail/(1+lambda_t);
+c_tip_tail = lambda_t * c_root_tail;
+%Weight
+pound = 2.20462262; % kg to lbs
+feet = 3.28; % m to ft
+[W_mass] = fuel_weight();
+W_fuel = W_mass*pound;
+W_dg = Mass*pound - 0.45*W_fuel;
+N_z = 1.5*3; %Ultimate load factor = 1.5*limit load factor
+S = S*feet^2; %[ft^2]
+Lambda_W = 36.34*pi/180; % Sweep angle
+S_csw = 0.2*S;
+q = 7070*pound/feet^2;
+W_tail_h = 0.016*(N_z*W_dg)^(0.414)*q^(0.168)*(S_tail*feet^2*sin(angle))^(0.896)*...
+    (100*0.1/cos(Lambda_W))^(-0.12)*(AR/(cos(Lambda_T))^2)^(0.043)*lambda_t^(-0.02);
+%Ht/Hv ??? = 0.5 because no information about V-tail
+Ht = 1;
+Hv = 2;
+W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(angle))^0.873...
+    *(100*0.1/cos(Lambda_T))^-0.49*(AR/(cos(Lambda_T))^2)^0.357*lambda^0.039;
+
+fprintf("Tail surface : %.2dm²\n",S_tail);
+fprintf("Tail span : %.2dm\n",b_tail);
+fprintf("Tail horizontal span : %.2dm\n",b_h);
+fprintf("Tail vertical span : %.2dm\n",b_v);
+fprintf("Dihedral angle (degrees) : %.2d\n",angle*180/pi);
+fprintf("Surface ratio : %.2d\n",S_h/S);
+fprintf("Weight of the horizontal tail : %.2dkg\n", W_tail_h/pound);
+fprintf("Weight of the vertical tail : %.2dkg\n", W_tail_v/pound);
+fprintf("Total weight of the tail : %.2dkg\n", (W_tail_v + W_tail_h)/pound);
