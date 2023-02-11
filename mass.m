@@ -1,4 +1,4 @@
-function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l)
+function [W_wing, W_V, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
@@ -38,7 +38,7 @@ S_csw = 0.2*S_w;
 W_wing = 0.0103*K_dw*K_vs*(W_dg*N_z)^0.5*S_w^0.622*AR_w^0.785*tc_root*(1+lambda_w)^0.05*cos(Lambda_w)^-1*S_csw^0.04;
 % General aviation 
 W_fw = 0.5*W_fuel;
-q = 360;
+q = 7070*pound/feet^2; %[kg/m^2]
 W_wing = 0.036*S_w^0.758*W_fw^0.0035*(AR_w/cos(Lambda_w)^2)^0.6*q^0.006*lambda_w^0.04*(100*tc_root/cos(Lambda_w))^-0.3*(N_z*W_dg)^0.49;
 W_wing = W_wing/pound;
 
@@ -157,12 +157,17 @@ W_landing_gear = K_L*K_ret*K_LG*W_L*(H_LG/b)*n_ult_land^0.2;
 %% Installed engine weight Raymer
 N_E = 1; %[-] nbre of engines
 K_E = 2.575; %[N] using metric units --> engine weight factor
-W_E = 140; %[kg] weight of each engine
+W_E = 140*pound; %[kg] weight of each engine
 
 W_installed_weight = K_E*N_E*W_E^0.922;
 W_installed_weight = W_installed_weight/pound; %[kg]
 %% Payload
 W_payload = 205.0237512;
+
+%% System
+IESuP = 222/pound; % Initial Estimated Subsystem Payload
+IESeP = 228/pound; % Initial Estimated Sensors Payload
+W_syst = IESuP+IESeP;
 
 %% Total mass
 W_tot = W_landing_gear + W_fuselage + W_FS + W_payload + W_installed_weight + W_V + W_wing + W_mass; %add the fuel weight

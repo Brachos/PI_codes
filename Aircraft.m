@@ -49,7 +49,7 @@ aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% V-Tail
-cg_pos = 3.4;% à revoir absolument !!!!
+cg_pos = 3.4;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_h,S_v,c_root_h,c_tip_h,c_root_v,c_tip_v, angle, l, C_L, Lambda_T] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw, cg_pos,l_f,l_cg,bw);
@@ -76,30 +76,32 @@ l_cg = cg_pos;
 % l         = length between wing ac and tail ac
 % Lambda_T  = sweep angle of the tail
 
-% S_T = S_h; %Tailplane area
-% l_T = l; %Tail moment arm
-% hrc = c_root_h; %horizontal tail root chord
-% htc = c_tip_h; %horizontal tail tip chord 
-% hTR = c_tip_h/c_root_h; %horizontal tail taper ratio
-% hMAC = hrc*(2/3)*((1+hTR+hTR^2)/(1+hTR)); %Horizontal Tail Main Aerodynamic Chord
-% V_hT = S_h*l_T/Sw*hMAC; %Tail volume ratio
-% xcg_h = 0.3*hMAC; %for the horizontal tail [m]
-% xac_h = 0.365*hMAC;
-% bh = b_h;
+S_T = S_h; %Tailplane area
+l_T = l; %Tail moment arm
+hrc = c_root_h; %horizontal tail root chord
+htc = c_tip_h; %horizontal tail tip chord 
+hTR = c_tip_h/c_root_h; %horizontal tail taper ratio
+hMAC = hrc*(2/3)*((1+hTR+hTR^2)/(1+hTR)); %Horizontal Tail Main Aerodynamic Chord
+V_hT = S_h*l_T/Sw*hMAC; %Tail volume ratio
+xcg_h = 0.3*hMAC; %for the horizontal tail [m]
+xac_h = 0.365*hMAC;
+
 % 
-% vrc = c_root_v; %vertical tail root chord
-% vtc = c_tip_v; %vertical tail tip chord 
-% vTR = c_tip_v/c_root_v; %vertical tail taper ratio
-% vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
-% V_vT = S_v*l_T/Sw*vMAC; %Tail volume ratio
-% xcg_v = 0.3*vMAC; %for the vertical tail [m]
-% xac_v = 0.365*vMAC; 
-% bv = b_v;
+vrc = c_root_v; %vertical tail root chord
+vtc = c_tip_v; %vertical tail tip chord 
+vTR = c_tip_v/c_root_v; %vertical tail taper ratio
+vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
+V_vT = S_v*l_T/Sw*vMAC; %Tail volume ratio
+xcg_v = 0.3*vMAC; %for the vertical tail [m]
+xac_v = 0.365*vMAC; 
 AR = 3.5;
+
 S_tail = S_h + S_v;
 b_tail = sqrt(3.5*S_tail);% span along the tail (one side)
 b_h = sin(angle)*b_tail;
+bh = b_h;
 b_v = cos(angle)*b_tail/2;
+bv = b_v;
 alpha = 0.5;
 c_root_tail = S_tail/b_tail/(1+alpha);
 c_tip_tail = alpha * c_root_tail;
@@ -108,8 +110,7 @@ c_tip_tail = alpha * c_root_tail;
 %V_F = S_F*l_F/S*c__; %fin volume ratio
 
 %% Weight
-[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_engine, W_payload, W_FS, W_fuel, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l);
-W_system = 0;
+[W_wing, W_V, W_fuselage, W_landing_gear, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(hMAC,vMAC,S_h,S_v,angle,V_hT,V_vT,MTOW,bw,cw_root,cw_tip,bh,l);
 W = [W_fuselage;W_wing;W_V;W_installed_engine;W_landing_gear;
     2*W_landing_gear;W_payload;W_FS+W_fuel;W_system]; 
 %vector of all the different weights (or mass)
