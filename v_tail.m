@@ -33,6 +33,7 @@ lambda = 0.3; % fixed
 % - Lambda_LE
 % Lambda_LE  = 36.34;
 % - Gamma
+Gamma = 41; %[?]
 % - airfoyl profile
 % ac = 0.365;
 % - C_L_alpha
@@ -97,7 +98,7 @@ l = l_f*l_ratio;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*S/l;
 C_L = 2*m*9.81/(rho*V_c^2*S);
-fprintf('Lift coefficient of the tail = %d\n',C_L);
+% fprintf('Lift coefficient of the tail = %d\n',C_L);
 
 % Selon le profil de l'aile, on a le pourcentage de la longueur auquel se
 % trouve le aerodynamic center (ex. 32% of the MAC)
@@ -130,7 +131,7 @@ S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
 CN_beta_i = 0.012; %because mid wing
 CN_tot = CN_beta_f + CN_beta_i;
-disp(CN_tot);
+% disp(CN_tot);
 % voir graphique slide 57
 V_v = 0.02; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
@@ -164,13 +165,13 @@ Ht = 1;
 Hv = 2;
 W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(angle))^0.873...
     *(100*0.1/cos(Lambda_T))^-0.49*(AR/(cos(Lambda_T))^2)^0.357*lambda^0.039;
-fprintf('Tail surface : %.2dm?\n',S_tail);
-fprintf('Tail span : %.2dm\n',b_tail);
-fprintf('Tail horizontal span : %.2dm\n',b_h);
-fprintf('Tail vertical span : %.2dm\n',b_v);
-fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
-fprintf('Surface ratio : %.2d\n',S_h/S);
-fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
-fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
-fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);
+% fprintf('Tail surface : %.2dm?\n',S_tail);
+% fprintf('Tail span : %.2dm\n',b_tail);
+% fprintf('Tail horizontal span : %.2dm\n',b_h);
+% fprintf('Tail vertical span : %.2dm\n',b_v);
+% fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
+% fprintf('Surface ratio : %.2d\n',S_h/S);
+% fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
+% fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
+% fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);
 W_tail = (W_tail_v + W_tail_h)/pound;

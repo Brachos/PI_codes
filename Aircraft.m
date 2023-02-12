@@ -15,7 +15,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 3930; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 3953; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -116,7 +116,6 @@ W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear;
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-disp(W_tail);
 minW = sum(W)-W(7)+W_FS-W(8); %minimum weight (or minimum mass)
 MTOW = sum(W);
 
@@ -127,21 +126,21 @@ x_wv = l; %distance between the wac and the vac
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 2; %for the first landing gears
-xcg_l2= 4; %for the second landing gears
-xcg_p = 5; %for the payload
+xcg_l2= 5; %for the second landing gears
+xcg_p = 3.5; %for the payload
 xcg_s = 1; %for the system (radar...)
-x_w = 2; %position of the wings
-x_t = 5;
+x_w = 1.55; %position of the wings
+x_t = l_f-c_root_tail; %position of the tail
+xcg_fuel = 2.5; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
 y_hmac = double(2/S_h*int(c*y,0,b_h/2));
 y_vmac = double(2/S_v*int(c*y,0,b_v/2));
-x_wLE = x_w+sin(Lambda_LE)*y_wmac; %position of the wing leading edge at the mac
-x_tLE = x_t+sin(angle)*y_tmac;
-x_hLE = x_t+sin(angle)*y_hmac;
-x_vLE = x_t+sin(angle)*y_vmac;
-xcg_fuel = 2;
+x_wLE = x_w+sin(36*pi/180)*y_wmac; %position of the wing leading edge at the mac
+x_tLE = x_t+sin(41*pi/180)*y_tmac;
+x_hLE = x_t+sin(41*pi/180)*y_hmac;
+x_vLE = x_t+sin(41*pi/180)*y_vmac;
 thick = 0; %thickness of the plane
 zcg_w = 0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
 xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg_s];
@@ -176,6 +175,8 @@ for i=1:3
     % the lower weight and the greater weight different coordinates of the 
     % cg for the max weight
 end
+fprintf('Cg from nose fully loaded : %.2dm\n',cgT(1));
+fprintf('Cg from nose empty : %.2dm\n',cgt(1));
 h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the MTOW
 h2 = (cgt(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the empty aircraft
 %% Lift coefficient 
@@ -193,7 +194,8 @@ r = lwt/(bw/2);
 m = zwt/(bw/2);
 de_dAOA = 0.4; %Variation de l'angle epsilon en fonction de l'angle d'attaque
 hn = h0 + V_hT*a1/a*(1-(de_dAOA)); %position of the neutral point in %MAC
-
+x_hn = hn*cw_MAC+x_wLE; %position of the neutral point from nose
+fprintf('Neutral point from nose fully loaded : %.2dm\n', x_hn);
 %% Aerodynamic center
 D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
 X_c4 = 1/4*cw_MAC; %position of the quarter-chord
@@ -208,7 +210,9 @@ static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty
 
 %% Static margin
 k = hn - h;
+fprintf('Static margin fully loaded is about : %.2dm\n',k);
 k2 = hn - h2;
+fprintf('Static margin empty is about : %.2dm\n',k2);
 %K = -dC_m/dC_Lw;
 %K = -static_stability
 
