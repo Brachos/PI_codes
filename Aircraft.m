@@ -49,7 +49,7 @@ aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% V-Tail
-cg_pos = 2.93;% ? revoir absolument !!!!
+cg_pos = 2.9243;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
@@ -132,7 +132,7 @@ xcg_l1= 2; %for the first landing gears
 xcg_l2= 5; %for the second landing gears
 xcg_p = 3.5; %for the payload
 xcg_s = 1; %for the system (radar...)
-x_w = 1.55; %position of the wings
+x_w = 1.58; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
 xcg_fuel = 2.5; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
