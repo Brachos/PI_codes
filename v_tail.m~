@@ -89,7 +89,7 @@ eta_h = 0.9;
 % important dans la stabilit? longitutinale de l'appareil. Apr?s avoir
 % consult? plusieur sources statistiques, ce cefficient sera fix? ? une
 % premi?re valeur de 0.75;
-V_h_bar = 0.6;
+V_h_bar = 0.75;
 % K_c = 1.1; % voir livre page 300)
 % l_opt = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
 % disp(l_opt);
@@ -97,7 +97,6 @@ V_h_bar = 0.6;
 l_ratio = 0.45; %0.55 un peu trop ?lev?
 l = l_f*l_ratio;
 l = l_f - l_cg - 0.5;
-l = 3.3;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*S/l;
 
@@ -161,7 +160,7 @@ N_z = 1.5*3; %Ultimate load factor = 1.5*limit load factor
 S = S*feet^2; %[ft^2]
 Lambda_W = 36.34*pi/180; % Sweep angle
 S_csw = 0.2*S;
-q = 8.6292e+03*pound/feet^2;
+q = 7070*pound/feet^2;
 W_tail_h = 0.016*(N_z*W_dg)^(0.414)*q^(0.168)*(S_tail*feet^2*sin(angle))^(0.896)*...
     (100*0.1/cos(Lambda_W))^(-0.12)*(AR/(cos(Lambda_T))^2)^(0.043)*lambda_t^(-0.02);
 %Ht/Hv ??? = 0.5 because no information about V-tail
