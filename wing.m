@@ -83,7 +83,7 @@ x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR
 
 A_tip  = trapz(c_tip*curve(:,1),c_tip*curve(:,2));   % [m?] Area of airfoil
 A_root = trapz(c_root*curve(:,1),c_root*curve(:,2)); % [m?] Area of airfoil
-V_fuel = (A_root+A_tip)*b/2;                         % [m?] volume of wings
+V_fuel = (A_root+A_tip)*b/2*0.8^2;                         % [m?] volume of wings
 
 %% Plot of airfoil profil
 % 

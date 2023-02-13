@@ -136,9 +136,11 @@ W_wing = W_wing/pound;
 
 %% Total tail weight
 
-%% Fuselage 
-L_f = 5.72*feet; % [m] fuselage length
-D_f = 0.82*feet; %[m] fuselage max diameter of the eq. circ. cross-sect??
+%% Fuselage
+Vw_fuel=1.2;
+[D_f_max,~,~,l_f,~]=fuselage_design(MTOW,Vw_fuel);
+L_f = l_f*feet; % [m] fuselage length
+D_f = D_f_max*0.8*feet; %[m] fuselage max diameter of the eq. circ. cross-sect??
 K_rhof = 0.002; % 0.0075 if fighter fuselage density factor
 K_inlet = 1; %inlets not on fuselage
 MAC_t = 0.62*feet;

@@ -18,23 +18,17 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4159; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4374; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
+rho = 0.48;
 V_c = speed;
 
-%% Fuselage
-Vw_fuel = 2.7; %volume of the fuel
-[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
-% a and b are the dimensions of the elliptical cross-section. V_f is the
-% volume of the fuselage. 
-h_f_max = 2.888274e-01; %[m]
-%l_f = 7; %[m]
 
 %% Wing
 aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,0.9*MTOW,aofa);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,0.93*MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -51,8 +45,15 @@ aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
+%% Fuselage
+[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
+% a and b are the dimensions of the elliptical cross-section. V_f is the
+% volume of the fuselage. 
+%h_f_max = 2.888274e-01; %[m]
+%l_f = 7; %[m]
+
 %% V-Tail
-cg_pos = 3.16;% ? revoir absolument !!!!
+cg_pos = 3.56;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
@@ -135,9 +136,9 @@ xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 5; %for the second landing gears
 xcg_p = 4.5; %for the payload
 xcg_s = 1; %for the system (radar...)
-x_w = 1.32; %position of the wings
+x_w = 1.62; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 3.10; %for the fuel
+xcg_fuel = 3.5; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
@@ -187,8 +188,9 @@ h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the MTOW
 h2 = (cgt(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the empty aircraft
 %% Lift coefficient 
 CL = CLw + C_L*S_h/Sw;
-rho_mat = 0.46; %[kg/m^3]
+rho_mat = 0.48; %[kg/m^3]
 L = CL*Sw*1/2*V_c^2*rho_mat;
+
 %% Neutral point
 lwt = l; %Horizontal distance between the wing ac and the tail ac
 zwt = 1; %Vertical distance bewteen the wing ac and the tail ac

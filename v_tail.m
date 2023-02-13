@@ -136,14 +136,14 @@ CN_beta_i = 0.012; %because mid wing
 CN_tot = CN_beta_f + CN_beta_i;
 disp(CN_tot);
 % voir graphique slide 57
-V_v = 0.03; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.04; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
-C_L = 0.3*cos(angle);
+C_L = 0.15*cos(angle);
 
-AR = 2.5;
+AR = 3;
 S_tail = S_h + S_v;
 b_tail = sqrt(AR*S_tail);% span along the tail (one side)
 b_h = sin(angle)*b_tail;
