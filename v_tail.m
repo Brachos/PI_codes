@@ -1,4 +1,4 @@
-function [S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(Mass,...
+function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(Mass,...
     D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
@@ -63,12 +63,7 @@ Lambda_T = Lambda_LE + 5;
 % Apr?s les quelques ?tapes expliqu?es dans le livre, on tombe sur
 % l'?quation : C_mo_wf + C_L*(h-h_o) - (l/c_bar * S_h/S) * C_Lh = 0 (2)
 
-% Le coefficient (l/c_bar * S_h/S)=:V_h_bar  est tr?s important et est
-% appel? "horizontal tail volume coefficient". Il joue un role tr?s
-% important dans la stabilit? longitutinale de l'appareil. Apr?s avoir
-% consult? plusieur sources statistiques, ce cefficient sera fix? ? une
-% premi?re valeur de 0.75;
-V_h_bar = 0.75;
+
 % Dans l'?quation (1), on peut trouver les autres coefficients comme suit :
 % C_mo_wf = C_maf*(AR*cos(Alpha)^2)/(AR + 2*cos(Alpha)) + 0.01*alpha_t;
 % o? :
@@ -89,15 +84,22 @@ eta_h = 0.9;
 % On prend ?galement h = 0.25, valeur classique
 % h = 0.25;
 
-K_c = 1.1; % voir livre page 300)
+% Le coefficient (l/c_bar * S_h/S)=:V_h_bar  est tr?s important et est
+% appel? "horizontal tail volume coefficient". Il joue un role tr?s
+% important dans la stabilit? longitutinale de l'appareil. Apr?s avoir
+% consult? plusieur sources statistiques, ce cefficient sera fix? ? une
+% premi?re valeur de 0.75;
+V_h_bar = 0.75;
+% K_c = 1.1; % voir livre page 300)
 % l_opt = K_c * sqrt(4*c_bar*S*V_h_bar/(pi*D_f));
 % disp(l_opt);
 % Ratio des longueur (voir page 276)
-l_ratio = 0.50; %0.55 un peu trop ?lev?
+l_ratio = 0.45; %0.55 un peu trop ?lev?
 l = l_f*l_ratio;
+l = l_f - l_cg - 0.5;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*S/l;
-C_L = 2*m*9.81/(rho*V_c^2*S);
+
 % fprintf('Lift coefficient of the tail = %d\n',C_L);
 
 % Selon le profil de l'aile, on a le pourcentage de la longueur auquel se
@@ -131,20 +133,21 @@ S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
 CN_beta_i = 0.012; %because mid wing
 CN_tot = CN_beta_f + CN_beta_i;
-% disp(CN_tot);
+disp(CN_tot);
 % voir graphique slide 57
 V_v = 0.02; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
+C_L = 0.3*cos(angle);
 
-AR = 3.5;
+AR = 4.5;
 S_tail = S_h + S_v;
 b_tail = sqrt(AR*S_tail);% span along the tail (one side)
 b_h = sin(angle)*b_tail;
 b_v = cos(angle)*b_tail/2;
-lambda_t = 0.5;
+lambda_t = 0.4;
 c_root_tail = S_tail/b_tail/(1+lambda_t);
 c_tip_tail = lambda_t * c_root_tail;
 %Weight
@@ -165,13 +168,14 @@ Ht = 1;
 Hv = 2;
 W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(angle))^0.873...
     *(100*0.1/cos(Lambda_T))^-0.49*(AR/(cos(Lambda_T))^2)^0.357*lambda^0.039;
-% fprintf('Tail surface : %.2dm?\n',S_tail);
-% fprintf('Tail span : %.2dm\n',b_tail);
-% fprintf('Tail horizontal span : %.2dm\n',b_h);
-% fprintf('Tail vertical span : %.2dm\n',b_v);
-% fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
-% fprintf('Surface ratio : %.2d\n',S_h/S);
-% fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
-% fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
-% fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);
+S_h = S_h*feet^2;
+fprintf('Tail surface : %.2dft²\n',S_tail);
+fprintf('Tail span : %.2dm\n',b_tail);
+fprintf('Tail horizontal span : %.2dm\n',b_h);
+fprintf('Tail vertical span : %.2dm\n',b_v);
+fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
+fprintf('Surface ratio : %.2d\n',S_h/S);
+fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
+fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
+fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);
 W_tail = (W_tail_v + W_tail_h)/pound;

@@ -49,9 +49,9 @@ aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% V-Tail
-cg_pos = 3.4;% ? revoir absolument !!!!
+cg_pos = 2.93;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
+[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -96,18 +96,21 @@ xcg_v = 0.3*vMAC; %for the vertical tail [m]
 xac_v = 0.365*vMAC; 
 AR = 3.5;
 
-S_tail = S_h + S_v;
-b_tail = sqrt(3.5*S_tail);% span along the tail (one side)
-b_h = sin(angle)*b_tail;
-bh = b_h;
-b_v = cos(angle)*b_tail/2;
-bv = b_v;
-alpha = 0.5;
-c_root_tail = S_tail/b_tail/(1+alpha);
-c_tip_tail = alpha * c_root_tail;
+% S_tail = S_h + S_v;
+% b_tail = sqrt(3.5*S_tail);% span along the tail (one side)
+% b_h = sin(angle)*b_tail;
+% bh = b_h;
+% b_v = cos(angle)*b_tail/2;
+% bv = b_v;
+% alpha = 0.5;
+% c_root_tail = S_tail/b_tail/(1+alpha);
+% c_tip_tail = alpha * c_root_tail;
 
-%% 
-%V_F = S_F*l_F/S*c__; %fin volume ratio
+
+% CL = CL_w + CL_T*S_tail/Sw;
+% => *1/2*Sw*rho*Vc^2 = W
+% => W = 1/2*Sw*rho*Vc^2*CL_w + 1/2*S_tail*rho*Vc^2*CL_tail
+% CL_tail = (MTOW*9.81 - 1/2*Sw*rho*V_c^2*CLw)/(1/2*S_tail*rho*V_c^2);
 
 %% Weight
 [W_wing, W_fuselage, W_landing_gear, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l);
