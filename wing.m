@@ -57,7 +57,7 @@ CL_alpha = a;
 CL = a*(AOA-alpha_L0);
 CD = 0.017+CL^2/(0.8*pi*AR);
 
-CD_alpha = 2*a^2*(AOA-alpha_L0)/0.8*pi*AR;
+CD_alpha = 2*a^2*(AOA-alpha_L0)/(0.8*pi*AR);
 
 % Wing surface and span
 S  = 2*L/(rho*V_inf^2*CL);
