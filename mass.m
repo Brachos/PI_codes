@@ -1,4 +1,4 @@
-function [W_wing, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l)
+function [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
@@ -39,7 +39,7 @@ S_csw = 0.2*S_w;
 W_wing = 0.0103*K_dw*K_vs*(W_dg*N_z)^0.5*S_w^0.622*AR_w^0.785*tc_root*(1+lambda_w)^0.05*cos(Lambda_w)^-1*S_csw^0.04;
 % General aviation 
 W_fw = 0.5*W_fuel;
-q = 7070*pound/feet^2; %[kg/m^2]
+q = 8.6292e+03*pound/feet^2; %[kg/m^2]
 W_wing = 0.036*S_w^0.758*W_fw^0.0035*(AR_w/cos(Lambda_w)^2)^0.6*q^0.006*lambda_w^0.04*(100*tc_root/cos(Lambda_w))^-0.3*(N_z*W_dg)^0.49;
 W_wing = W_wing/pound;
 
@@ -137,13 +137,15 @@ W_wing = W_wing/pound;
 %% Total tail weight
 
 %% Fuselage 
-L_f = 5.72; % [m] fuselage length
-D_f = 0.82; %[m] fuselage max diameter of the eq. circ. cross-sect??
+L_f = 5.72*feet; % [m] fuselage length
+D_f = 0.82*feet; %[m] fuselage max diameter of the eq. circ. cross-sect??
 K_rhof = 0.002; % 0.0075 if fighter fuselage density factor
 K_inlet = 1; %inlets not on fuselage
+MAC_t = 0.62*feet;
+W_press = 0;
 
 W_fuselage =  L_f * D_f^2 * rho_mat * K_rhof * n_ult^0.25 * K_inlet * g;
-
+W_fuselage = 0.052*(pi*D_f*L_f+pi*D_f^2/2)^1.086*(N_z*W_dg)^0.177*MAC_t^-0.051*(L_f/D_f)^-0.072*q^0.241+W_press;
 %% Landing gear
 b = 9.2; %wing span
 K_ret = 1.07; %retractable landing gear
@@ -161,13 +163,13 @@ W_l = MTOW*pound; %in [lbs]
 L_n = 1.5*inche; %in [in]
 
 W_landing_gear = 0.125*(N_l*W_l)^0.566*(L_n/12)^0.845;
-W_landing_gear  = W_landing_gear/pound; %in [kg]
+W_landing_gear_nose  = W_landing_gear/pound; %in [kg]
 
 %% Main landing gear Raymer
 L_m = 1.5*inche; %in [in]
 
 W_landing_gear = 0.095*(N_l*W_l)^0.768*(L_m/12)^0.409;
-W_landing_gear = W_landing_gear/pound; %in [kg]
+W_landing_gear_main = W_landing_gear/pound; %in [kg]
 
 %% Installed engine weight Raymer
 N_E = 1; %[-] nbre of engines

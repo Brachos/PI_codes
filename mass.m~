@@ -1,10 +1,10 @@
-function [W_wing, W_fuselage, W_landing_gear, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l)
+function [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
 pound = 2.20462262; % kg to lbs
 feet = 3.28; % m to ft
-inche = 39,37; %m to in
+inche = 39.37; %m to in
 rho_mat = 2711; % Density of construction material, here aerospace Al
 
 %% Fuel system weight for transport and fighter aircraft 
@@ -141,9 +141,10 @@ L_f = 5.72; % [m] fuselage length
 D_f = 0.82; %[m] fuselage max diameter of the eq. circ. cross-sect??
 K_rhof = 0.002; % 0.0075 if fighter fuselage density factor
 K_inlet = 1; %inlets not on fuselage
+MAC_t = 0.62;
 
 W_fuselage =  L_f * D_f^2 * rho_mat * K_rhof * n_ult^0.25 * K_inlet * g;
-
+W_fuselage = 0.052*(pi*D_f^2/4)^1.086*(N_z*W_dg)0.177*MAC_t^-0.051*(L_f/D_f)^-0.
 %% Landing gear
 b = 9.2; %wing span
 K_ret = 1.07; %retractable landing gear
@@ -157,16 +158,17 @@ W_landing_gear = K_L*K_ret*K_LG*W_L*(H_LG/b)*n_ult_land^0.2;
 
 %% Nose landing gear Raymer
 N_l = 1.5;
-W_l = MTOW*pound;
-L_n = 1.5;
+W_l = MTOW*pound; %in [lbs]
+L_n = 1.5*inche; %in [in]
 
 W_landing_gear = 0.125*(N_l*W_l)^0.566*(L_n/12)^0.845;
+W_landing_gear_nose  = W_landing_gear/pound; %in [kg]
 
 %% Main landing gear Raymer
-L_m = 1.5*inche; %in [inches]
+L_m = 1.5*inche; %in [in]
 
 W_landing_gear = 0.095*(N_l*W_l)^0.768*(L_m/12)^0.409;
-W_landing_gear/pound;
+W_landing_gear_main = W_landing_gear/pound; %in [kg]
 
 %% Installed engine weight Raymer
 N_E = 1; %[-] nbre of engines
