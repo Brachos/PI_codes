@@ -143,12 +143,12 @@ S_v = V_v*S*b/l_F;
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
 C_L = 0.3*cos(angle);
 
-AR = 4.5;
+AR = 2.5;
 S_tail = S_h + S_v;
 b_tail = sqrt(AR*S_tail);% span along the tail (one side)
 b_h = sin(angle)*b_tail;
 b_v = cos(angle)*b_tail/2;
-lambda_t = 0.4;
+lambda_t = 0.7;
 c_root_tail = S_tail/b_tail/(1+lambda_t);
 c_tip_tail = lambda_t * c_root_tail;
 %Weight

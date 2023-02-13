@@ -1,4 +1,4 @@
-function [b,S,CL_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,Mass,aofa)
+function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,Mass,aofa)
 
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
@@ -56,6 +56,8 @@ CL_alpha = a;
 
 CL = a*(AOA-alpha_L0);
 CD = 0.017+CL^2/(0.8*pi*AR);
+
+CD_alpha = 2*a^2*(AOA-alpha_L0)/0.8*pi*AR;
 
 % Wing surface and span
 S  = 2*L/(rho*V_inf^2*CL);
