@@ -18,7 +18,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4374; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4113; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -53,7 +53,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 3.56;% ? revoir absolument !!!!
+cg_pos = 3.62;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
@@ -119,12 +119,13 @@ AR = 3.5;
 %% Weight
 [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l);
 W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;
-    W_landing_gear_main;W_payload;W_FS+W_fuel;W_system+W_FS]; 
+    W_landing_gear_main;W_payload;W_fuel;W_system+W_FS]; 
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
 minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
 MTOW = sum(W);
+PayW = sum(W)-W(8);
 
 %% Center of gravity
 le = 0.7; %length of the engine
@@ -135,8 +136,8 @@ xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 5; %for the second landing gears
 xcg_p = 4.5; %for the payload
-xcg_s = 1; %for the system (radar...)
-x_w = 1.62; %position of the wings
+xcg_s = 1.5; %for the system (radar...)
+x_w = 1.8; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
 xcg_fuel = 3.5; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
