@@ -18,13 +18,12 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4057; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4059; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
 rho = 0.48;
 V_c = speed;
-
 
 %% Wing
 aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
@@ -118,8 +117,6 @@ AR = 3.5;
 
 %% Weight
 [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l);
-%W_wing = 450;
-%W_tail = 150;
 W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;
     W_landing_gear_main;W_payload;W_fuel;W_system+W_FS]; 
 %vector of all the different weights (or mass)
@@ -175,7 +172,6 @@ for i=1:Nelem
     MT(1) = MT(1) +(W(i)*xarm(i));
     MT(2) = MT(2) +(W(i)*yarm(i));
     MT(3) = MT(3) +(W(i)*zarm(i));
-    
     if(i==7)
         Mp(1) = Mp(1) +(W(i)*xarm(i));
         Mp(2) = Mp(2) +(W(i)*yarm(i));
