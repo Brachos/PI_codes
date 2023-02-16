@@ -30,6 +30,15 @@ close all;          % close all figure
 % here we assume working with ISA at Sea level
 
 m = 4374;                     % aircraft mass at takeoff in [kg]
+Mach = 0.7;
+Altitude = 30000; % [ft]
+aofa = 0.75; % [°]
+
+% [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,m,aofa);
+% [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(Mass,...
+%     D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S,l_f,l_cg,b);
+
+
 rho = 1.225;                  % density at sea level in [kg/m^3]
 g = 9.80665;                  % gravity value in [m/s^2]
 S = 11.76;                     % Reference surface in [m^2]
