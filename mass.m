@@ -162,13 +162,13 @@ W_landing_gear = K_L*K_ret*K_LG*W_L*(H_LG/b)*n_ult_land^0.2;
 %% Nose landing gear Raymer
 N_l = 1.5; % nombre de landing gear * 1.5
 W_l = MTOW*pound; %in [lbs]
-L_n = 1.5*inche; %in [in] hauteaur
+L_n = 0.8*inche; %in [in] hauteaur
 
 W_landing_gear = 0.125*(N_l*W_l)^0.566*(L_n/12)^0.845;
 W_landing_gear_nose  = W_landing_gear/pound; %in [kg]
 
 %% Main landing gear Raymer
-L_m = 1.5*inche; %in [in]
+L_m = 0.8*inche; %in [in]
 
 W_landing_gear = 0.095*(N_l*W_l)^0.768*(L_m/12)^0.409;
 W_landing_gear_main = W_landing_gear/pound; %in [kg]

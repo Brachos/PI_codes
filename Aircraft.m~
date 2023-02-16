@@ -18,7 +18,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4057; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4113; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -53,7 +53,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 3.67;% ? revoir absolument !!!!
+cg_pos = 3.68;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
@@ -261,9 +261,6 @@ k = hn - h;
 fprintf('Static margin fully loaded is about : %.2dm\n',k);
 kp = hn - hp;
 fprintf('Static margin payload no fuel is about : %.2dm\n',kp);
-%Range 
-x1 = (hn-0.05)*cw_MAC+x_wLE;
-x2 = (hn-0.2)*cw_MAC+x_wLE;
 %K = -dC_m/dC_Lw;
 %K = -static_stability
 
@@ -273,28 +270,28 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % 'Certification authorities specify that k >= 0.05
 
 %% Polar CD_vs_CL
-% AOA_vector = -18:18;
-% for i=1:length(AOA_vector)
-% [~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
-% CL_vector(i) = CLw;
-% CD_vector(i) = CD;
-% CL_CD(i) = CL_vector(i)/CD_vector(i);
-% end
-% figure1 = figure(1);
-% clf;
-% set(Figure1,'defaulttextinterpreter','latex');
-% hold on;
-% p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 15', 'color', '#00707F');
-% xlabel('CD')
-% ylabel('CL')
-% % figure;
-% % p2=plot(AOA_vector,CL_CD);
-% % xlabel('AOA')
-% % ylabel('CL/CD')
-% % figure;
-% % p3=plot(AOA_vector,CD_vector);
-% % xlabel('AOA');
-% % ylabel('CD');
+AOA_vector = -18:18;
+for i=1:length(AOA_vector)
+[~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
+CL_vector(i) = CLw;
+CD_vector(i) = CD;
+CL_CD(i) = CL_vector(i)/CD_vector(i);
+end
+figure1 = figure(1);
+clf;
+set(Figure1,'defaulttextinterpreter','latex');
+hold on;
+p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 15', 'color', '#00707F');
+xlabel('CD')
+ylabel('CL')
+% figure;
+% p2=plot(AOA_vector,CL_CD);
+% xlabel('AOA')
+% ylabel('CL/CD')
+% figure;
+% p3=plot(AOA_vector,CD_vector);
+% xlabel('AOA');
+% ylabel('CD');
 
 
 
