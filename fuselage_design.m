@@ -3,7 +3,11 @@ function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
 V_sensors=1;%[m^3]
 V_subsystems=1;%[m^3]
 V_mission=0.15;%[m^3]
+<<<<<<< HEAD
 m_fuel=2400;%[kg]
+=======
+m_fuel=2441;%[kg]
+>>>>>>> 13fcfe8ba36c1ac2d563d27d3acf58b95e258422
 V_tot_fuel=m_fuel/800;%hypothesis: kerozen is used as the fuel.
 Vf_fuel=V_tot_fuel-Vw_fuel;
 %diameter of the wheels
