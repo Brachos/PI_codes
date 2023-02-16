@@ -137,7 +137,7 @@ W_wing = W_wing/pound;
 %% Total tail weight
 
 %% Fuselage
-Vw_fuel=1.2;
+Vw_fuel=1.088;
 [D_f_max,~,~,l_f,~]=fuselage_design(MTOW,Vw_fuel);
 L_f = l_f*feet; % [m] fuselage length
 D_f = D_f_max*0.8*feet; %[m] fuselage max diameter of the eq. circ. cross-sect??
