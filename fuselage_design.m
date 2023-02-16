@@ -3,16 +3,16 @@ function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
 V_sensors=1;%[m^3]
 V_subsystems=1;%[m^3]
 V_mission=0.15;%[m^3]
-m_fuel=2221.2;%[kg]
+m_fuel=2400;%[kg]
 V_tot_fuel=m_fuel/800;%hypothesis: kerozen is used as the fuel.
 Vf_fuel=V_tot_fuel-Vw_fuel;
 %diameter of the wheels
-d_nose_wheel=((5.1*MTOW*0.12)^0.302)*10^(-2);%[m]nose wheel supports 8 to 15% of the weight.
-w_nose_wheel=((0.36*MTOW*0.12)^0.467)*10^(-2);
-d_wheel=((5.1*MTOW*(1-0.12)/2)^0.302)*10^(-2);
-w_wheel=((0.36*MTOW*(1-0.12)/2)^0.467)*10^(-2);
+d_nose_wheel=(5.1*(MTOW*0.12)^0.302)*10^(-2)%[m]nose wheel supports 8 to 15% of the weight.
+w_nose_wheel=(0.36*(MTOW*0.12)^0.467)*10^(-2)
+d_wheel=(5.1*(MTOW*(1-0.12)/2)^0.302)*10^(-2)
+w_wheel=(0.36*(MTOW*(1-0.12)/2)^0.467)*10^(-2)
 V_wheels=d_nose_wheel^2/4*pi*w_nose_wheel+2*d_wheel^2/4*pi*w_wheel;
-V_landing_gear=V_wheels;
+V_landing_gear=V_wheels
 V_f_real=V_sensors+V_subsystems+V_mission+Vf_fuel+V_landing_gear;
 %%
 %first estimation using statistical relations.
@@ -80,7 +80,7 @@ L_f_val=L_f(i);
 Deq_val=Deq(i);
 % fprintf('The final length of the fuselage is equal to %d m \n',L_f(i));
 % fprintf('The final equivalent diameter of the fuselage is equal to %d m \n',Deq(i));
-% fprintf('The final width of the rectangle is equal to %d m \n',w(i));
-% fprintf('The final height is equal to %d m \n',h(i));
+ fprintf('The final width of the rectangle is equal to %d m \n',w(i));
+ fprintf('The final height is equal to %d m \n',h(i));
 % fprintf('The final dimensions of the elliptical cross-section equal to a=%d m and b=%d m\n',a(i),b(i));
 end
