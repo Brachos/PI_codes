@@ -20,7 +20,7 @@ W  = Mass*g; % [N] Take off weight (= Lift at cruise)
 L  = W;
 
 [V_inf,rho] = speed(Altitude,Mach);     % 30 000 ft = 9 144 m 
-rho = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m³]  Density at 30 000 ft
+rho = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m?]  Density at 30 000 ft
 mu  = (1.458+(1.458-1.493)*0.144)*1e-5; % [kg/m.s] Dynamic viscosity 
 
 AR  = 7;   % Aspect ratio = [5.5-8] for ultralight aircraft
@@ -83,11 +83,8 @@ x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR
 
 A_tip  = trapz(c_tip*curve(:,1),c_tip*curve(:,2));   % [m?] Area of airfoil
 A_root = trapz(c_root*curve(:,1),c_root*curve(:,2)); % [m?] Area of airfoil
-<<<<<<< Updated upstream
 V_fuel = (A_root+A_tip)*b/2*0.8^2;                         % [m?] volume of wings
-=======
 V_fuel = (A_root+A_tip)*b/2*0.8^2;                   % [m?] volume of wings
->>>>>>> Stashed changes
 
 %% Plot of airfoil profil
 % 

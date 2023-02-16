@@ -53,7 +53,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 3.62;% ? revoir absolument !!!!
+cg_pos = 3.68;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
@@ -118,6 +118,8 @@ AR = 3.5;
 
 %% Weight
 [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l);
+%W_wing = 450;
+%W_tail = 150;
 W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;
     W_landing_gear_main;W_payload;W_fuel;W_system+W_FS]; 
 %vector of all the different weights (or mass)
@@ -126,6 +128,7 @@ W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;
 minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
 MTOW = sum(W);
 PayW = sum(W)-W(8);
+FW = sum(W)-W(7);
 
 %% Center of gravity
 le = 0.7; %length of the engine
@@ -137,9 +140,9 @@ xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 5; %for the second landing gears
 xcg_p = 4.5; %for the payload
 xcg_s = 1.5; %for the system (radar...)
-x_w = 1.8; %position of the wings
+x_w = 1.9; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 3.5; %for the fuel
+xcg_fuel = 3.6; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
@@ -161,32 +164,57 @@ zarm = [zcg_w;0;0;0;0;0;0;0;0];
 % to the cg of the mass ; origin : nose
 cgT = zeros(3,1); %coordinates of the center of gravity maximum weight
 cgt = zeros(3,1); %coordinates of the center of gravity minimum weight
+cgp = zeros(3,1); %coordinates of the center of gravity with only payload no fuel
+cgf = zeros(3,1); %coordinates of the center of gravity with only fuel no payload
 X_cg=0;
 MT = zeros(1,3);
 Mt = zeros(1,3);
+Mp = zeros(1,3);
+Mf = zeros(1,3);
 for i=1:Nelem
     MT(1) = MT(1) +(W(i)*xarm(i));
     MT(2) = MT(2) +(W(i)*yarm(i));
     MT(3) = MT(3) +(W(i)*zarm(i));
-    if(i==7||i==8)
+    
+    if(i==7)
+        Mp(1) = Mp(1) +(W(i)*xarm(i));
+        Mp(2) = Mp(2) +(W(i)*yarm(i));
+        Mp(3) = Mp(3) +(W(i)*zarm(i));
+        continue;
+    elseif(i==8)
+        Mf(1) = Mf(1) +(W(i)*xarm(i));
+        Mf(2) = Mf(2) +(W(i)*yarm(i));
+        Mf(3) = Mf(3) +(W(i)*zarm(i));
         continue;
     else
         Mt(1) = Mt(1) +(W(i)*xarm(i));
         Mt(2) = Mt(2) +(W(i)*yarm(i));
         Mt(3) = Mt(3) +(W(i)*zarm(i));
+        Mp(1) = Mp(1) +(W(i)*xarm(i));
+        Mp(2) = Mp(2) +(W(i)*yarm(i));
+        Mp(3) = Mp(3) +(W(i)*zarm(i));
+        Mf(1) = Mf(1) +(W(i)*xarm(i));
+        Mf(2) = Mf(2) +(W(i)*yarm(i));
+        Mf(3) = Mf(3) +(W(i)*zarm(i));
     end
 end
 for i=1:3
     cgT(i) = MT(i)/MTOW; 
     cgt(i) = Mt(i)/minW;
+    cgp(i) = Mp(i)/PayW;
+    cgf(i) = Mf(i)/FW;
     % Total moment/Total weight ; we can compute a range for the cg with
     % the lower weight and the greater weight different coordinates of the 
     % cg for the max weight
 end
+fprintf('Cg from nose with only fuel, no payload : %.2dm\n',cgf(1));
 fprintf('Cg from nose fully loaded : %.2dm\n',cgT(1));
 fprintf('Cg from nose empty : %.2dm\n',cgt(1));
+fprintf('Cg from nose with only payload, no fuel : %.2dm\n',cgp(1));
 h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the MTOW
 h2 = (cgt(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the empty aircraft
+hp = (cgp(1)-x_wLE)/cw_MAC;
+hf = (cgf(1)-x_wLE)/cw_MAC;
 %% Lift coefficient 
 CL = CLw + C_L*S_h/Sw;
 rho_mat = 0.48; %[kg/m^3]
@@ -202,7 +230,8 @@ a1 = 4; %CL_alpha tail
 r = lwt/(bw/2); 
 m = zwt/(bw/2);
 de_dAOA = 0.45; %Variation de l'angle epsilon en fonction de l'angle d'attaque
-hn = h0 + V_hT*a1/a*(1-(de_dAOA)); %position of the neutral point in %MAC
+de_dAOA1 = 1.75*a/(pi*7*(2*lwt*0.3/bw)^(1/4)*(1+m));
+hn = h0 + V_hT*a1/a*(1-(de_dAOA1)); %position of the neutral point in %MAC
 x_hn = hn*cw_MAC+x_wLE; %position of the neutral point from nose
 fprintf('Neutral point from nose fully loaded : %.2dm\n', x_hn);
 %% Aerodynamic center
@@ -224,10 +253,14 @@ CD_alpha = CDw_alpha;
 Cn = 0;
 
 %% Static margin
+kf = hn - hf;
+fprintf('Static margin fuel no payload is about : %.2dm\n',kf);
 k = hn - h;
 fprintf('Static margin fully loaded is about : %.2dm\n',k);
 k2 = hn - h2;
 fprintf('Static margin empty is about : %.2dm\n',k2);
+kp = hn - hp;
+fprintf('Static margin payload no fuel is about : %.2dm\n',kp);
 %K = -dC_m/dC_Lw;
 %K = -static_stability
 
