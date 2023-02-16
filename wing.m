@@ -72,12 +72,16 @@ c_tip  = tap*c_root;
 syms y
 c    = (1-2*y/b)*c_root + (2*y/b)*c_tip;
 c_AC = double(2/S*int(c^2,0,b/2));
-Re   = rho*V_inf*c_root/mu;
+Re   = rho*V_inf*6.78/mu
 
 % Aerodynamic center
 y_AC    = double(2/S*int(c*y,0,b/2));
 x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR 
 
+
+% Flaps design
+
+CL_max = 0.95*cos(sweep)*1.55*1.1
 
 %% Computation of fuel volume in the wings
 
@@ -95,24 +99,22 @@ V_fuel = (A_root+A_tip)*b/2*0.8^2;                   % [m?] volume of wings
 % xlabel('AoA [$^\circ$]','interpreter','Latex','Fontsize',pt)
 % ylabel('$c_l$ [-]','interpreter','Latex','Fontsize',pt)
 % h=legend('NACA 0012','NACA 0018','NACA 0024','Thin airfoil theory','interpreter','latex','Fontsize',pt,'Location', 'northwest');
-set(gca,'interpreter','Latex','FontSize',pt);
-set(gca,'TickLabelInterpreter','latex','Fontsize',pt);
-pbaspect([1.5 1 1]);
-% xlim([0 17.6])
-grid on
-set(gca,'fontsize',pt)
+set(0, 'DefaultTextInterpreter', 'latex');
+set(0, 'DefaultLegendInterpreter', 'latex');
+set(0, 'DefaultAxesTickLabelInterpreter', 'latex');
+set(0, 'DefaultAxesFontSize',15);
+set(0, 'DefaultLegendFontSize',12);
+set(0, 'DefaultLineLineWidth', 1.5);
 
 
 figure
 p1= plot(coord(1:103,1),coord(1:103,2),coord(104:end,1),coord(104:end,2),'color','blue')
 hold on
 plot(c_upper(:,1),c_upper(:,2),c_lower(:,1),c_lower(:,2),'color','blue')
-xlabel('x/c [m]')
-ylabel('z/c [m]')
+xlabel('$x$/c [-]')
+ylabel('$z$/c [-]')
 axis equal
-set(gca,'interpreter','Latex','FontSize',pt);
 pbaspect([1.5 1 1]);
-saveas(p1,'supercritical_profile','epsc');
 hold off
 
 end
