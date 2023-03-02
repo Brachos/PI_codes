@@ -242,7 +242,7 @@ hAC = xac_h + x_hLE;
 vAC = xac_v + x_vLE;
 
 %% Pitching moment equation
-static_stability = (h - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the MTOW dCm/dalpha
+static_stability = h-(h0+V_hT*a1/a*(1-(de_dAOA1))); %in the case of the MTOW dCm/dalpha
 static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty aircraft
 
 %% Derivatives
@@ -272,28 +272,33 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % 'Certification authorities specify that k >= 0.05
 
 %% Polar CD_vs_CL
-% AOA_vector = -18:18;
-% for i=1:length(AOA_vector)
-% [~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
-% CL_vector(i) = CLw;
-% CD_vector(i) = CD;
-% CL_CD(i) = CL_vector(i)/CD_vector(i);
-% end
-% figure1 = figure(1);
-% clf;
-% set(Figure1,'defaulttextinterpreter','latex');
-% hold on;
-% p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 15', 'color', '#00707F');
-% xlabel('CD')
-% ylabel('CL')
-% % figure;
-% % p2=plot(AOA_vector,CL_CD);
-% % xlabel('AOA')
-% % ylabel('CL/CD')
-% % figure;
-% % p3=plot(AOA_vector,CD_vector);
-% % xlabel('AOA');
-% % ylabel('CD');
+AOA_vector = -18:18;
+for i=1:length(AOA_vector)
+[~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
+CL_vector(i) = CLw;
+CD_vector(i) = CD;
+CL_CD(i) = CL_vector(i)/CD_vector(i);
+end
+figure1 = figure(1);
+clf;
+set(figure1,'defaulttextinterpreter','latex');
+hold on;
+p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
+xlabel('CD [-]')
+ylabel('CL [-]')
+box on
+figure2 = figure(2);
+clf;
+set(figure2,'defaulttextinterpreter','latex');
+hold on;
+p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
+xlabel('AOA [?]')
+ylabel('CL/CD [-]')
+box on
+% figure;
+% p3=plot(AOA_vector,CD_vector);
+% xlabel('AOA');
+% ylabel('CD');
 
 
 
