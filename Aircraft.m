@@ -137,9 +137,9 @@ xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 5; %for the second landing gears
 xcg_p = 4.5; %for the payload
 xcg_s = 3.6; %for the system (radar...)
-x_w = 2.37; %position of the wings
+x_w = 2.7; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4; %for the fuel
+xcg_fuel = 4.3; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y

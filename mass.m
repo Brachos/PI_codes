@@ -176,7 +176,7 @@ W_landing_gear_main = W_landing_gear/pound; %in [kg]
 %% Installed engine weight Raymer
 N_E = 1; %[-] nbre of engines
 K_E = 2.575; %[N] using metric units --> engine weight factor
-W_E = 140*pound; %[kg] weight of each engine
+W_E = 260*pound; %[kg] weight of each engine
 
 W_installed_weight = K_E*N_E*W_E^0.922;
 W_installed_weight = W_installed_weight/pound; %[kg]

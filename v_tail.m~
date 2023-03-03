@@ -136,7 +136,7 @@ CN_beta_i = -0.017; %because mid wing
 CN_tot = CN_beta_f + CN_beta_i;
 disp(CN_tot);
 % voir graphique slide 57
-V_v = 0.055; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.04; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
 
