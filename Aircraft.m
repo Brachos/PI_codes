@@ -54,7 +54,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% V-Tail
 cg_pos = 4.11;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
+[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -247,27 +247,25 @@ vAC = xac_v + x_vLE;
 static_stability = h-(h0+V_hT*a1/a*(1-(de_dAOA1))); %in the case of the MTOW dCm/dalpha
 static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty aircraft
 
+%% Directional stability
+S_F = S_v; %fin surface
+Z_w = b_el; %vertical distance from the wing root quarter chord to the fuselage center line (positive downward)
+av_area = pi*a_el*b_el; %average fuselage cross section area
+d = sqrt(av_area/0.7854);
+A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
+ds_db = -0.276+3.06*S_F/Sw*1/(1+cos(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
+V_v = 1; %vertical tailplane airspeed
+V = 1; %airspeed
+n_v = (V_v/V)^2;
+Cyv_alpha = 0.065;
+Sv = S_v;
+lv = l;
+Cn_beta = Cn_beta_Ah+n_v*Cyv_alpha*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+
 %% Derivatives
 CL_alpha = CLw_alpha;
 Cm_alpha = static_stability;
 CD_alpha = CDw_alpha;
-Cn = 0;
-
-%% Directional stability
-S_F = S_v; %fin surface
-Z_w = ; %vertical distance from the wing root quarter chord to the fuselage center line (positive downward)
-av_area = ; %average fuselage cross section area
-d = sqrt(av_area/0.7854);
-A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
-ds_db = -0.276+3.06*S_F/Sw*1/(1+cos(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
-V_v = ;
-V = ;
-n_v = (V_v/V)^2;
-Cn_beta_Ah = ;
-Cyv_alpha = ;
-Sv = ;
-lv = ;
-Cn_beta = Cn_beta_Ah+n_v*Cyv_alpha*(Sv*lv)/(S*b)*(1-ds_db)*(Vv/v)^2;
 
 %% Static margin
 kf = hn - hf;
