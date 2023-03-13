@@ -1,4 +1,4 @@
-function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(Mass,...
+function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h, W_tail,CN_tot] = v_tail(Mass,...
     D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
@@ -132,11 +132,11 @@ b_h = sqrt(S_h*AR_h);
 K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
 S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
-CN_beta_i = 0.012; %because mid wing
+CN_beta_i = -0.017; %because mid wing
 CN_tot = CN_beta_f + CN_beta_i;
 disp(CN_tot);
 % voir graphique slide 57
-V_v = 0.04; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.055; % avec V_v = S_F*l_F/(S*b)
 l_F = l; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
 
