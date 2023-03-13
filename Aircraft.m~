@@ -211,7 +211,6 @@ h = (cgT(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the MTOW
 h2 = (cgt(1)-x_wLE)/cw_MAC; % Position of the cg in the case of the empty aircraft
 hp = (cgp(1)-x_wLE)/cw_MAC;
 hf = (cgf(1)-x_wLE)/cw_MAC;
-
 %% Lift coefficient
 rho_mat = 0.48; %[kg/m^3]
 % L = MTOW*9.81;
@@ -234,7 +233,6 @@ de_dAOA1 = 1.75*a/(pi*7*(2*lwt*0.3/bw)^(1/4)*(1+m));
 hn = h0 + V_hT*a1/a*(1-(de_dAOA1)); %position of the neutral point in %MAC
 x_hn = hn*cw_MAC+x_wLE; %position of the neutral point from nose
 fprintf('Neutral point from nose fully loaded : %.2dm\n', x_hn);
-
 %% Aerodynamic center
 D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
 X_c4 = 1/4*cw_MAC; %position of the quarter-chord
@@ -254,14 +252,13 @@ CD_alpha = CDw_alpha;
 Cn = 0;
 
 %% Directional stability
-S_F = S_v; %fin surface
-Z_w = ; %vertical distance from the wing root quarter chord to the fuselage center line (positive downward)
+S_F = ; %fin surface
+Lambda = ; %sweep angle at the quarter chord
+Z_w = ; %vertical distance from the wing root quarter chor
 av_area = ; %average fuselage cross section area
 d = sqrt(av_area/0.7854);
-A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
-ds_db = -0.276+3.06*S_F/Sw*1/(1+cos(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
-V_v = ;
-V = ;
+A = ;
+ds_db = -0.276+3.06*S_F/Sw*1/(1+cos(Lambda))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
 n_v = (V_v/V)^2;
 Cn_beta_Ah = ;
 Cyv_alpha = ;
