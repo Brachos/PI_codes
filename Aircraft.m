@@ -54,7 +54,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% V-Tail
 cg_pos = 4.11;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah] = v_tail(MTOW,...
+[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf] = v_tail(MTOW,...
     D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -137,9 +137,9 @@ xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 5; %for the second landing gears
 xcg_p = 4.5; %for the payload
 xcg_s = 3.6; %for the system (radar...)
-x_w = 2.7; %position of the wings
+x_w = 2.9; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4.3; %for the fuel
+xcg_fuel = 4.4; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
@@ -257,10 +257,12 @@ ds_db = -0.276+3.06*S_F/Sw*1/(1+cos(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash der
 V_v = 1; %vertical tailplane airspeed
 V = 1; %airspeed
 n_v = (V_v/V)^2;
-Cyv_alpha = 0.065;
+CL_alphaT = 0.065;
 Sv = S_v;
 lv = l;
-Cn_beta = Cn_beta_Ah+n_v*Cyv_alpha*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+
+Cn_beta = Cn_beta_Ah + V_vf*CL_alphaT*(1-ds_db);
 
 %% Derivatives
 CL_alpha = CLw_alpha;

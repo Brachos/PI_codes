@@ -37,7 +37,7 @@ cl  = 0.7;
 %% Computation of wings properties
 % Sweep angle
 MD    = 0.725;
-MObj  = 0.9;
+MObj  = 0.8;
 sweep = acos(MD/MObj);
 % sweep = 0;
 % Mach = 0.2;
