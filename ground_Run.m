@@ -29,34 +29,45 @@ close all;          % close all figure
 
 % here we assume working with ISA at Sea level
 
-m = 4374;                     % aircraft mass at takeoff in [kg]
+pound = 2.20462262; % kg to lbs
+feet = 3.28; % m to ft
+inche = 39.37; %m to in
+
+MTOW = 4044;                     % aircraft mass at takeoff in [kg]
 Mach = 0.7;
 Altitude = 30000; % [ft]
 aofa = 0.75; % [°]
+[speed,rho] = speed(Altitude,Mach);
+rho = 0.48;
+V_c = speed;
+cg_pos = 4.11;% ? revoir absolument !!!!
+l_cg = cg_pos;
 
-% [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,m,aofa);
-% [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l,C_L,Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(Mass,...
-%     D_f_max,h_f_max,V_c,c_chord,Lambda_LE,S,l_f,l_cg,b);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(Mach,...
+    Altitude,0.95*MTOW,aofa);
+[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
+[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
+    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 
 
 rho = 1.225;                  % density at sea level in [kg/m^3]
 g = 9.80665;                  % gravity value in [m/s^2]
-S = 11.76;                     % Reference surface in [m^2]
+% Sw = 11.76;                     % Reference surface in [m^2]
 AR = 7;                       % Aspect ratio
 h = 1.5;                     % height of the wing above the ground.
-b = 9.0700;                      % Wingspan in [m]
-CL_cruise = 0.4;              % lift coefficient at cruise
+% bw = 9.0700;                      % Wingspan in [m]
+CL_cruise = CLw+S_h/Sw*C_L;              % lift coefficient at cruise
 mu = 0.03;                    % runway friction coefficient
-W = m*g;                      % Aircraft weight at takeoff in [N]
+W = MTOW*g;                      % Aircraft weight at takeoff in [N]
 % CL_TO = 1.5;                 % Lift coefficient at take-off
 % CL_STR = 0.36;                % Lift coefficient at take-off during transition phase.
 % CD_min = 0.025;                % Drag coefficient at take-off
-R_T = 0.4;                    % Wing taper ratio. 
+R_T = 0.3;                    % Wing taper ratio. 
 % K = 0.1;                      % Wing height in ground roll (it could be less)
 beta_L = 0.99;                % High-lift correction coefficient during take-off.
 beta_D = 0.1;                 % High-lift correction coefficient during take-off.
 n = 1.2;                    % Load factor during take-off
-h_obst = 9.144;               % Obstacle height clearance in [m].
+h_obst = 30/feet;               % Obstacle height clearance in [m].
 T_SL = 8210;                  % Thrust at sea level in [N].
 BPR = 4.1;                    % Engine bypass ratio
 K = 0.2;
@@ -66,7 +77,7 @@ K = 0.2;
 
 % Stall velocity computation
 
-V_stall = sqrt((2*W)/(rho*CL_cruise*S));
+V_stall = sqrt((2*W)/(rho*CL_cruise*Sw));
 
 % computation of the Take-off velocity
 
@@ -106,13 +117,13 @@ delta_D = 1 - 0.157*(R_T^0.775 - 0.373)*(AR^0.417 - 1.27);
 
 q = 0.5*rho*(V_LOF/sqrt(2))^2;              % Dynamic pressure at take-off.
 
-CL_max = 1.3;                               % W/(q*S)*Phi_L;
+CL_max = 1.5;                               % W/(q*S)*Phi_L;
 C_D = 0.1449;                               % (CD_min + k*C_L^2)*Phi_D;
 
 % K_T = (T_SL/W) - mu;
 % K_A = ((0.5*rho)/(W/S))*((mu*0.8*CL_max) - C_D - K*(0.8*CL_max)^2);
 
-S_G = 0.5*(V_LOF^2/g)*(1/(6 - (q*S*C_D)/W) - mu*(1 - (q*S*0.8*CL_max)/W));   % Assumed 70% of Engine Thrust at take-off
+S_G = 0.5*(V_LOF^2/g)*(1/(6 - (q*Sw*C_D)/W) - mu*(1 - (q*Sw*0.8*CL_max)/W));   % Assumed 70% of Engine Thrust at take-off
 
 % S_G = (1/(2*g*K_A))*log((K_T + K_A*(V_LOF)^2)/K_T);
 

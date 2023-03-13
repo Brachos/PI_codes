@@ -10,6 +10,7 @@ Altitude = 30000; %Cruise altitude [feet]
 pound = 2.20462262; % kg to lbs
 feet = 3.28; % m to ft
 inche = 39.37; %m to in
+N2Lbf = 0.224809; %N to Lbf factor
 
 S_F = 0; %Fin area
 l_F = 0; %Fin moment arm
