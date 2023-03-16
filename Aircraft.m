@@ -18,7 +18,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4044; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4228; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -260,9 +260,28 @@ n_v = (V_v/V)^2;
 CL_alphaT = 0.065;
 Sv = S_v;
 lv = l;
-Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+Cn_beta = Cn_beta_Ah + n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+Cn_beta_T1 = V_vf*CL_alphaT*(1-ds_db);
+Cn_beta1 = Cn_beta_Ah + Cn_beta_T1;
 
-Cn_beta = Cn_beta_Ah + V_vf*CL_alphaT*(1-ds_db);
+%% Directional stability (DATCOM method)
+ds_dba = -0.018; %approximated from Datcom graphs p.2841
+alpha_f = 3; %angle of attack [deg]
+ds_dbg = -0.6; %approximated from Datcom graphs p.2849
+Gamma = 0;
+ds_dbt = -0.0125; %approximated from Datcom graphs p.2861
+theta = 0;
+ds_dbWB = 0.0575; %approximated from Datcom graphs p.2877
+ds_db = ds_dba*alpha_f+ds_dbg/57.3*Gamma-ds_dbt*theta+ds_dbWB;
+l_p = l;
+alpha_f = 3; %[deg]
+z_p = 0.3;
+Cn_beta_T2 = 2*CL_alphaT*ds_db*S_v/Sw*(l_p*cosd(alpha_f)+z_p*sind(alpha_f))/bw;
+Cn_beta2 = Cn_beta_Ah + Cn_beta_T2;
+
+%% Directional stability (Elsevier)
+h_f = 0.5;
+Cl_beta_T = - V_vf*h_f/l*CL_alphaT;
 
 %% Derivatives
 CL_alpha = CLw_alpha;
