@@ -22,6 +22,7 @@ pound = 2.20462262; % kg to lbs
 feet = 3.28; % m to ft
 %% Longitudinal trim
 % Horizontal tail
+
 % Le coefficient (l/c_bar * S_h/S)=:V_h_bar  est tr?s important et est
 % appel? "horizontal tail volume coefficient". Il joue un role tr?s
 % important dans la stabilit? longitutinale de l'appareil. Apr?s avoir
@@ -36,7 +37,7 @@ S_h = V_h_bar*c_bar*S/l_arm;
 K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
 S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/S/b;
-CN_beta_i = -0.017; %because mid wing
+CN_beta_i = -0.017; %because high wings
 CN_tot = CN_beta_f + CN_beta_i;
 disp(CN_tot);
 % voir graphique slide 57
@@ -73,12 +74,12 @@ S = S/feet^2;
 
 %% Prints
 fprintf('Tail surface : %.2dft?\n',S_tail);
-fprintf('Tail span : %.2dm\n',b_tail);
+% fprintf('Tail span : %.2dm\n',b_tail);
 fprintf('Tail horizontal span : %.2dm\n',b_h);
 fprintf('Tail vertical span : %.2dm\n',b_v);
 fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
 fprintf('Surface ratio : %.2d\n',S_h/S);
-fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
-fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
+% fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
+% fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
 fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);
 W_tail = (W_tail_v + W_tail_h)/pound;
