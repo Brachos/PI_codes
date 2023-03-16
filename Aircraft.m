@@ -56,7 +56,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 cg_pos = 4.11;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf] = v_tail(MTOW,...
-    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
+    2*b_el,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
