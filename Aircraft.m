@@ -10,6 +10,7 @@ Altitude = 30000; %Cruise altitude [feet]
 pound = 2.20462262; % kg to lbs
 feet = 3.28; % m to ft
 inche = 39.37; %m to in
+N2Lbf = 0.224809; %N to Lbf factor
 
 S_F = 0; %Fin area
 l_F = 0; %Fin moment arm
@@ -54,8 +55,8 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% V-Tail
 cg_pos = 4.11;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf] = v_tail(MTOW,...
-    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
+[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l_arm, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf] = v_tail(MTOW,...
+    2*b_el,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
@@ -80,7 +81,7 @@ l_cg = cg_pos;
 % Lambda_T  = sweep angle of the tail
 
 S_T = S_h; %Tailplane area
-l_T = l; %Tail moment arm
+l_T = l_arm; %Tail moment arm
 hrc = c_root_tail; %horizontal tail root chord
 htc = c_tip_tail; %horizontal tail tip chord 
 hTR = c_tip_tail/c_root_tail; %horizontal tail taper ratio
@@ -94,29 +95,11 @@ vrc = c_root_tail; %vertical tail root chord
 vtc = c_tip_tail; %vertical tail tip chord 
 vTR = c_tip_tail/c_root_tail; %vertical tail taper ratio
 vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
-V_vT = S_v*l_T/Sw*vMAC; %Tail volume ratio
 xcg_v = 0.3*vMAC; %for the vertical tail [m]
 xac_v = 0.365*vMAC; 
-AR = 3.5;
-
-% S_tail = S_h + S_v;
-% b_tail = sqrt(3.5*S_tail);% span along the tail (one side)
-% b_h = sin(angle)*b_tail;
-% bh = b_h;
-% b_v = cos(angle)*b_tail/2;
-% bv = b_v;
-% alpha = 0.5;
-% c_root_tail = S_tail/b_tail/(1+alpha);
-% c_tip_tail = alpha * c_root_tail;
-
-
-% CL = CL_w + CL_T*S_tail/Sw;
-% => *1/2*Sw*rho*Vc^2 = W
-% => W = 1/2*Sw*rho*Vc^2*CL_w + 1/2*S_tail*rho*Vc^2*CL_tail
-% CL_tail = (MTOW*9.81 - 1/2*Sw*rho*V_c^2*CLw)/(1/2*S_tail*rho*V_c^2);
 
 %% Weight
-[W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l);
+[W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l_arm);
 W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;
     W_landing_gear_main;W_payload;W_fuel;W_system+W_FS]; 
 %vector of all the different weights (or mass)
@@ -130,7 +113,7 @@ FW = sum(W)-W(7);
 %% Center of gravity
 le = 0.7; %length of the engine
 x_e = l_f-le; %position of the engine inlet
-x_wv = l; %distance between the wac and the vac
+x_wv = l_arm; %distance between the wac and the vac
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 1.5; %for the first landing gears
@@ -221,7 +204,7 @@ CL = CLw + C_L*S_h/Sw;
 L = CL*Sw*1/2*V_c^2*rho_mat;
 
 %% Neutral point
-lwt = l; %Horizontal distance between the wing ac and the tail ac
+lwt = l_arm; %Horizontal distance between the wing ac and the tail ac
 zwt = 1; %Vertical distance bewteen the wing ac and the tail ac
 h0 = 0.37; %Position of the aerodynamic center
 %CL = 0;
@@ -259,10 +242,15 @@ V = 1; %airspeed
 n_v = (V_v/V)^2;
 CL_alphaT = 0.065;
 Sv = S_v;
+<<<<<<< HEAD
 lv = l;
 Cn_beta = Cn_beta_Ah + n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
 Cn_beta_T1 = V_vf*CL_alphaT*(1-ds_db);
 Cn_beta1 = Cn_beta_Ah + Cn_beta_T1;
+=======
+lv = l_arm;
+Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+>>>>>>> 0226fef619822c8b5e63f45c16f019d8901a8ef9
 
 %% Directional stability (DATCOM method)
 ds_dba = -0.018; %approximated from Datcom graphs p.2841
