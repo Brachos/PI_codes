@@ -19,7 +19,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 9; % number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4228; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4231; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -236,40 +236,36 @@ Z_w = b_el; %vertical distance from the wing root quarter chord to the fuselage 
 av_area = pi*a_el*b_el; %average fuselage cross section area
 d = sqrt(av_area/0.7854);
 A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
-ds_db = -0.276+3.06*S_F/Sw*1/(1+cos(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
+ds_db = -0.276+3.06*S_F/Sw*1/(1+cosd(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
 V_v = 1; %vertical tailplane airspeed
 V = 1; %airspeed
 n_v = (V_v/V)^2;
-CL_alphaT = 0.065;
+CL_alphaT = 0.065; %[deg^-1]
 Sv = S_v;
-<<<<<<< HEAD
-lv = l;
-Cn_beta = Cn_beta_Ah + n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+lv = l_arm;
 Cn_beta_T1 = V_vf*CL_alphaT*(1-ds_db);
 Cn_beta1 = Cn_beta_Ah + Cn_beta_T1;
-=======
 lv = l_arm;
 Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
->>>>>>> 0226fef619822c8b5e63f45c16f019d8901a8ef9
 
 %% Directional stability (DATCOM method)
 ds_dba = -0.018; %approximated from Datcom graphs p.2841
 alpha_f = 3; %angle of attack [deg]
 ds_dbg = -0.6; %approximated from Datcom graphs p.2849
-Gamma = 0;
+Gamma = 1; %dihedral angle
 ds_dbt = -0.0125; %approximated from Datcom graphs p.2861
-theta = 0;
+theta = 1; %twist angle
 ds_dbWB = 0.0575; %approximated from Datcom graphs p.2877
 ds_db = ds_dba*alpha_f+ds_dbg/57.3*Gamma-ds_dbt*theta+ds_dbWB;
-l_p = l;
+l_p = l_arm;
 alpha_f = 3; %[deg]
 z_p = 0.3;
-Cn_beta_T2 = 2*CL_alphaT*ds_db*S_v/Sw*(l_p*cosd(alpha_f)+z_p*sind(alpha_f))/bw;
+Cn_beta_T2 = 2*CL_alphaT*ds_db*S_v/Sw*(l_p*feet*cosd(alpha_f)+z_p*feet*sind(alpha_f))/bw*feet;
 Cn_beta2 = Cn_beta_Ah + Cn_beta_T2;
 
 %% Directional stability (Elsevier)
 h_f = 0.5;
-Cl_beta_T = - V_vf*h_f/l*CL_alphaT;
+Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 CL_alpha = CLw_alpha;
@@ -297,34 +293,34 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % 'Certification authorities specify that k >= 0.05
 
 %% Polar CD_vs_CL
-AOA_vector = -18:18;
-for i=1:length(AOA_vector)
-[~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
-CL_vector(i) = CLw;
-CD_vector(i) = CD;
-CL_CD(i) = CL_vector(i)/CD_vector(i);
-end
-figure1 = figure(1);
-clf;
-set(figure1,'defaulttextinterpreter','latex');
-hold on;
-p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
-xlabel('CD [-]')
-ylabel('CL [-]')
-xlim([0 0.2]);
-ylim([0 2]);
-box on
-figure2 = figure(2);
-clf;
-set(figure2,'defaulttextinterpreter','latex');
-hold on;
-p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
-xlabel('AOA [?]')
-ylabel('CL/CD [-]')
-box on
-% figure;
-% p3=plot(AOA_vector,CD_vector);
-% xlabel('AOA');
-% ylabel('CD');
+% AOA_vector = -18:18;
+% for i=1:length(AOA_vector)
+% [~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
+% CL_vector(i) = CLw;
+% CD_vector(i) = CD;
+% CL_CD(i) = CL_vector(i)/CD_vector(i);
+% end
+% figure1 = figure(1);
+% clf;
+% set(figure1,'defaulttextinterpreter','latex');
+% hold on;
+% p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
+% xlabel('CD [-]')
+% ylabel('CL [-]')
+% xlim([0 0.2]);
+% ylim([0 2]);
+% box on
+% figure2 = figure(2);
+% clf;
+% set(figure2,'defaulttextinterpreter','latex');
+% hold on;
+% p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
+% xlabel('AOA [?]')
+% ylabel('CL/CD [-]')
+% box on
+% % figure;
+% % p3=plot(AOA_vector,CD_vector);
+% % xlabel('AOA');
+% % ylabel('CD');
 
 %% 
