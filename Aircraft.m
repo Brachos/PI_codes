@@ -291,13 +291,38 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % 'Certification authorities specify that k >= 0.05
 
 %% Polar CD_vs_CL
-AOA_vector = -18:18;
+AOA_vector = -18:0.1:18;
 for i=1:length(AOA_vector)
 [~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
 CL_vector(i) = CLw;
 CD_vector(i) = CD;
 CL_CD(i) = CL_vector(i)/CD_vector(i);
+
+deriv(i) = 0.5/CL_vector(i)*pi*0.8*ARw;
+if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
+    CL_opt = CL_vector(i)
+    num = i
 end
+end
+
+figure(3)
+plot(CD_vector,CL_vector)
+hold on
+plot(CD_vector,deriv(num)*CD_vector)
+xlim([0 0.2]);
+ylim([0 2]);
+
+% % Tangente
+% for i = 1 : length(CD_vector)-1
+%     deriv(i) = (CL_vector(i+1)-CL_vector(i))/(CD_vector(i+1)-CD_vector(i));
+%     cd_deriv(i) = (CD_vector(i+1)+CD_vector(i))/2;
+% end
+% 
+% 
+% 
+% figure(3)
+% plot(cd_deriv,deriv)
+
 figure1 = figure(1);
 clf;
 set(figure1,'defaulttextinterpreter','latex');
@@ -320,5 +345,11 @@ box on
 % p3=plot(AOA_vector,CD_vector);
 % xlabel('AOA');
 % ylabel('CD');
+figure(3)
+plot(CD_vector,CL_vector)
+hold on
+plot(CD_vector,deriv(num)*CD_vector)
+xlim([0 0.2]);
+ylim([0 2]);
 
 %% 
