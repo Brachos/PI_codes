@@ -1,4 +1,4 @@
-function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c] = wing(Mach,Altitude,Mass,aofa)
+function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,L_beta,c,sweep] = wing(Mach,Altitude,Mass,aofa)
 
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
@@ -72,7 +72,7 @@ c_tip  = tap*c_root;
 syms y
 c    = (1-2*y/b)*c_root + (2*y/b)*c_tip;
 c_AC = double(2/S*int(c^2,0,b/2));
-Re   = rho*V_inf*6.78/mu
+Re   = rho*V_inf*6.78/mu;
 
 % Aerodynamic center
 y_AC    = double(2/S*int(c*y,0,b/2));
@@ -81,9 +81,9 @@ x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR
 
 % Flaps design
 
-CL_max = 0.95*cos(sweep)*1.55*1.1
+CL_max = 0.95*cos(sweep)*1.55*1.1;
 DCL_max = 0.2;
-S_flapped = S*DCL_max/(0.9*0.9*cosd(28.8))
+S_flapped = S*DCL_max/(0.9*0.9*cosd(28.8));
 
 %% Computation of fuel volume in the wings
 

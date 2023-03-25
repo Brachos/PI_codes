@@ -1,6 +1,20 @@
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 clear all;
+
+%% Figures settings
+clc
+close all
+feature('DefaultCharacterSet','UTF8');
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaultTextInterpreter', 'latex');
+set(groot, 'defaultTextFontsize',13);
+set(groot, 'defaultAxesFontsize',13);
+set(groot, 'defaultLegendFontsize',13);
+set(groot, 'defaultLegendLocation','best');
+set(0, 'DefaultLineLineWidth', 1.8);
+pt = 12;
 %% Parameters
 AOA = 0.75*pi/180; %angle of attack
 ARw = 7; %Wing Aspect ratio
@@ -28,7 +42,7 @@ V_c = speed;
 
 %% Wing
 aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,0.95*MTOW,aofa);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c,sweep] = wing(M,Altitude,0.95*MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -53,32 +67,41 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 4.11;% ? revoir absolument !!!!
+cg_pos = 4.51;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l_arm, C_L, Lambda_T, b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf] = v_tail(MTOW,...
-    2*b_el,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
+[S_tail,S_h,S_v,c_root_tail,c_tip_tail, dihedral_angle, l_arm, C_L, Lambda_T,...
+    b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip, rudder_chord_root, rudder_chord_tip, rudder_chord] = v_tail(MTOW,...
+    2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
 % h_f_max   = height of airplaine fuselage (side view)
 % V_c       = cruise speed
 % cw_MAC    = mean aerodynamic chord
-% Lambda_LE = sweep angle of leading edge of the wings
+% sweep = sweep angle of leading edge of the wings
 % Sw        = surface of the wings
 % cg_pos    = position of center of gravity
 % l_f       = fuselage length
 % l_cg      = length between center of gravity and nose
 % bw        = wing span
-%%%%%%%%%% EXIT %%%%%%%%%%%
-% S_h       = horizontal surface of the tail
-% S_v       = vertical surface of the tail
-% c_root_h  = chord at the root of horizontal tail
-% c_tip_h   = chord at the tip of horizontal tail
-% c_root_v  = chord at the root of vertical tail
-% c_tip_v   = chord at the tip of vertical tail
-% angle     = dihedral angle of the v-tail
-% l         = length between wing ac and tail ac
-% Lambda_T  = sweep angle of the tail
+%%%%%%%%%% OUTPUTS %%%%%%%%%%%
+% S_tail            = total surface of the tail
+% S_h               = horizontal surface of the tail
+% S_v               = vertical surface of the tail
+% c_root_tail       = chord at the root of the tail
+% c_tip_tail        = chord at the tip of the tail
+% b_tail            = total span of the tail along itself
+% b_v               = vertical span of the tail
+% b_h               = horizontal span of the tail
+% dihedral_angle    = dihedral angle of the v-tail in RADIANS
+% l_arm             = length between wing ac and tail ac
+% Lambda_T          = sweep angle of the tail
+% W_tail            = weight of the tail in KILOGRAMS
+% hight_root        = hight of the begining of the rudder
+% hight_tip         = hight of the end of the rudder
+% rudder_chord      = proportion of the chord used for rudder
+% rudder_chord_root = rudder chord at the root of the rudder
+% rudder_chord_tip  = rudder chord at the tip of the rudder
 
 S_T = S_h; %Tailplane area
 l_T = l_arm; %Tail moment arm
@@ -90,7 +113,7 @@ V_hT = S_h*l_T/(Sw*cw_MAC); %Tail volume ratio
 xcg_h = 0.3*hMAC; %for the horizontal tail [m]
 xac_h = 0.365*hMAC;
 
-% 
+% Vertical
 vrc = c_root_tail; %vertical tail root chord
 vtc = c_tip_tail; %vertical tail tip chord 
 vTR = c_tip_tail/c_root_tail; %vertical tail taper ratio
@@ -303,4 +326,19 @@ box on
 % xlabel('AOA');
 % ylabel('CD');
 
+% tail plot
+p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
+p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
+figure
+plot([0 0 c_root_tail tand(Lambda_T)*b_v;...
+    c_root_tail tand(Lambda_T)*b_v tand(Lambda_T)*b_v+c_tip_tail tand(Lambda_T)*b_v+c_tip_tail],...
+    [0 0 0 b_v; 0 b_v b_v b_v],'color',[0 0.4470 0.7410]);
+hold on
+plot([0 0;-b_h/2/3 b_h/2/3]-0,[0 0; b_v/3 b_v/3]+0.5,'color',[0.8500 0.3250 0.0980])
+hold on 
+plot([p1 p1 p2; ...
+    p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
+    [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
+title('V-tail geometry')
+axis equal
 %% 

@@ -1,4 +1,5 @@
-function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, b_tail, b_v, b_h, W_tail,CN_tot, V_v] = v_tail(Mass,...
+function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
+    b_tail, b_v, b_h, W_tail,CN_tot, V_v, hight_root, hight_tip, rudder_chord_root, rudder_chord_tip, rudder_chord] = v_tail(Mass,...
     h_f_max,c_chord,Lambda_LE,S,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
@@ -8,6 +9,19 @@ function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, b_t
 %Cette m?thode est it?rative et s'appuie sur les ?quilibre statiques
 %et dynamique.
 
+
+%% Figures settings
+clc
+feature('DefaultCharacterSet','UTF8');
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaultTextInterpreter', 'latex');
+set(groot, 'defaultTextFontsize',13);
+set(groot, 'defaultAxesFontsize',13);
+set(groot, 'defaultLegendFontsize',13);
+set(groot, 'defaultLegendLocation','best');
+set(0, 'DefaultLineLineWidth', 1.8);
+pt = 12;
 %% Data required
 c_bar = c_chord;
 % - lambda
@@ -15,7 +29,7 @@ lambda = 0.3; % fixed
 % - sweep angle
 Lambda_T = Lambda_LE + 5;
 % - aspect ratio
-AR_t = 3;
+AR_t = 3.5;
 
 % conversions
 pound = 2.20462262; % kg to lbs
@@ -72,6 +86,16 @@ W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(a
     *(100*0.1/cos(Lambda_T))^-0.49*(AR_t/(cos(Lambda_T))^2)^0.357*lambda^0.039;
 S = S/feet^2;
 
+
+%% control surfaces
+%Based on Raymer tab
+span_covered = 0.7; %proportion of total span
+rudder_chord = 0.35; %proportion of the chord
+hight_root = (1-span_covered)/2*b_v;
+hight_tip = ((1-span_covered)/2+span_covered)*b_v;
+rudder_chord_root = interp1([0 b_v],[c_root_tail c_tip_tail],hight_root)*rudder_chord;
+rudder_chord_tip = interp1([0 b_v],[c_root_tail c_tip_tail],hight_tip)*rudder_chord;
+rudder_surface = (rudder_chord_root + rudder_chord_tip)*(hight_tip-hight_root)/2;
 %% Prints
 fprintf('Tail surface : %.2dft?\n',S_tail);
 % fprintf('Tail span : %.2dm\n',b_tail);
@@ -79,6 +103,7 @@ fprintf('Tail horizontal span : %.2dm\n',b_h);
 fprintf('Tail vertical span : %.2dm\n',b_v);
 fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
 fprintf('Surface ratio : %.2d\n',S_h/S);
+fprintf('Rudder surface : %.2d\n', rudder_surface);
 % fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
 % fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
 fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);
