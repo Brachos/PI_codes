@@ -40,7 +40,7 @@ V_c = speed;
 
 %% Wing
 aofa = 2.5; % AOA where the drag is minimum or cl/cd is maximum
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,0.95*MTOW,aofa);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c] = wing(M,Altitude,0.95*MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
