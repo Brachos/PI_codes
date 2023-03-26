@@ -31,7 +31,7 @@ close all;          % close all figure
 
 pound = 2.20462262; % kg to lbs
 feet = 3.28; % m to ft
-inche = 39.37; %m to in
+inche = 39.37; % m to in
 
 MTOW = 4044;                     % aircraft mass at takeoff in [kg]
 Mach = 0.7;
