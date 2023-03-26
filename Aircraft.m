@@ -21,16 +21,14 @@ ARw = 7; %Wing Aspect ratio
 TAPw = 0.3; %Wing tapper ratio
 M = 0.7; %Mach number
 Altitude = 30000; %Cruise altitude [feet]
-pound = 2.20462262; % kg to lbs
-feet = 3.28; % m to ft
+pound = 2.20462262; %kg to lbs
+feet = 3.28; %m to ft
 inche = 39.37; %m to in
 N2Lbf = 0.224809; %N to Lbf factor
 
-S_F = 0; %Fin area
-l_F = 0; %Fin moment arm
 MT = zeros(3,1); %vector of the total moment 3 different directions for the max weight
 Mt = zeros(3,1); %vector of the total moment 3 different directions for the min weight
-Nelem = 9; % number of differents elements, of different mass
+Nelem = 9; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
 MTOW = 4231; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
@@ -41,8 +39,8 @@ rho = 0.48;
 V_c = speed;
 
 %% Wing
-aofa=0.75; % AOA where the drag is minimum or cl/cd is maximum
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c,sweep] = wing(M,Altitude,0.95*MTOW,aofa);
+aofa = 2.5; % AOA where the drag is minimum or cl/cd is maximum
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,0.95*MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -361,7 +359,7 @@ clf;
 set(figure2,'defaulttextinterpreter','latex');
 hold on;
 p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
-xlabel('AOA [?]')
+xlabel('AOA [deg]')
 ylabel('CL/CD [-]')
 box on
 % figure;
