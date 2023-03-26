@@ -1,5 +1,5 @@
 function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
-    b_tail, b_v, b_h, W_tail,CN_tot, V_v, hight_root, hight_tip, rudder_chord_root, rudder_chord_tip, rudder_chord] = v_tail(Mass,...
+    b_tail, b_v, b_h, W_tail,CN_tot, V_v, hight_root, hight_tip, rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder] = v_tail(Mass,...
     h_f_max,c_chord,Lambda_LE,S,l_f,l_cg,b)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
@@ -29,7 +29,7 @@ lambda = 0.3; % fixed
 % - sweep angle
 Lambda_T = Lambda_LE + 5;
 % - aspect ratio
-AR_t = 3.5;
+AR_t = 4;
 
 % conversions
 pound = 2.20462262; % kg to lbs
@@ -55,13 +55,12 @@ CN_beta_i = -0.017; %because high wings
 CN_tot = CN_beta_f + CN_beta_i;
 disp(CN_tot);
 % voir graphique slide 57
-V_v = 0.06; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.063; % avec V_v = S_F*l_F/(S*b)
 l_F = l_arm; % first guess, distance between cg and fin ac
 S_v = V_v*S*b/l_F;
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
 C_L = 0.15*cos(angle);
-
 
 S_tail = S_h + S_v;
 b_tail = sqrt(AR_t*S_tail);% span along the tail (one side)
@@ -95,7 +94,7 @@ hight_root = (1-span_covered)/2*b_v;
 hight_tip = ((1-span_covered)/2+span_covered)*b_v;
 rudder_chord_root = interp1([0 b_v],[c_root_tail c_tip_tail],hight_root)*rudder_chord;
 rudder_chord_tip = interp1([0 b_v],[c_root_tail c_tip_tail],hight_tip)*rudder_chord;
-rudder_surface = (rudder_chord_root + rudder_chord_tip)*(hight_tip-hight_root)/2;
+S_rudder = (rudder_chord_root + rudder_chord_tip)*(hight_tip-hight_root)/2;
 %% Prints
 fprintf('Tail surface : %.2dft?\n',S_tail);
 % fprintf('Tail span : %.2dm\n',b_tail);
@@ -103,7 +102,7 @@ fprintf('Tail horizontal span : %.2dm\n',b_h);
 fprintf('Tail vertical span : %.2dm\n',b_v);
 fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
 fprintf('Surface ratio : %.2d\n',S_h/S);
-fprintf('Rudder surface : %.2d\n', rudder_surface);
+fprintf('Rudder surface : %.2d\n', S_rudder);
 % fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
 % fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
 fprintf('Total weight of the tail : %.2dkg\n', (W_tail_v + W_tail_h)/pound);

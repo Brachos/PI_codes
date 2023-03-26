@@ -69,8 +69,9 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %% V-Tail
 cg_pos = 4.51;% ? revoir absolument !!!!
 l_cg = cg_pos;
-[S_tail,S_h,S_v,c_root_tail,c_tip_tail, dihedral_angle, l_arm, C_L, Lambda_T,...
-    b_tail, b_v, b_h, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip, rudder_chord_root, rudder_chord_tip, rudder_chord] = v_tail(MTOW,...
+[S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
+    b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
+    rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder] = v_tail(MTOW,...
     2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -86,13 +87,13 @@ l_cg = cg_pos;
 % bw        = wing span
 %%%%%%%%%% OUTPUTS %%%%%%%%%%%
 % S_tail            = total surface of the tail
-% S_h               = horizontal surface of the tail
-% S_v               = vertical surface of the tail
+% Sh_tail               = horizontal surface of the tail
+% Sv_tail               = vertical surface of the tail
 % c_root_tail       = chord at the root of the tail
 % c_tip_tail        = chord at the tip of the tail
 % b_tail            = total span of the tail along itself
-% b_v               = vertical span of the tail
-% b_h               = horizontal span of the tail
+% bv_tail               = vertical span of the tail
+% bh_tail               = horizontal span of the tail
 % dihedral_angle    = dihedral angle of the v-tail in RADIANS
 % l_arm             = length between wing ac and tail ac
 % Lambda_T          = sweep angle of the tail
@@ -103,13 +104,13 @@ l_cg = cg_pos;
 % rudder_chord_root = rudder chord at the root of the rudder
 % rudder_chord_tip  = rudder chord at the tip of the rudder
 
-S_T = S_h; %Tailplane area
+S_T = Sh_tail; %Tailplane area
 l_T = l_arm; %Tail moment arm
 hrc = c_root_tail; %horizontal tail root chord
 htc = c_tip_tail; %horizontal tail tip chord 
 hTR = c_tip_tail/c_root_tail; %horizontal tail taper ratio
 hMAC = hrc*(2/3)*((1+hTR+hTR^2)/(1+hTR)); %Horizontal Tail Main Aerodynamic Chord
-V_hT = S_h*l_T/(Sw*cw_MAC); %Tail volume ratio
+V_hT = Sh_tail*l_T/(Sw*cw_MAC); %Tail volume ratio
 xcg_h = 0.3*hMAC; %for the horizontal tail [m]
 xac_h = 0.365*hMAC;
 
@@ -149,8 +150,8 @@ xcg_fuel = 4.4; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
-y_hmac = double(2/S_h*int(c*y,0,b_h/2));
-y_vmac = double(2/S_v*int(c*y,0,b_v/2));
+y_hmac = double(2/Sh_tail*int(c*y,0,bh_tail/2));
+y_vmac = double(2/Sv_tail*int(c*y,0,bv_tail/2));
 x_wLE = x_w+sin(36.3361*pi/180)*y_wmac; %position of the wing leading edge at the mac
 x_tLE = x_t+sin(41.3361*pi/180)*y_tmac;
 x_hLE = x_t+sin(41.3361*pi/180)*y_hmac;
@@ -223,7 +224,7 @@ rho_mat = 0.48; %[kg/m^3]
 % L = MTOW*9.81;
 % CL = L/(Sw*1/2*V_c^2*rho_mat);
 % C_L = (CL-CLw)*Sw/S_h;
-CL = CLw + C_L*S_h/Sw;
+CL = CLw + CL_tail*Sh_tail/Sw;
 L = CL*Sw*1/2*V_c^2*rho_mat;
 
 %% Neutral point
@@ -253,23 +254,20 @@ vAC = xac_v + x_vLE;
 static_stability = h-(h0+V_hT*a1/a*(1-(de_dAOA1))); %in the case of the MTOW dCm/dalpha
 static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty aircraft
 
-%% Directional stability
-S_F = S_v; %fin surface
+%% Directional stability - Torenbeek
+
 Z_w = b_el; %vertical distance from the wing root quarter chord to the fuselage center line (positive downward)
 av_area = pi*a_el*b_el; %average fuselage cross section area
 d = sqrt(av_area/0.7854);
 A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
-ds_db = -0.276+3.06*S_F/Sw*1/(1+cosd(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
+ds_db = -0.276+3.06*Sv_tail/Sw*1/(1+cosd(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
 V_v = 1; %vertical tailplane airspeed
 V = 1; %airspeed
 n_v = (V_v/V)^2;
 CL_alphaT = 0.065; %[deg^-1]
-Sv = S_v;
-lv = l_arm;
 Cn_beta_T1 = V_vf*CL_alphaT*(1-ds_db);
 Cn_beta1 = Cn_beta_Ah + Cn_beta_T1;
-lv = l_arm;
-Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv*lv)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
+Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv_tail*l_arm)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
 
 %% Directional stability (DATCOM method)
 ds_dba = -0.018; %approximated from Datcom graphs p.2841
@@ -283,7 +281,7 @@ ds_db = ds_dba*alpha_f+ds_dbg/57.3*Gamma-ds_dbt*theta+ds_dbWB;
 l_p = l_arm;
 alpha_f = 3; %[deg]
 z_p = 0.3;
-Cn_beta_T2 = 2*CL_alphaT*ds_db*S_v/Sw*(l_p*feet*cosd(alpha_f)+z_p*feet*sind(alpha_f))/bw*feet;
+Cn_beta_T2 = 2*CL_alphaT*ds_db*Sv_tail/Sw*(l_p*feet*cosd(alpha_f)+z_p*feet*sind(alpha_f))/bw*feet;
 Cn_beta2 = Cn_beta_Ah + Cn_beta_T2;
 
 %% Directional stability (Elsevier)
@@ -325,8 +323,8 @@ CL_CD(i) = CL_vector(i)/CD_vector(i);
 
 deriv(i) = 0.5/CL_vector(i)*pi*0.8*ARw;
 if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
-    CL_opt = CL_vector(i)
-    num = i
+    CL_opt = CL_vector(i);
+    num = i;
 end
 end
 
@@ -381,11 +379,11 @@ ylim([0 2]);
 p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
 p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
 figure
-plot([0 0 c_root_tail tand(Lambda_T)*b_v;...
-    c_root_tail tand(Lambda_T)*b_v tand(Lambda_T)*b_v+c_tip_tail tand(Lambda_T)*b_v+c_tip_tail],...
-    [0 0 0 b_v; 0 b_v b_v b_v],'color',[0 0.4470 0.7410]);
+plot([0 0 c_root_tail tand(Lambda_T)*bv_tail;...
+    c_root_tail tand(Lambda_T)*bv_tail tand(Lambda_T)*bv_tail+c_tip_tail tand(Lambda_T)*bv_tail+c_tip_tail],...
+    [0 0 0 bv_tail; 0 bv_tail bv_tail bv_tail],'color',[0 0.4470 0.7410]);
 hold on
-plot([0 0;-b_h/2/3 b_h/2/3]-0,[0 0; b_v/3 b_v/3]+0.5,'color',[0.8500 0.3250 0.0980])
+plot([0 0;-bh_tail/2/3 bh_tail/2/3]-0.2,[0 0; bv_tail/3 bv_tail/3]+0.5,'color',[0.8500 0.3250 0.0980])
 hold on 
 plot([p1 p1 p2; ...
     p1 + rudder_chord_root p2 p2+rudder_chord_tip],...

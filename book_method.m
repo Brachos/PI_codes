@@ -35,4 +35,4 @@ sum1(i) = sum1(i) + (2*j-1) * A(j)*sin((2*j-1)*theta(i));
 sum2(i) = sum2(i) + A(j)*sin((2*j-1)*theta(i));
 end
 end
-CL_tail = pi * AR * A(1)
+CL_tail = pi * AR * A(1);
