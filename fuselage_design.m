@@ -26,7 +26,7 @@ L_first_guess=A*MTOW^C;%[m], length of the fuselage.
 %be streamlined.
 %The volume used here corresponds to the volume necessary to store all the
 %payload+the subsystems+the sensors+the landing gears+fuel.
-V_f=V_f_real+0.1*V_f_real;%[m^3], take a margin to ensure that the volume is still sufficient even after streamlining.
+V_f=V_f_real+0.3*V_f_real;%[m^3], take a margin to ensure that the volume is still sufficient even after streamlining.
 f=7;%optimum fineness ratio of the fuselage to minimize drag (for a constant volume):[6;8].
 %the payload is stored in a rectangle of volume V_f. The width is considered to be 1.5 larger than the height of the rectangle.
 w_first_guess=sqrt(V_f/(2/3*L_first_guess));

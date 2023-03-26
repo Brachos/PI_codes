@@ -142,7 +142,7 @@ xcg_p = 5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 6; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 3.05; %position of the wings
+x_w = 2.98; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
 xcg_fuel = 4; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
@@ -307,6 +307,7 @@ V_T = 0;
 CL_qH = 2*CL_alphaT*heta*V_T;
 
 %Longitudinal Derivatives
+CL_alpha = CLw_alpha; 
 CL_alpha = CLw_alpha;
 Cm_alpha = static_stability;
 CD_alpha = CDw_alpha;
@@ -326,7 +327,6 @@ Cm_ih = 0;
 CL_heta = 0;
 Cm_heta = 0;
 %Lateral Derivatives
-
 %% Static margin
 kf = hn - hf;
 fprintf('Static margin fuel no payload is about : %.2dm\n',kf);
@@ -347,81 +347,81 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % coefficient of the total moment ; -C_malpha/C_Lalpha
 % 'Certification authorities specify that k >= 0.05
 
-%% Polar CD_vs_CL
-AOA_vector = -18:0.1:18;
-for i=1:length(AOA_vector)
-[~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
-CL_vector(i) = CLw;
-CD_vector(i) = CD;
-CL_CD(i) = CL_vector(i)/CD_vector(i);
-
-deriv(i) = 0.5/CL_vector(i)*pi*0.8*ARw;
-if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
-    CL_opt = CL_vector(i)
-    num = i
-end
-end
-
-figure(3)
-plot(CD_vector,CL_vector)
-hold on
-plot(CD_vector,deriv(num)*CD_vector)
-xlim([0 0.2]);
-ylim([0 2]);
-
-% % Tangente
-% for i = 1 : length(CD_vector)-1
-%     deriv(i) = (CL_vector(i+1)-CL_vector(i))/(CD_vector(i+1)-CD_vector(i));
-%     cd_deriv(i) = (CD_vector(i+1)+CD_vector(i))/2;
+% %% Polar CD_vs_CL
+% AOA_vector = -18:0.1:18;
+% for i=1:length(AOA_vector)
+% [~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
+% CL_vector(i) = CLw;
+% CD_vector(i) = CD;
+% CL_CD(i) = CL_vector(i)/CD_vector(i);
+% 
+% deriv(i) = 0.5/CL_vector(i)*pi*0.8*ARw;
+% if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
+%     CL_opt = CL_vector(i)
+%     num = i
+% end
 % end
 % 
-% 
-% 
 % figure(3)
-% plot(cd_deriv,deriv)
-
-figure1 = figure(1);
-clf;
-set(figure1,'defaulttextinterpreter','latex');
-hold on;
-p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
-xlabel('CD [-]')
-ylabel('CL [-]')
-xlim([0 0.2]);
-ylim([0 2]);
-box on
-figure2 = figure(2);
-clf;
-set(figure2,'defaulttextinterpreter','latex');
-hold on;
-p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
-xlabel('AOA [deg]')
-ylabel('CL/CD [-]')
-box on
-% figure;
-% p3=plot(AOA_vector,CD_vector);
-% xlabel('AOA');
-% ylabel('CD');
-figure(3)
-plot(CD_vector,CL_vector)
-hold on
-plot(CD_vector,deriv(num)*CD_vector)
-xlim([0 0.2]);
-ylim([0 2]);
-
-% tail plot
-p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
-p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
-figure
-plot([0 0 c_root_tail tand(Lambda_T)*b_v;...
-    c_root_tail tand(Lambda_T)*b_v tand(Lambda_T)*b_v+c_tip_tail tand(Lambda_T)*b_v+c_tip_tail],...
-    [0 0 0 b_v; 0 b_v b_v b_v],'color',[0 0.4470 0.7410]);
-hold on
-plot([0 0;-b_h/2/3 b_h/2/3]-0,[0 0; b_v/3 b_v/3]+0.5,'color',[0.8500 0.3250 0.0980])
-hold on 
-plot([p1 p1 p2; ...
-    p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
-    [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
-title('V-tail geometry')
-axis equal
-%% 
+% plot(CD_vector,CL_vector)
+% hold on
+% plot(CD_vector,deriv(num)*CD_vector)
+% xlim([0 0.2]);
+% ylim([0 2]);
+% 
+% % % Tangente
+% % for i = 1 : length(CD_vector)-1
+% %     deriv(i) = (CL_vector(i+1)-CL_vector(i))/(CD_vector(i+1)-CD_vector(i));
+% %     cd_deriv(i) = (CD_vector(i+1)+CD_vector(i))/2;
+% % end
+% % 
+% % 
+% % 
+% % figure(3)
+% % plot(cd_deriv,deriv)
+% 
+% figure1 = figure(1);
+% clf;
+% set(figure1,'defaulttextinterpreter','latex');
+% hold on;
+% p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
+% xlabel('CD [-]')
+% ylabel('CL [-]')
+% xlim([0 0.2]);
+% ylim([0 2]);
+% box on
+% figure2 = figure(2);
+% clf;
+% set(figure2,'defaulttextinterpreter','latex');
+% hold on;
+% p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
+% xlabel('AOA [deg]')
+% ylabel('CL/CD [-]')
+% box on
+% % figure;
+% % p3=plot(AOA_vector,CD_vector);
+% % xlabel('AOA');
+% % ylabel('CD');
+% figure(3)
+% plot(CD_vector,CL_vector)
+% hold on
+% plot(CD_vector,deriv(num)*CD_vector)
+% xlim([0 0.2]);
+% ylim([0 2]);
+% 
+% % tail plot
+% p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
+% p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
+% figure
+% plot([0 0 c_root_tail tand(Lambda_T)*b_v;...
+%     c_root_tail tand(Lambda_T)*b_v tand(Lambda_T)*b_v+c_tip_tail tand(Lambda_T)*b_v+c_tip_tail],...
+%     [0 0 0 b_v; 0 b_v b_v b_v],'color',[0 0.4470 0.7410]);
+% hold on
+% plot([0 0;-b_h/2/3 b_h/2/3]-0,[0 0; b_v/3 b_v/3]+0.5,'color',[0.8500 0.3250 0.0980])
+% hold on 
+% plot([p1 p1 p2; ...
+%     p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
+%     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
+% title('V-tail geometry')
+% axis equal
+% %% 
