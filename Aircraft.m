@@ -28,10 +28,10 @@ N2Lbf = 0.224809; %N to Lbf factor
 
 MT = zeros(3,1); %vector of the total moment 3 different directions for the max weight
 Mt = zeros(3,1); %vector of the total moment 3 different directions for the min weight
-Nelem = 9; %number of differents elements, of different mass
+Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4231; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4285; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
@@ -40,7 +40,7 @@ V_c = speed;
 
 %% Wing
 aofa = 2.5; % AOA where the drag is minimum or cl/cd is maximum
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(M,Altitude,0.95*MTOW,aofa);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c] = wing(M,Altitude,0.95*MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -121,30 +121,31 @@ xcg_v = 0.3*vMAC; %for the vertical tail [m]
 xac_v = 0.365*vMAC; 
 
 %% Weight
-[W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l_arm);
-W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;
-    W_landing_gear_main;W_payload;W_fuel;W_system+W_FS]; 
+[W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot, W_subsyst, W_sensors] = mass(MTOW,bw,cw_root,cw_tip,l_arm);
+W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;W_landing_gear_main;W_payload;W_fuel+W_FS;W_subsyst;W_sensors]; 
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
-% gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
+% gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
+minW = sum(W)-W(7)-W(8)+W_FS; %minimum weight (or minimum mass)
 MTOW = sum(W);
-PayW = sum(W)-W(8);
+PayW = sum(W)-W(8)+W_FS;
 FW = sum(W)-W(7);
 
 %% Center of gravity
 le = 0.7; %length of the engine
-x_e = l_f-le; %position of the engine inlet
-x_wv = l_arm; %distance between the wac and the vac
+x_e = l_f-le; %position of the engine inlet [m]
+x_wv = l_arm; %distance between the wac and the vac [m]
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 1.5; %for the first landing gears
-xcg_l2= 5; %for the second landing gears
-xcg_p = 4.5; %for the payload
-xcg_s = 3.6; %for the system (radar...)
-x_w = 2.9; %position of the wings
+xcg_l2= 4.8; %for the second landing gears
+xcg_p = 5; %for the payload
+% xcg_s = 3.6; %for the system (radar...)
+xcg_sub = 6; %for the subsystems
+xcg_sen = 1.5; %for the sensors
+x_w = 3.05; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4.4; %for the fuel
+xcg_fuel = 4; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
@@ -156,11 +157,11 @@ x_hLE = x_t+sin(41.3361*pi/180)*y_hmac;
 x_vLE = x_t+sin(41.3361*pi/180)*y_vmac;
 thick = 0; %thickness of the plane
 zcg_w = 0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
-xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg_s];
-yarm = [0;0;0;0;0;0;0;0;0]; %symetric
-zarm = [zcg_w;0;0;0;0;0;0;0;0];
+xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg_sen;xcg_sub];
+yarm = [0;0;0;0;0;0;0;0;0;0]; %symetric
+zarm = [zcg_w;0;0;0;0;0;0;0;0;0];
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
-% gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
+% gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.Sensors;10.Subsystems)
 % vector of all the different arms corresponding to the different
 % weights ; arm = horizontal dimension from the nose of the plane
 % to the cg of the mass ; origin : nose
@@ -286,10 +287,43 @@ Cn_beta2 = Cn_beta_Ah + Cn_beta_T2;
 h_f = 0.5;
 Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
-%% Derivatives
+%Parameters
+DM = 0;
+CD_DM = 0;
+CD_M = 0;
+CD_Cm = (CD_DM+CD_M)/DM;
+xacw_DM = 0;
+xacw_M = 0;
+dxac_dm = (xacw_DM-xacw_M)/DM;
+CLaw = 0; %with M=0
+Lambda = 0;
+Xw = 0;
+B = 0;
+CL_qw = (A+2*cos(Lambda))/(A*B+2*cos(Lambda))*(1/2+2*Xw/c)*CLw_alpha;
+heta = 0;
+V_T = 0;
+CL_qH = 2*CL_alphaT*heta*V_T;
+
+%Longitudinal Derivatives
 CL_alpha = CLw_alpha;
 Cm_alpha = static_stability;
 CD_alpha = CDw_alpha;
+CL_u = M^2/(1-M^2)*CLw;
+CD_u = M*CD_Cm;
+Cm_u = -CLw+dxac_dm;
+CL_q = CL_qw + CL_qH;
+CD_q = 0; %usually neglected
+Cm_q = 0;
+CL_adot = 0;
+CD_adot = 0;
+Cm_adot = 0;
+CL_df = 0;
+Cm_df = 0;
+CL_ih = 0;
+Cm_ih = 0;
+CL_heta = 0;
+Cm_heta = 0;
+%Lateral Derivatives
 
 %% Static margin
 kf = hn - hf;

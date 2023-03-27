@@ -1,4 +1,4 @@
-function [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot] = mass(MTOW,bw,cw_root,cw_tip,l)
+function [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_weight, W_payload, W_FS, W_mass, W_syst, W_tot, W_subsyst, W_sensors] = mass(MTOW,bw,cw_root,cw_tip,l)
 %%Based on chapter 10 of the reference book Aicraft design
 %%a sytems engineering approach
 Mach = 0.7;
@@ -187,7 +187,8 @@ W_payload = 205.0237512;
 IESuP = 222/pound; % Initial Estimated Subsystem Payload
 IESeP = 228/pound; % Initial Estimated Sensors Payload
 W_syst = IESuP+IESeP;
-
+W_subsyst = IESuP;
+W_sensors = IESeP;
 %% Total mass
 W_tot = W_landing_gear + W_fuselage + W_FS + W_payload + W_installed_weight + W_wing + W_mass; %add the fuel weight
 end
