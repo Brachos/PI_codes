@@ -30,18 +30,10 @@ AOA = AOA*pi/180; % AOA where the drag is minimum or cl/cd is maximum
 
 %% Computation of wings properties
 % Sweep angle
-<<<<<<< HEAD
-MD    = 0.725;
-MObj  = 0.8;
-sweep = acos(MD/MObj);
-sweep = 15*pi/180;
-% Mach = 0.2;
-=======
 % MD    = 0.725;
 % MObj  = 0.8;
 % sweep = acos(MD/MObj);
 sweep  = 15*pi/180; % [rad] Sweep angle 
->>>>>>> Florian
 beta   = sqrt(1-Mach^2);
 L_beta = atan(tan(sweep)/beta); % Angle to graphically find x_AC
 

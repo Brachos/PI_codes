@@ -1,9 +1,10 @@
-function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
+function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel,m_fuel)
 %volume of the payload
 V_sensors=1;%[m^3]
 V_subsystems=1;%[m^3]
 V_mission=0.15;%[m^3]
-m_fuel=2221;%[kg]
+V_engine=(1.9/(3.2808*2))^2*pi*4/3.2808;
+% m_fuel=2221;%[kg]
 V_tot_fuel=m_fuel/800;%hypothesis: kerozen is used as the fuel.
 Vf_fuel=V_tot_fuel-Vw_fuel;
 %diameter of the wheels
@@ -12,8 +13,8 @@ w_nose_wheel=(0.36*(MTOW*0.12)^0.467)*10^(-2);
 d_wheel=(5.1*(MTOW*(1-0.12)/2)^0.302)*10^(-2);
 w_wheel=(0.36*(MTOW*(1-0.12)/2)^0.467)*10^(-2);
 V_wheels=d_nose_wheel^2/4*pi*w_nose_wheel+2*d_wheel^2/4*pi*w_wheel;
-V_landing_gear=V_wheels;
-V_f_real=V_sensors+V_subsystems+V_mission+Vf_fuel+V_landing_gear;
+V_landing_gear=V_wheels+2*(0.115/2)^2*pi*(0.8-d_wheel)+(0.115/2)^2*pi*(0.8-d_nose_wheel);
+V_f_real=V_sensors+V_subsystems+V_mission+Vf_fuel+V_landing_gear+V_engine;
 %%
 %first estimation using statistical relations.
 %MTOW and empty weight comparable to a jet trainer (resp. 3500kg and 2500kg).
@@ -26,7 +27,7 @@ L_first_guess=A*MTOW^C;%[m], length of the fuselage.
 %be streamlined.
 %The volume used here corresponds to the volume necessary to store all the
 %payload+the subsystems+the sensors+the landing gears+fuel.
-V_f=V_f_real+0.3*V_f_real;%[m^3], take a margin to ensure that the volume is still sufficient even after streamlining.
+V_f=V_f_real+0.3*V_f_real;%[m^3], take a margin to ensure that the volume is still sufficient even after streamlining (30%).
 f=7;%optimum fineness ratio of the fuselage to minimize drag (for a constant volume):[6;8].
 %the payload is stored in a rectangle of volume V_f. The width is considered to be 1.5 larger than the height of the rectangle.
 w_first_guess=sqrt(V_f/(2/3*L_first_guess));
