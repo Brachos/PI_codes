@@ -1,4 +1,5 @@
-function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel,m_fuel)
+function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
+m_fuel = fuel_weight();
 %volume of the payload
 V_sensors=1;%[m^3]
 V_subsystems=1;%[m^3]

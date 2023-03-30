@@ -31,16 +31,18 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4285; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4327; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed,rho] = speed(Altitude,M);
+disp('rho is');
+disp(rho);
 rho = 0.48;
 V_c = speed;
 
 %% Wing
-aofa = 2.5; % AOA where the drag is minimum or cl/cd is maximum
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c] = wing(M,Altitude,0.95*MTOW,aofa);
+aofa = 2.5; % AOA where the drag is minimum or cl/cd is maximum [deg]
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0] = wing(M,Altitude,0.95*MTOW,aofa);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -143,7 +145,7 @@ xcg_p = 5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 6; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 3.05; %position of the wings
+x_w = 3.12; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
 xcg_fuel = 4; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
@@ -254,7 +256,6 @@ static_stability = h-(h0+V_hT*a1/a*(1-(de_dAOA1))); %in the case of the MTOW dCm
 static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty aircraft
 
 %% Directional stability - Torenbeek
-
 Z_w = b_el; %vertical distance from the wing root quarter chord to the fuselage center line (positive downward)
 av_area = pi*a_el*b_el; %average fuselage cross section area
 d = sqrt(av_area/0.7854);
@@ -287,7 +288,27 @@ Cn_beta2 = Cn_beta_Ah + Cn_beta_T2;
 h_f = 0.5;
 Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
-%Parameters
+% Parameters
+    % CL_alpha
+d = (2*a_el+2*b_el)/2;
+K_WB = 1-0.25*(d/bw)^2+0.025*(d/bw);
+CL_alphaWB = K_WB*CLw_alpha;
+heta_H = 0.95; %[0.9;1]
+    % CD_alpha
+V0 = 0;
+CL = MTOW*9.81/(1/2*rho*V_c^2*Sw);
+CD = 0.017+CL^2/(0.8*pi*ARw);
+e = 0.8;
+    % CM_alpha
+% sum = 0;
+% for i=1:Nelem
+%     sum = sum+W(i)*de_dAOA1*W^2;
+% end
+% DM_dalpha = 1/2*rho*V_c^2/36.5*1;
+% x_acWB = 0;
+% x_ac = (x_acWB+CL_alphaT/CL_alphaWB*heta_H*Sh_tail/S*x_ach*(1-de_dAOA1))/(1+CL_alphaT/CL_alphaWB*heta_H*Sh_tail/Sw*(1-de_dAOA1));
+% dCM_dCL = x_cg-x_ac;
+
 DM = 0;
 CD_DM = 0;
 CD_M = 0;
@@ -304,25 +325,33 @@ heta = 0;
 V_T = 0;
 CL_qH = 2*CL_alphaT*heta*V_T;
 
-%Longitudinal Derivatives
-CL_alpha = CLw_alpha;
+%Longitudinal Derivatives (for the entire aircraft) [rad^-1]
+CL_alpha = CL_alphaWB + CL_alphaT*heta_H*Sh_tail/Sw*(1-de_dAOA1);
+CD_alpha = 2*CL*CL_alpha/(pi*ARw*e);
 Cm_alpha = static_stability;
-CD_alpha = CDw_alpha;
-CL_u = M^2/(1-M^2)*CLw;
+% CM_alpha = dCM_dCL*CL_alpha;
+CL = CL_alpha*(aofa*pi/180-alpha_L0);
+CL_u = M^2/(1-M^2)*CL;
 CD_u = M*CD_Cm;
 Cm_u = -CLw+dxac_dm;
+
 CL_q = CL_qw + CL_qH;
 CD_q = 0; %usually neglected
 Cm_q = 0;
+
 CL_adot = 0;
 CD_adot = 0;
 Cm_adot = 0;
+
 CL_df = 0;
 Cm_df = 0;
+
 CL_ih = 0;
 Cm_ih = 0;
+
 CL_heta = 0;
 Cm_heta = 0;
+
 %Lateral Derivatives
 
 %% Static margin
@@ -345,81 +374,81 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % coefficient of the total moment ; -C_malpha/C_Lalpha
 % 'Certification authorities specify that k >= 0.05
 
-%% Polar CD_vs_CL
-AOA_vector = -18:0.1:18;
-for i=1:length(AOA_vector)
-[~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
-CL_vector(i) = CLw;
-CD_vector(i) = CD;
-CL_CD(i) = CL_vector(i)/CD_vector(i);
-
-deriv(i) = 0.5/CL_vector(i)*pi*0.8*ARw;
-if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
-    CL_opt = CL_vector(i);
-    num = i;
-end
-end
-
-figure(3)
-plot(CD_vector,CL_vector)
-hold on
-plot(CD_vector,deriv(num)*CD_vector)
-xlim([0 0.2]);
-ylim([0 2]);
-
-% % Tangente
-% for i = 1 : length(CD_vector)-1
-%     deriv(i) = (CL_vector(i+1)-CL_vector(i))/(CD_vector(i+1)-CD_vector(i));
-%     cd_deriv(i) = (CD_vector(i+1)+CD_vector(i))/2;
+% %% Polar CD_vs_CL
+% AOA_vector = -18:0.1:18;
+% for i=1:length(AOA_vector)
+% [~,~,~,~,CLw,CD,~,~,~,~,~,~,~,~,~] = wing(M,Altitude,MTOW,AOA_vector(i));
+% CL_vector(i) = CLw;
+% CD_vector(i) = CD;
+% CL_CD(i) = CL_vector(i)/CD_vector(i);
+% 
+% deriv(i) = 0.5/CL_vector(i)*pi*0.8*ARw;
+% if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
+%     CL_opt = CL_vector(i);
+%     num = i;
+% end
 % end
 % 
-% 
-% 
 % figure(3)
-% plot(cd_deriv,deriv)
-
-figure1 = figure(1);
-clf;
-set(figure1,'defaulttextinterpreter','latex');
-hold on;
-p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
-xlabel('CD [-]')
-ylabel('CL [-]')
-xlim([0 0.2]);
-ylim([0 2]);
-box on
-figure2 = figure(2);
-clf;
-set(figure2,'defaulttextinterpreter','latex');
-hold on;
-p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
-xlabel('AOA [deg]')
-ylabel('CL/CD [-]')
-box on
-% figure;
-% p3=plot(AOA_vector,CD_vector);
-% xlabel('AOA');
-% ylabel('CD');
-figure(3)
-plot(CD_vector,CL_vector)
-hold on
-plot(CD_vector,deriv(num)*CD_vector)
-xlim([0 0.2]);
-ylim([0 2]);
-
-% tail plot
-p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
-p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
-figure
-plot([0 0 c_root_tail tand(Lambda_T)*bv_tail;...
-    c_root_tail tand(Lambda_T)*bv_tail tand(Lambda_T)*bv_tail+c_tip_tail tand(Lambda_T)*bv_tail+c_tip_tail],...
-    [0 0 0 bv_tail; 0 bv_tail bv_tail bv_tail],'color',[0 0.4470 0.7410]);
-hold on
-plot([0 0;-bh_tail/2/3 bh_tail/2/3]-0.2,[0 0; bv_tail/3 bv_tail/3]+0.5,'color',[0.8500 0.3250 0.0980])
-hold on 
-plot([p1 p1 p2; ...
-    p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
-    [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
-title('V-tail geometry')
-axis equal
+% plot(CD_vector,CL_vector)
+% hold on
+% plot(CD_vector,deriv(num)*CD_vector)
+% xlim([0 0.2]);
+% ylim([0 2]);
+% 
+% % % Tangente
+% % for i = 1 : length(CD_vector)-1
+% %     deriv(i) = (CL_vector(i+1)-CL_vector(i))/(CD_vector(i+1)-CD_vector(i));
+% %     cd_deriv(i) = (CD_vector(i+1)+CD_vector(i))/2;
+% % end
+% % 
+% % 
+% % 
+% % figure(3)
+% % plot(cd_deriv,deriv)
+% 
+% figure1 = figure(1);
+% clf;
+% set(figure1,'defaulttextinterpreter','latex');
+% hold on;
+% p1=plot(CD_vector,CL_vector,'linewidth', 2, 'MarkerSize', 20');
+% xlabel('CD [-]')
+% ylabel('CL [-]')
+% xlim([0 0.2]);
+% ylim([0 2]);
+% box on
+% figure2 = figure(2);
+% clf;
+% set(figure2,'defaulttextinterpreter','latex');
+% hold on;
+% p2=plot(AOA_vector,CL_CD,'linewidth', 2, 'MarkerSize', 20');
+% xlabel('AOA [deg]')
+% ylabel('CL/CD [-]')
+% box on
+% % figure;
+% % p3=plot(AOA_vector,CD_vector);
+% % xlabel('AOA');
+% % ylabel('CD');
+% figure(3)
+% plot(CD_vector,CL_vector)
+% hold on
+% plot(CD_vector,deriv(num)*CD_vector)
+% xlim([0 0.2]);
+% ylim([0 2]);
+% 
+% % tail plot
+% p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
+% p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
+% figure
+% plot([0 0 c_root_tail tand(Lambda_T)*bv_tail;...
+%     c_root_tail tand(Lambda_T)*bv_tail tand(Lambda_T)*bv_tail+c_tip_tail tand(Lambda_T)*bv_tail+c_tip_tail],...
+%     [0 0 0 bv_tail; 0 bv_tail bv_tail bv_tail],'color',[0 0.4470 0.7410]);
+% hold on
+% plot([0 0;-bh_tail/2/3 bh_tail/2/3]-0.2,[0 0; bv_tail/3 bv_tail/3]+0.5,'color',[0.8500 0.3250 0.0980])
+% hold on 
+% plot([p1 p1 p2; ...
+%     p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
+%     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
+% title('V-tail geometry')
+% axis equal
 %% 

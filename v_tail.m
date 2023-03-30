@@ -77,12 +77,15 @@ N_z = 1.5*3; %Ultimate load factor = 1.5*limit load factor
 S = S*feet^2; %[ft^2]
 q = 8.6292e+03*pound/feet^2;
 W_tail_h = 0.016*(N_z*W_dg)^(0.414)*q^(0.168)*(S_tail*feet^2*sin(angle))^(0.896)*...
-    (100*0.1/cos(Lambda_LE))^(-0.12)*(AR_t/(cos(Lambda_T))^2)^(0.043)*lambda_t^(-0.02);
+    (100*0.1/cosd(Lambda_LE))^(-0.12)*(AR_t/(cosd(Lambda_T))^2)^(0.043)*lambda_t^(-0.02);
+
 %Ht/Hv ??? = 0.5 because no information about V-tail
 Ht = 1;
 Hv = 2;
 W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(angle))^0.873...
     *(100*0.1/cos(Lambda_T))^-0.49*(AR_t/(cos(Lambda_T))^2)^0.357*lambda^0.039;
+disp(W_tail_h);
+disp(W_tail_v);
 S = S/feet^2;
 
 
