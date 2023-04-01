@@ -95,18 +95,17 @@ for i = 1 : length(n)
     [L_W(i), L_E(i), M_fus(i), F_fin(i), D_B(i), M_tail(i)] = aerodynamic_loads(Aircraft, Wing, Empennage, Fin, Flight);
     
     %%Strucutural loads: Fuselage
-    [TX(i),TY(i),TZ(i),Mx(i),My(i),Mz(i)] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Flight.aoa,n(i), L_E, F_fin, M_fus); 
+    [TX(i),TY(i),TZ(i),Mx(i),My(i),Mz(i)] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Flight.aoa,Fligth.n, L_E, F_fin, M_fus); 
     
     %%Strucutural loads: Wing 
     Wing_loading.L = L_W(i);
     Wing_loading.D= 1/2 * Flight.rho * Wing.C_D * Flight.V^2 * Wing.S;
-    Wing_loading.T = Wing.T;
     AoA_w = (AoA_envelope(i) + Wing.aoa_fuselage) * pi / 180 ;
     y_CG = 0.5;% meter TO BE CHECKED
     y_AC = 0.5;% From P.Raymer TO BE CHECKED
     Mom_wing= 0.5 * Flight.rho * Flight.V^2 * Wing.S * Wing.MAC * Wing.C_M;
     
-    [Txw(i),Tyw(i),Tzw(i),Mxw(i),Myw(i),Mzw(i)] = wing_load(Aircraft.W, Wing_loading, AoA_w, Wing.aoa_fuselage * pi / 180, y_cg, y_ac, Mom_wing, n(i), Wing);
+    [Txw(i),Tyw(i),Tzw(i),Mxw(i),Myw(i),Mzw(i)] = wing_load(Aircraft.W, Wing_loading, AoA_w, y_cg, y_ac, Mom_wing, n(i), Wing);
 end
 
 %% FINAL VALUES

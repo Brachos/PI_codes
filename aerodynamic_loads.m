@@ -14,34 +14,34 @@ function [L_W, L_E, M_fus, F_fin, D_B, M_tail] = aerodynamic_loads(Aircraft, Win
     %               Aircraft.C_DB: body drag coefficient [kg/m²]
     %               Aircraft.l_DB: body drag lever arm [m]
     %   Wing:       Wing.S: Wing surface [m²]
-    %               Wing.C_D: Wing drag coefficient
-    %               Wing.c: Wing mean aerodynamic chord [m]
-    %               Wing.C_M: Wing pitching moment coefficient [Nm]
-    %               Wing.l_L: Wing lift lever arm [N]
-    %               Wing.l_D: Wing drag lever arm [m]
-    %               Wing.aoa_L: Angle of attack between the wing lift lever
+    %               Wing.W: Wing weight [N]
+    %               Wing.AR: Wing aspect ratio [-]
+    %               Wing.MAC: Wing mean aerodynamic chord [m]
+    %               Wing.l: Wing lever arm [m]
+    %               Wing.aoa: Angle of attack between the wing lever
     %               arm and the chord [rad]
-    %               Wing.aoa_D: Angle of attack between the wing drag lever
-    %               arm and the chord [rad]
+    %               Wing.LE: Position of the leading edge [m]
+    %               Wing.root_chord: Wiing root chord [m]
+    %               Wing.aoa_fuselage: Angle of attack between the wing and
+    %               the fuselage center line [rad]
     %   Empennage:  Empennage.S: Empennage surface [m²]
-    %               Empennage.C_D: Empennage drag coefficient
-    %               Empennage.c: Empennage mean aerodynamic chord [m]
-    %               Empennage.C_M: Empennage pitching moment coefficient
-    %               [Nm]
+    %               Empennage.W: Empennage weight [N]
+    %               Empennage.MAC: Empennage mean aerodynamic chord [m]
     %               Empennage.b: Empennage span [m]
-    %               Empennage.l_L: Empennage lift lever arm [m]
+    %               Empennage.l: Empennage lever arm [m]
     %               Empennage.T: Thrust placed on Empennage [N]
     %               Empennage.l_T: Empennage thrust lever arm [m]
-    %               Empennage.l_D: Empennage drag lever arm [m]
-    %               Empennage.aoa_L: Angle of attack between the empennage lift lever
-    %               arm and the chord [rad]
-    %               Empennage.aoa_D: Angle of attack between the empennage drag lever
+    %               Empennage.aoa: Angle of attack between the empennage lever
     %               arm and the chord [rad]
     %               Empennage.aoa_T: Angle of attack between the thrust lift lever
     %               arm and the chord [rad]
+    %               Empennage.ac: Aerodynamic centre of the empennage [m]
+    %               Empennage.aoa_fuselage: Angle of attack between the empennage and
+    %               the fuselage center line [rad]
     %   Fin:        Fin.AR: Fin aspect ratio [-]
     %               Fin.S: Fin surface [m²]
     %               Fin.l: Fin lever arm [m]
+    %               Fin.ac: Aerodynamic centre of the fin [m]
     %   Flight:     Flight.rho: Density [kg/m³]
     %               Flight.V: Flight speed [m/s]
     %               Flight.Mach: Flight Mach number 
