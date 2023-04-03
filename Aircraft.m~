@@ -1,6 +1,7 @@
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 clear all;
+
 %% Figures settings
 clc
 close all
@@ -313,10 +314,10 @@ DM = M/20;
 MDM = M+DM;
 [speedDM,rhoDM] = speed(Altitude,MDM);
 V_cDM = speedDM;
-[bwDM,SwDM,CLw_alphaDM,CDw_alphaDM,CLwDM,CDwDM,DDM,cw_rootDM,cw_tipDM,cw_MACDM,xw_ACDM,yw_ACDM,Vw_fuelDM,sweepDM,cDM,alpha_L0DM] = wing(MDM,Altitude,0.95*MTOW,AOA);
-[S_tailDM,Sh_tailDM,Sv_tailDM,c_root_tailDM,c_tip_tailDM, dihedral_angleDM, l_armDM, CL_tailDM, Lambda_TDM,...
-    b_tailDM, bv_tailDM, bh_tailDM, W_tailDM, Cn_beta_AhDM, V_vfDM, hight_rootDM, hight_tipDM,...
-    rudder_chord_rootDM, rudder_chord_tipDM, rudder_chordDM, S_rudderDM] = v_tail(MTOW,...
+[bwDM,SwDM,~,~,~,~,D,cw_rootDM,cw_tipDM,cw_MACDM,xw_ACDM,yw_AC,Vw_fuel,sweepDM,c,alpha_L0] = wing(MDM,Altitude,0.95*MTOW,AOA);
+[S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_armDM, CL_tail, Lambda_T,...
+    b_tail, bv_tail, bh_tail, W_tailDM, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
+    rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder] = v_tail(MTOW,...
     2*b_el,cw_MACDM,sweepDM*180/pi,SwDM,l_f,l_cg,bwDM);
 [W_wingDM, W_fuselageDM, W_landing_gear_noseDM, W_landing_gear_mainDM, W_installed_engineDM, W_payloadDM, W_FSDM, W_fuelDM, W_systemDM, W_totDM, W_subsystDM, W_sensorsDM] = mass(MTOW,bwDM,cw_rootDM,cw_tipDM,l_armDM);
 WDM = [W_fuselageDM;W_wingDM;W_tailDM;W_installed_engineDM;W_landing_gear_noseDM;W_landing_gear_mainDM;W_payloadDM;W_fuelDM+W_FSDM;W_subsystDM;W_sensorsDM];
