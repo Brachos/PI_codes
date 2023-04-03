@@ -59,8 +59,8 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
-% a and b are the dimensions of the elliptical cross-section. V_f is the
-% volume of the fuselage. 
+% a and b are the dimensions of the elliptical cross-section. 
+% V_f is the volume of the fuselage. 
 %h_f_max = 2.888274e-01; %[m]
 %l_f = 7; %[m]
 
@@ -77,7 +77,7 @@ l_cg = cg_pos;
 % h_f_max   = height of airplaine fuselage (side view)
 % V_c       = cruise speed
 % cw_MAC    = mean aerodynamic chord
-% sweep = sweep angle of leading edge of the wings
+% sweep     = sweep angle of leading edge of the wings
 % Sw        = surface of the wings
 % cg_pos    = position of center of gravity
 % l_f       = fuselage length
@@ -85,13 +85,13 @@ l_cg = cg_pos;
 % bw        = wing span
 %%%%%%%%%% OUTPUTS %%%%%%%%%%%
 % S_tail            = total surface of the tail
-% Sh_tail               = horizontal surface of the tail
-% Sv_tail               = vertical surface of the tail
+% Sh_tail           = horizontal surface of the tail
+% Sv_tail           = vertical surface of the tail
 % c_root_tail       = chord at the root of the tail
 % c_tip_tail        = chord at the tip of the tail
 % b_tail            = total span of the tail along itself
-% bv_tail               = vertical span of the tail
-% bh_tail               = horizontal span of the tail
+% bv_tail           = vertical span of the tail
+% bh_tail           = horizontal span of the tail
 % dihedral_angle    = dihedral angle of the v-tail in RADIANS
 % l_arm             = length between wing ac and tail ac
 % Lambda_T          = sweep angle of the tail
@@ -262,25 +262,7 @@ ds_db = -0.276+3.06*Sv_tail/Sw*1/(1+cosd(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewas
 V_v = 1; %vertical tailplane airspeed
 V = 1; %airspeed
 n_v = (V_v/V)^2;
-CL_alphaT = 0.065; %[deg^-1]
-Cn_beta_T1 = V_vf*CL_alphaT*(1-ds_db);
-Cn_beta1 = Cn_beta_Ah + Cn_beta_T1;
-Cn_beta = Cn_beta_Ah+n_v*CL_alphaT*(Sv_tail*l_arm)/(Sw*bw)*(1-ds_db)*(V_v/V)^2;
-
-%% Directional stability (DATCOM method)
-ds_dba = -0.018; %approximated from Datcom graphs p.2841
-alpha_f = 3; %angle of attack [deg]
-ds_dbg = -0.6; %approximated from Datcom graphs p.2849
-Gamma = 1; %dihedral angle
-ds_dbt = -0.0125; %approximated from Datcom graphs p.2861
-theta = 1; %twist angle
-ds_dbWB = 0.0575; %approximated from Datcom graphs p.2877
-ds_db = ds_dba*alpha_f+ds_dbg/57.3*Gamma-ds_dbt*theta+ds_dbWB;
-l_p = l_arm;
-alpha_f = 3; %[deg]
-z_p = 0.3;
-Cn_beta_T2 = 2*CL_alphaT*ds_db*Sv_tail/Sw*(l_p*feet*cosd(alpha_f)+z_p*feet*sind(alpha_f))/bw*feet;
-Cn_beta2 = Cn_beta_Ah + Cn_beta_T2;
+CL_alphaT = 1.1/10 * sin(dihedral_angle);
 
 %% Directional stability (Elsevier)
 h_f = 0.5;
@@ -361,8 +343,9 @@ Cm_ih = 0;
 
 CL_heta = 0;
 Cm_heta = 0;
-
-%Lateral Derivatives
+% Lateral stability
+[Cn_beta, Cl_beta] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
+    Cn_beta_Ah, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f);
 
 %% Static margin
 kf = hn - hf;
