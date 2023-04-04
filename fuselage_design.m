@@ -4,10 +4,19 @@ m_fuel = fuel_weight();
 V_sensors=1;%[m^3]
 V_subsystems=1;%[m^3]
 V_mission=0.15;%[m^3]
-V_engine=(1.9/(3.2808*2))^2*pi*4/3.2808;
-% m_fuel=2221;%[kg]
+L_engine=4/3.2808;
+V_engine=(1.9/(3.2808*2))^2*pi*L_engine;
+
+D_air_inlet=0.57912+0.1;
+L_air_inlet_fuselage=0.65;
+V_air_inlet=2*pi*(D_air_inlet/2)^2*L_air_inlet_fuselage;
+b_end=D_air_inlet/2;
+a_end=b_end;
+
+m_fuel=fuel_weight();
 V_tot_fuel=m_fuel/800;%hypothesis: kerozen is used as the fuel.
 Vf_fuel=V_tot_fuel-Vw_fuel;
+
 %diameter of the wheels
 d_nose_wheel=(5.1*(MTOW*0.12)^0.302)*10^(-2);%[m]nose wheel supports 8 to 15% of the weight.
 w_nose_wheel=(0.36*(MTOW*0.12)^0.467)*10^(-2);
@@ -15,7 +24,8 @@ d_wheel=(5.1*(MTOW*(1-0.12)/2)^0.302)*10^(-2);
 w_wheel=(0.36*(MTOW*(1-0.12)/2)^0.467)*10^(-2);
 V_wheels=d_nose_wheel^2/4*pi*w_nose_wheel+2*d_wheel^2/4*pi*w_wheel;
 V_landing_gear=V_wheels+2*(0.115/2)^2*pi*(0.8-d_wheel)+(0.115/2)^2*pi*(0.8-d_nose_wheel);
-V_f_real=V_sensors+V_subsystems+V_mission+Vf_fuel+V_landing_gear+V_engine;
+
+V_f_real=V_sensors+V_subsystems+V_mission+Vf_fuel+V_landing_gear+V_engine+V_air_inlet;
 %%
 %first estimation using statistical relations.
 %MTOW and empty weight comparable to a jet trainer (resp. 3500kg and 2500kg).
@@ -82,7 +92,24 @@ L_f_val=L_f(i);
 Deq_val=Deq(i);
 % fprintf('The final length of the fuselage is equal to %d m \n',L_f(i));
 % fprintf('The final equivalent diameter of the fuselage is equal to %d m \n',Deq(i));
- fprintf('The final width of the rectangle is equal to %d m \n',w(i));
- fprintf('The final height is equal to %d m \n',h(i));
+fprintf('The final width of the rectangle is equal to %d m \n',w(i));
+fprintf('The final height is equal to %d m \n',h(i));
 % fprintf('The final dimensions of the elliptical cross-section equal to a=%d m and b=%d m\n',a(i),b(i));
+%%
+% x_fuel=4.4;
+% x_engine=L_f_val-L_engine;
+% x_end=L_f_val;
+% x_air_inlet=5.2128;
+% b_engine=b_end;
+% m_a=(a_end-a_val)/(x_end-x_fuel);
+% p_a=a_val-m_a*x_fuel;
+% m_b=(2*b_engine-2*b_val)/(x_engine-x_fuel);
+% p_b=2*b_val-m_b*x_fuel;
+% syms a_x(x) b_x(x)
+% a_x(x)=m_a*x+p_a;
+% b_x(x)=m_b*x+p_b;
+% double(1000*a_x(x_air_inlet))
+% double(1000*b_x(x_air_inlet)/2)
+% double(1000*a_x(5.62))
+% double(1000*b_x(5.62)/2)
 end
