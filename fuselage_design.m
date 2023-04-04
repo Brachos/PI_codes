@@ -1,8 +1,8 @@
 function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
-m_fuel = fuel_weight();
+
 %volume of the payload
-V_sensors=1;%[m^3]
-V_subsystems=1;%[m^3]
+V_sensors=0.5;%[m^3]
+V_subsystems=0.4;%[m^3]
 V_mission=0.15;%[m^3]
 L_engine=4/3.2808;
 V_engine=(1.9/(3.2808*2))^2*pi*L_engine;
@@ -89,6 +89,8 @@ end
 a_val=a(i);
 b_val=b(i);
 L_f_val=L_f(i);
+% Change the value of L_f after check of internal arrangement;
+
 Deq_val=Deq(i);
 % fprintf('The final length of the fuselage is equal to %d m \n',L_f(i));
 % fprintf('The final equivalent diameter of the fuselage is equal to %d m \n',Deq(i));
@@ -96,20 +98,18 @@ fprintf('The final width of the rectangle is equal to %d m \n',w(i));
 fprintf('The final height is equal to %d m \n',h(i));
 % fprintf('The final dimensions of the elliptical cross-section equal to a=%d m and b=%d m\n',a(i),b(i));
 %%
-% x_fuel=4.4;
-% x_engine=L_f_val-L_engine;
-% x_end=L_f_val;
-% x_air_inlet=5.2128;
-% b_engine=b_end;
-% m_a=(a_end-a_val)/(x_end-x_fuel);
-% p_a=a_val-m_a*x_fuel;
-% m_b=(2*b_engine-2*b_val)/(x_engine-x_fuel);
-% p_b=2*b_val-m_b*x_fuel;
-% syms a_x(x) b_x(x)
-% a_x(x)=m_a*x+p_a;
-% b_x(x)=m_b*x+p_b;
-% double(1000*a_x(x_air_inlet))
-% double(1000*b_x(x_air_inlet)/2)
-% double(1000*a_x(5.62))
-% double(1000*b_x(5.62)/2)
+x_fuel=4.4;
+x_engine=L_f_val-L_engine;
+x_end=L_f_val;
+x_air_inlet=5.2128;
+b_engine=b_end;
+m_a=(a_end-a_val)/(x_end-x_fuel);
+p_a=a_val-m_a*x_fuel;
+m_b=(2*b_engine-2*b_val)/(x_engine-x_fuel);
+p_b=2*b_val-m_b*x_fuel;
+syms a_x(x) b_x(x)
+a_x(x)=m_a*x+p_a;
+b_x(x)=m_b*x+p_b;
+double(1000*a_x(x_air_inlet))
+double(1000*b_x(x_air_inlet)/2)
 end
