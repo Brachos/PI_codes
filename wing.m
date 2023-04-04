@@ -72,13 +72,10 @@ x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR
 
 % Flaps design
 
-rho = 1.225;  % [kg/m^3] Air density at sea level
-mu = 1.79e-5; % [Ns/m^2] Air dynamic viscosity at sea level
-% Vs = 
-% Re = rho*Vs*(c_root+c_tip)/(2*mu);
-CL_max = 0.95*cos(sweep)*1.55*1.1;
-DCL_max = 0.2;
-S_flapped = S*DCL_max/(0.9*0.9*cosd(28.8));
+CL_max_base = 0.95*cos(sweep)*1.75*1.1 % Maximum CL without device
+CL_max = 2.5;
+DCL_max = CL_max - CL_max_base
+S_flapped = S*DCL_max/(1.3*0.9*cosd(10)) % 1.3 because slotted flap
 
 %% Computation of fuel volume in the wings
 

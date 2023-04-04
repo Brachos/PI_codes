@@ -33,30 +33,27 @@ pound = 2.20462262; % kg to lbs
 feet = 3.28; % m to ft
 inche = 39.37; % m to in
 
-MTOW = 4044;                     % aircraft mass at takeoff in [kg]
+MTOW = 4200;                     % aircraft mass at takeoff in [kg]
 Mach = 0.7;
 Altitude = 30000; % [ft]
-aofa = 0.75; % [°]
+AOA = 2.5; % [°]
 [speed,rho] = speed(Altitude,Mach);
 rho = 0.48;
 V_c = speed;
 cg_pos = 4.11;% ? revoir absolument !!!!
 l_cg = cg_pos;
 
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CD,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,Lambda_LE,c] = wing(Mach,...
-    Altitude,0.95*MTOW,aofa);
-[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
-[S_tail,S_h,S_v,c_root_tail,c_tip_tail, angle, l, C_L, Lambda_T, b_tail, b_v, b_h, W_tail] = v_tail(MTOW,...
-    D_f_max,2*b_el,V_c,cw_MAC,Lambda_LE,Sw,l_f,l_cg,bw);
-
+[bw,Sw,~,~,CLw,CD,~,~,~,cw_MAC,~,~,Vw_fuel,sweep,~] = wing(Mach,Altitude,0.95*MTOW,AOA);
+[~,~,b_el,l_f,~] = fuselage_design(MTOW,Vw_fuel);
+[~,Sh,~,~,~,~,~,CLt,~,~,~,~,~] = v_tail(MTOW,2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
+    
 
 rho = 1.225;                  % density at sea level in [kg/m^3]
 g = 9.80665;                  % gravity value in [m/s^2]
 % Sw = 11.76;                     % Reference surface in [m^2]
 AR = 7;                       % Aspect ratio
 h = 1.5;                     % height of the wing above the ground.
-% bw = 9.0700;                      % Wingspan in [m]
-CL_cruise = CLw+S_h/Sw*C_L;              % lift coefficient at cruise
+CL_cruise = CLw+Sh/Sw*CLt;              % lift coefficient at cruise
 mu = 0.03;                    % runway friction coefficient
 W = MTOW*g;                      % Aircraft weight at takeoff in [N]
 % CL_TO = 1.5;                 % Lift coefficient at take-off
