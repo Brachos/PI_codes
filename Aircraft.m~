@@ -120,7 +120,7 @@ vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
 xcg_v = 0.3*vMAC; %for the vertical tail [m]
 xac_v = 0.365*vMAC; 
 
-fprintf('Yaw coefficient derivative of the Aircraft whithout the fin: %.2dm\n',Cn_beta_Ah);
+disp('Yaw coefficient derivative (computed to determine the size of the fin): %.2dm\n',CN_tot);
 
 % Prints
 fprintf('Tail surface : %.2dft?\n',S_tail);
