@@ -334,7 +334,7 @@ Cm_ih = 0;
 CL_heta = 0;
 Cm_heta = 0;
 % Lateral stability
-[Cn_beta, Cl_beta] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
+[Cn_beta, Cl_beta, Cy_beta] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
     Cn_beta_Ah, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f);
 
 %% Static margin
