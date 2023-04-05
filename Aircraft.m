@@ -40,7 +40,7 @@ rho = 0.48;
 V_c = speed1;
 
 %% Wing
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0] = wing(M,Altitude,0.95*MTOW,AOA);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alpha] = wing(M,Altitude,0.95*MTOW,AOA);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -284,7 +284,7 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 [CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,CD_adot,...
     Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
-    de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg);
+    de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alpha,l_arm);
 % Lateral stability
 [Cn_beta, Cl_beta, Cy_beta] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
     Cn_beta_Ah, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f);

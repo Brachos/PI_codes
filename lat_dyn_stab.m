@@ -6,8 +6,8 @@ function [Cn_beta, Cl_beta, Cy_beta] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sf
 % sweep = sweep angle of c/4 of the wings
 % A     = aspect ratio of the wings
 
-alpha = 2.5*pi/180; % assuming an angle of attack of 3°
-beta = 2*pi/180; % assuming a sidewash angle of 2° (beta < 4°)
+alpha = 2.5*pi/180; % assuming an angle of attack of 3?
+beta = 2*pi/180; % assuming a sidewash angle of 2? (beta < 4?)
 
 %% Lateral Stability Derivatives
 % Cn_beta
@@ -30,14 +30,14 @@ Cy_beta_B = - CL_alpha_B;
 delta_Cy_beta_Gam = 0; %p.1582, no dihedral for wings
 Ki = -1; %p.1588 DATCOM
 Cy_beta_WB = Ki*Cy_beta_B*(BRA/Sw) + delta_Cy_beta_Gam; %p.1582
-k = 0.75; %p.1668, factor bv/2rs evaluated with bv = fin span and 2rs = fuselage depth in region of the v_tail (à revoir !!)
+k = 0.75; %p.1668, factor bv/2rs evaluated with bv = fin span and 2rs = fuselage depth in region of the v_tail (? revoir !!)
 sidewash_and_dyn_press_param = 0.724 + 3.06*(Sf/Sw)/(1 + cos(sweep)) + 0.4*(-1/2) + 0.009*A; %this param = (1+ds_db)*qv/q_inf, see p.1754
 t_c = 0.14; %see code wing.m, thickness to chord ratio
 clalpha = 6.28 + 4.7*t_c; % p.471
 clalphaM = clalpha/beta;
 kappa = clalphaM/(2*pi/beta);
 param_p549 = A/kappa*(beta + (tan(sweep))^2)^(1/2);
-fprintf("Param p.549 = %.2f.\n",param_p549); % = 2.07 for last check (à revoir !!)
+fprintf('Param p.549 = %.2f.\n',param_p549); % = 2.07 for last check (? revoir !!)
 CL_alpha_v = A*1.3;%p.503 + p.549
 delta_Cy_beta_VBH = -k*(CL_alpha_v)*sidewash_and_dyn_press_param*Sf/Sw; %p.1645
 Cy_beta = Cy_beta_WB + delta_Cy_beta_VBH; %p.1812
