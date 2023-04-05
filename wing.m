@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,sweep,c,alpha_L0,tap,cl_alpha] = wing(Mach,Altitude,Mass,AOA)
+=======
+function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,sweep,c,alpha_L0, tap, theta_tip] = wing(Mach,Altitude,Mass,AOA)
+>>>>>>> eb6c348ac9d0453434d989f51e83b5faf28f7f7a
 
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
