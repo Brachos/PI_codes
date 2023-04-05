@@ -40,11 +40,7 @@ rho = 0.48;
 V_c = speed1;
 
 %% Wing
-<<<<<<< HEAD
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alpha] = wing(M,Altitude,0.95*MTOW,AOA);
-=======
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0, theta_tip] = wing(M,Altitude,0.95*MTOW,AOA);
->>>>>>> eb6c348ac9d0453434d989f51e83b5faf28f7f7a
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alpha,theta_tip] = wing(M,Altitude,0.95*MTOW,AOA);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]

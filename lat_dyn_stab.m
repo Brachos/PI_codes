@@ -9,35 +9,32 @@ function [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta
 % Sf    = surface of the fin
 % Sw    = Surface of the wings
 
-<<<<<<< HEAD
 alpha = 2.5*pi/180; % assuming an angle of attack of 3?
 beta = 2*pi/180; % assuming a sidewash angle of 2? (beta < 4?)
-=======
+
 %Hypothesis 
 % - no wing dihedral angle
 % - no delfection angle for flaps
-% - cruise conditions with AOA of 2.5°
-% - sidewash angle of 2°
-alpha = 2.5*pi/180; % assuming an angle of attack of 2.5°
-beta = 2*pi/180; % assuming a sidewash angle of 2° (beta < 4°)
+% - cruise conditions with AOA of 2.5?
+% - sidewash angle of 2?
+alpha = 2.5*pi/180; % assuming an angle of attack of 2.5?
+beta = 2*pi/180; % assuming a sidewash angle of 2? (beta < 4?)
 alphaF = alpha; % assuming AOA of fuselage of alpha
->>>>>>> eb6c348ac9d0453434d989f51e83b5faf28f7f7a
 
 %% Lateral Stability Derivatives
 % Cn_beta -> p.1858, p.1626
 c1 = 1.1/10 * sin(dihedral_angle); %[deg^-1] see http://airfoiltools.com/airfoil/details?airfoil=naca0010-il
 % ds_db = -0.276 + 3.06*Sf/Sw*1/(1+cos(sweep)) + 0.4*Zw/d + 0.0009*A;
-SBs = a_el*l_f*0.7; %p.1626, side area of the body (à revoir !!)
-fprintf("Param for p.1633 : xm_lB = %.2f, lB2_SBs = %.2f, sqrt_h1_h2 = %.2f and h_w = %.2f.\n",...
-    cg/l_f, l_f^2/SBs, 1, a_el/b_el); %(à revoir !!)
+SBs = a_el*l_f*0.7; %p.1626, side area of the body (? revoir !!)
+fprintf('Param for p.1633 : xm_lB = %.2f, lB2_SBs = %.2f, sqrt_h1_h2 = %.2f and h_w = %.2f.\n',...
+    cg/l_f, l_f^2/SBs, 1, a_el/b_el); %(? revoir !!)
 KN = 0.0009; %p.1633
 nu = 0.000032436;
 Re_fus = V_c * l_f/nu;
-fprintf("Reynolds number for fuselage for graph p.1634 is %.5f.\n",Re_fus);
+fprintf('Reynolds number for fuselage for graph p.1634 is %.5f.\n',Re_fus);
 KRl = 1.52; %p.1634
 Cn_beta_WB = -KN*KRl * SBs/Sw * l_f/bw * 180/pi; %p.1626, per RADIANS
 
-<<<<<<< HEAD
 %% Cl_beta
 Cl_beta_CLw = -0.0005; % slide 51, course lateral stability
 Cl_beta = Cl_beta_CLw * CLw;
@@ -51,20 +48,17 @@ delta_Cy_beta_Gam = 0; %p.1582, no dihedral for wings
 Ki = -1; %p.1588 DATCOM
 Cy_beta_WB = Ki*Cy_beta_B*(BRA/Sw) + delta_Cy_beta_Gam; %p.1582
 k = 0.75; %p.1668, factor bv/2rs evaluated with bv = fin span and 2rs = fuselage depth in region of the v_tail (? revoir !!)
-=======
->>>>>>> eb6c348ac9d0453434d989f51e83b5faf28f7f7a
+
 sidewash_and_dyn_press_param = 0.724 + 3.06*(Sf/Sw)/(1 + cos(sweep)) + 0.4*(-1/2) + 0.009*A; %this param = (1+ds_db)*qv/q_inf, see p.1754
 t_c = 0.14; %see code wing.m, thickness to chord ratio
 clalpha = 6.28 + 4.7*t_c; % p.471
 clalphaM = clalpha/beta;
 kappa = clalphaM/(2*pi/beta);
 param_p549 = A/kappa*(beta + (tan(sweep))^2)^(1/2);
-<<<<<<< HEAD
+
 fprintf('Param p.549 = %.2f.\n',param_p549); % = 2.07 for last check (? revoir !!)
-=======
-fprintf("Param p.549 = %.2f.\n",param_p549); % = 2.07 for last check (à revoir !!)
-k = 0.75; %p.1668, factor bv/2rs evaluated with bv = fin span and 2rs = fuselage depth in region of the v_tail (à revoir !!)
->>>>>>> eb6c348ac9d0453434d989f51e83b5faf28f7f7a
+k = 0.75; %p.1668, factor bv/2rs evaluated with bv = fin span and 2rs = fuselage depth in region of the v_tail (? revoir !!)
+
 CL_alpha_v = A*1.3;%p.503 + p.549
 delta_Cy_beta_VWBH = -k*(CL_alpha_v)*sidewash_and_dyn_press_param*Sf/Sw; %p.1645, per RADIANS
 zp = bv_tail/4;
@@ -76,7 +70,7 @@ Clbeta_CL_Lambda = -0.001; %p.1563
 KM_Lambda = 1.22; %p.1564
 lf_param = x_w + sin(sweep)*bw/2;
 b_param = cos(sweep)*bw;
-fprintf("Param p.1625 lf_b = %.2f.\n", lf_param/b_param);
+fprintf('Param p.1625 lf_b = %.2f.\n', lf_param/b_param);
 Kf = 0.94; %p.1625
 Clbeta_CL_A = 0.0001; %p.1564
 zW = - a_el/2; %p.1603
@@ -100,7 +94,7 @@ Cy_beta = Cy_beta_WB + delta_Cy_beta_VWBH; %p.1812
 bbeta = sqrt(1-M^2);
 %--------- WING-------------
 Lambda_beta = atan(tan(sweep)/bbeta);%p.2532
-fprintf("WING : Param Lambda_beta p.2532 = %.3f and the other is %.3f.\n", Lambda_beta*180/pi, bbeta*A/kappa); %last check, 20.566 and 4.527 (à revoir !!)
+fprintf('WING : Param Lambda_beta p.2532 = %.3f and the other is %.3f.\n', Lambda_beta*180/pi, bbeta*A/kappa); %last check, 20.566 and 4.527 (? revoir !!)
 bClp_kappa = -0.28; %p.2550, with param from the "frpintf" just before
 % CLalpha_CL = CL_alpha_v%p.566 same as p.549
 CLalpha_CL0 = CL_alpha_v; %here assuming that there's no difference for CL_alpha with CL
@@ -110,7 +104,7 @@ S_wet = Sw - cw_root*b_el;
 R_LS = 1.2; %p.749
 
 Re_ell = cw_MAC*V_c/nu;
-fprintf("WING : Reynolds at 30000ft is %.5f.\n",Re_ell); %last check 7e6
+fprintf('WING : Reynolds at 30000ft is %.5f.\n',Re_ell); %last check 7e6
 Cf = 0.0031; %p.747
 CD0 = Cf*(1 + L*t_c + 100*t_c^4)*R_LS*S_wet/Sw; %p.723
 delta_Clp_drag = Clp_Cdl_CL2 * CLw^2 - 1/8 * CD0; %p.2533
@@ -118,7 +112,7 @@ Cl_p_WB = bClp_kappa * kappa/bbeta * CL_alpha_v/CLalpha_CL0 * 1 + delta_Clp_drag
 %---------HORIZONTAL TAIL------------
 t_c_tail = 0.10;
 Lambda_beta_tail = atan(tand(Lambda_T)/bbeta);%p.2532
-fprintf("TAIL : Param Lambda_beta p.2532 = %.3f and the other is %.3f.\n", Lambda_beta_tail*180/pi, bbeta*AR_T/kappa); %last check, 20.566 and 4.527 (à revoir !!)
+fprintf('TAIL : Param Lambda_beta p.2532 = %.3f and the other is %.3f.\n', Lambda_beta_tail*180/pi, bbeta*AR_T/kappa); %last check, 20.566 and 4.527 (? revoir !!)
 bClp_kappa_tail = -0.2; %p.2550, with param from the "frpintf" just before
 % CLalpha_CL = CL_alpha_v%p.566 same as p.549
 CLalpha_CL0_tail = c1; %here assuming that there's no difference for CL_alpha with CL
@@ -128,7 +122,7 @@ S_wet_tail = Sh_tail;
 R_LS = 1.2; %p.749
 nu = 0.000032436;
 Re_ell_tail = c_MAC_tail*V_c/nu;
-fprintf("TAIL : Reynolds at 30000ft is %.5f.\n",Re_ell_tail); %last check 5e6
+fprintf('TAIL : Reynolds at 30000ft is %.5f.\n',Re_ell_tail); %last check 5e6
 Cf_tail = 0.00325; %p.747
 CD0_tail = Cf_tail*(1 + L*t_c_tail + 100*t_c_tail^4)*R_LS*S_wet_tail/Sh_tail; %p.723
 delta_Clp_drag_tail = Clp_Cdl_CL2_tail * CL_tail^2 - 1/8 * CD0_tail; %p.2533
@@ -155,7 +149,7 @@ Cy_p_WB = K*(Cyp_CL_CL0_M*CLw) + delta_Cyp_gamma; %p.2522
 Cy_p = Cy_p_WB + 2*z/bw * (z - zp)/bw * delta_Cy_beta_VWBH; %p.2776
 
 %% Cn_r -> p.2805, p.2715, p.2593
-fprintf("Param x_bar/c_bar for graph p.2597 is %.2f.\n", x_bar/cw_MAC);
+fprintf('Param x_bar/c_bar for graph p.2597 is %.2f.\n', x_bar/cw_MAC);
 Cnr_CL2 = 0.01; %see Figure p.2597
 Cnr_CD0 = -0.33; %p.2598
 Cn_r_WB = Cnr_CL2 * CLw^2 + Cnr_CD0 * CD0; %p.2593
@@ -175,7 +169,7 @@ Cy_r_WB = 2.6*0; %p.2459 (very bad approx), neglected
 Cy_r = Cy_r_WB - 2/bw * (lp*cos(alpha) + zp*sin(alpha))*delta_Cy_beta_VWBH; %p.2799
 
 %% Cy_beta_dot -> p.2825
-fprintf("Param for p.2830 zV_b is %.3f and the one for sigma_beta_WB is %.3f.\n", (zp*cos(alphaF) - lp*(sin(alphaF)))/(b_param/2), (a_el/b_el)/2/(b_param/2));
+fprintf('Param for p.2830 zV_b is %.3f and the one for sigma_beta_WB is %.3f.\n', (zp*cos(alphaF) - lp*(sin(alphaF)))/(b_param/2), (a_el/b_el)/2/(b_param/2));
 sigma_beta_alpha = (-0.002-0.055)/2; %p.2840 + p.2841, mean value
 sigma_beta_theta = (-0.0055 - 0.05)/2; %p.2860 + p.2861, same param of p.2830 (mean value)
 sigma_beta_WB = (0.204 - 0.186)/2; %p.2880 + p.2881
