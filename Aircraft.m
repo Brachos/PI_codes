@@ -292,8 +292,17 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg);
 % Lateral stability
-[Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
-    V_vf, dihedral_angle, CLw, l_f, cw_root, V_f, cgT(1), c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w);
+[Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot...
+    , Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
+    Sv_tail, Sw, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f, cgT(1), ...
+    c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T,...
+    Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w);
+T = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot,'RowNames',{'For alpha = 2.5 deg and beta = 2 deg'});
+% writetable(T, 'lateralStab.xls');
+% Cn_beta -- Per RADIANS
+% Cl_beta -- Per RADIANS
+% Clp seems good
+
 
 %% Static margin
 kf = hn - hf;

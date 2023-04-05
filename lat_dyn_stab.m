@@ -1,4 +1,4 @@
-function [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sf, ...
+function [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sf, ...
     Sw, Vf, dihedral_angle, CLw, l_f, cw_root, VB, cg, ...
     c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w)
 % a_el  = lentgh of long dimension of elliptic fuselage
@@ -14,8 +14,9 @@ function [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r] = lat_d
 % - no delfection angle for flaps
 % - cruise conditions with AOA of 2.5°
 % - sidewash angle of 2°
-alpha = 2.5*pi/180; % assuming an angle of attack of 3°
+alpha = 2.5*pi/180; % assuming an angle of attack of 2.5°
 beta = 2*pi/180; % assuming a sidewash angle of 2° (beta < 4°)
+alphaF = alpha; % assuming AOA of fuselage of alpha
 
 %% Lateral Stability Derivatives
 % Cn_beta -> p.1858, p.1626
@@ -29,7 +30,7 @@ nu = 0.000032436;
 Re_fus = V_c * l_f/nu;
 fprintf("Reynolds number for fuselage for graph p.1634 is %.5f.\n",Re_fus);
 KRl = 1.52; %p.1634
-Cn_beta_WB = -KN*KRl * SBs/Sw * l_f/bw; %p.1626
+Cn_beta_WB = -KN*KRl * SBs/Sw * l_f/bw * 180/pi; %p.1626, per RADIANS
 
 sidewash_and_dyn_press_param = 0.724 + 3.06*(Sf/Sw)/(1 + cos(sweep)) + 0.4*(-1/2) + 0.009*A; %this param = (1+ds_db)*qv/q_inf, see p.1754
 t_c = 0.14; %see code wing.m, thickness to chord ratio
@@ -40,10 +41,10 @@ param_p549 = A/kappa*(beta + (tan(sweep))^2)^(1/2);
 fprintf("Param p.549 = %.2f.\n",param_p549); % = 2.07 for last check (à revoir !!)
 k = 0.75; %p.1668, factor bv/2rs evaluated with bv = fin span and 2rs = fuselage depth in region of the v_tail (à revoir !!)
 CL_alpha_v = A*1.3;%p.503 + p.549
-delta_Cy_beta_VWBH = -k*(CL_alpha_v)*sidewash_and_dyn_press_param*Sf/Sw; %p.1645
+delta_Cy_beta_VWBH = -k*(CL_alpha_v)*sidewash_and_dyn_press_param*Sf/Sw; %p.1645, per RADIANS
 zp = bv_tail/4;
 lp = l_f - cg - 3/4*c_root_tail + zp/tand(Lambda_T); %see graph p.2777
-Cn_beta = Cn_beta_WB + delta_Cy_beta_VWBH*lp/bw; %p.1858
+Cn_beta = Cn_beta_WB + delta_Cy_beta_VWBH*lp/bw; %p.1858, per RADIANS
 
 %% Cl_beta -> p.1845, p.1602
 Clbeta_CL_Lambda = -0.001; %p.1563
@@ -57,7 +58,7 @@ zW = - a_el/2; %p.1603
 d = sqrt(a_el/2 * b_el/2 * pi/0.7854);
 delta_Clbeta_zW = 1.2*sqrt(A)/57.3 * (zW/b_param)*(2*d/b_param); %p.1603
 delta_Clbeta_theta_tansweep = 0.0000325; %see figure p.1566
-Cl_beta_WB = CLw *(Clbeta_CL_Lambda * KM_Lambda * Kf + Clbeta_CL_A) + 0 + delta_Clbeta_zW + theta_tip*tan(sweep)*delta_Clbeta_theta_tansweep; %p.1602
+Cl_beta_WB = (CLw *(Clbeta_CL_Lambda * KM_Lambda * Kf + Clbeta_CL_A) + 0 + delta_Clbeta_zW + theta_tip*180/pi*tan(sweep)*delta_Clbeta_theta_tansweep)*180/pi; %p.1602, per RADIANS
 Cl_beta = Cl_beta_WB + delta_Cy_beta_VWBH*(zp*cos(alpha) - lp*sin(alpha))/bw; %p.1845
 
 %% Cy_beta -> p.1512, p.1582
@@ -148,9 +149,21 @@ Cl_r = Cl_r_WB - 2/bw^2 * (lp*cos(alpha) + zp*sin(alpha))*(zp*cos(alpha) - lp*si
 Cy_r_WB = 2.6*0; %p.2459 (very bad approx), neglected
 Cy_r = Cy_r_WB - 2/bw * (lp*cos(alpha) + zp*sin(alpha))*delta_Cy_beta_VWBH; %p.2799
 
-%% Cn_xi 
-% Cl_xi =
-% Cy_xi =
+%% Cy_beta_dot -> p.2825
+fprintf("Param for p.2830 zV_b is %.3f and the one for sigma_beta_WB is %.3f.\n", (zp*cos(alphaF) - lp*(sin(alphaF)))/(b_param/2), (a_el/b_el)/2/(b_param/2));
+sigma_beta_alpha = (-0.002-0.055)/2; %p.2840 + p.2841, mean value
+sigma_beta_theta = (-0.0055 - 0.05)/2; %p.2860 + p.2861, same param of p.2830 (mean value)
+sigma_beta_WB = (0.204 - 0.186)/2; %p.2880 + p.2881
+sigma_beta = sigma_beta_alpha *alphaF*180/pi + 0 - sigma_beta_theta*theta_tip*180/pi + sigma_beta_WB; %p.2826
+Cy_beta_dot = 2*c1 * sigma_beta *Sf/Sw * (lp*cos(alphaF) + zp*sin(alphaF))/bw; %p.2825
+
+
+%% Cl_beta_dot -> p.2886
+Cl_beta_dot = Cy_beta_dot * (zp*cos(alphaF) - lp*sin(alphaF))/bw;
+
+%% Cn_beta_dot -> p.2888
+Cn_beta_dot = - Cy_beta_dot * (lp*cos(alphaF) + zp*sin(alphaF))/bw;
+
 % Cn_zeta =
 % Cl_zeta =
 % Cy_zeta =
