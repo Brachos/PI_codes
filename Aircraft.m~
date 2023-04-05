@@ -40,9 +40,8 @@ rho = 0.48;
 V_c = speed1;
 
 %% Wing
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip] = wing(M,Altitude,0.95*MTOW,AOA);
-disp('Sw =');
-disp(Sw);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alpha,theta_tip] = wing(M,Altitude,0.95*MTOW,AOA);
+
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
 % CLw_alpha = wing 3D lift coefficient slope [1/rad]
@@ -123,7 +122,6 @@ vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
 xcg_v = 0.3*vMAC; %for the vertical tail [m]
 xac_v = 0.365*vMAC; 
 
-cl_alphaT = (1.4-1)/(0+4)*180/pi; % Approximated [1/rad]
 syms y
 c_tail    = (1-2*y/b_tail)*c_root_tail + (2*y/b_tail)*c_tip_tail;
 c_MAC_tail = double(2/S_tail*int(c_tail^2,0,b_tail/2));
@@ -289,10 +287,10 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 % Longitudinal stability
-[CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,CD_adot,...
-    Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
-    a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
-    de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alphaw,cl_alphaT,l_arm);
+% [CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,CD_adot,...
+%     Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
+%     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
+%     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alpha,l_arm);
 % Lateral stability
 [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot...
     , Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...

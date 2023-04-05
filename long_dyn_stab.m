@@ -1,7 +1,7 @@
 function [CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,...
     CD_adot,Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,de_dAOA1,...
-    static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alphaw,l_arm)
+    static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alphaw,cl_alphaT,l_arm)
 % Parameters
 % beta = sqrt(1-M^2);
 % k = cl_alpha/(2*pi);
@@ -72,12 +72,13 @@ x_ACwingDM = K1*(xac_crDM-K2);
 dxac_dm = (x_ACwingDM-x_ACwing)/DM;
 
     % CL_q
-% Computing CL_alpha with M=0
+Computing CL_alpha with M=0
 M0=0;
 beta = sqrt(1-M0^2);
-k = cl_alphaw/(2*pi);
-CL0_alpha_wing = 2*pi*ARw/(2+sqrt(((ARw^2*beta^2)/k^2)*(1+tan(sweep)^2/beta^2)+4));
-k = cl_alphaT/(2*pi);
+k1 = cl_alphaw/(2*pi);
+CL0_alpha_wing = 2*pi*ARw/(2+sqrt(((ARw^2*beta^2)/k1^2)*(1+tan(sweep)^2/beta^2)+4));
+CL_qw = (ARw+2*cos(sweep))/ARw*
+
 [bw0,Sw0,CLw_alpha0,~,~,~,~,~,~,~,~,~,~,~,~,~] = wing(0,Altitude,0.95*MTOW,AOA);
 [~,Sh_tail0,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~] = v_tail(MTOW,2*b_el,...
 cw_MACDM,sweepDM*180/pi,SwDM,l_f,l_cg,bwDM);
