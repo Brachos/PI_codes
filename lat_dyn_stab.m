@@ -1,6 +1,6 @@
 function [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sf, ...
     Sw, Vf, dihedral_angle, CLw, l_f, cw_root, VB, cg, ...
-    c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w)
+    c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA)
 % a_el  = lentgh of long dimension of elliptic fuselage
 % b_el  = lentgh of short dimension of elliptic fuselage
 % bw    = wing span
@@ -14,7 +14,7 @@ function [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta
 % - no delfection angle for flaps
 % - cruise conditions with AOA of 2.5°
 % - sidewash angle of 2°
-alpha = 2.5*pi/180; % assuming an angle of attack of 2.5°
+alpha = AOA*pi/180; % assuming an angle of attack of 2.5°
 beta = 2*pi/180; % assuming a sidewash angle of 2° (beta < 4°)
 alphaF = alpha; % assuming AOA of fuselage of alpha
 
@@ -165,5 +165,5 @@ Cl_beta_dot = Cy_beta_dot * (zp*cos(alphaF) - lp*sin(alphaF))/bw;
 Cn_beta_dot = - Cy_beta_dot * (lp*cos(alphaF) + zp*sin(alphaF))/bw;
 
 % Cn_zeta =
-% Cl_zeta =
+% Cl_zeta , see slide 66 course 07
 % Cy_zeta =

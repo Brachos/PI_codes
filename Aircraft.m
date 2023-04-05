@@ -296,13 +296,16 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
     , Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
     Sv_tail, Sw, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f, cgT(1), ...
     c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T,...
-    Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w);
+    Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA);
 T = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot,'RowNames',{'For alpha = 2.5 deg and beta = 2 deg'});
-% writetable(T, 'lateralStab.xls');
-% Cn_beta -- Per RADIANS
-% Cl_beta -- Per RADIANS
-% Clp seems good
+writetable(T, 'lateralStab.xls');
+% Cn_beta -- Per RADIANS (// Nv in slides)
+% Cl_beta -- Per RADIANS (// Lv in slides)
+% Clp seems good         (// Lp in slides)
 
+% Criterium for stability, eq. see slide 34 course 02 Flight dynamic :
+% x_dot = A*x + B*u, and eigen value of A should have a negative real part
+% to ensure stability !
 
 %% Static margin
 kf = hn - hf;
