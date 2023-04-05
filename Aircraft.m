@@ -40,7 +40,7 @@ rho = 0.48;
 V_c = speed1;
 
 %% Wing
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0] = wing(M,Altitude,0.95*MTOW,AOA);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0, theta_tip] = wing(M,Altitude,0.95*MTOW,AOA);
 
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
@@ -50,10 +50,11 @@ V_c = speed1;
 % D         = Drag [N]
 % cw_root   = wing root chord [m]
 % cw_tip    = wing tip chord [m]
-% cw_AC     = wing Mean Aerodynamic Chord (MAC) [m]
+% cw_MAC     = wing Mean Aerodynamic Chord (MAC) [m]
 % xw_AC     = wing x-coordinate of the Aerodynamic Centre [m]
 % yw_AC     = wing y-coordinate of the Aerodynamic Centre [m]
 % Vw_fuel   = fuel volume that can be stocked in the wings [l]
+% theta_tip = twist angle in RADIANS
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
@@ -69,7 +70,7 @@ cg_pos = 4.51;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
-    rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder] = v_tail(MTOW,...
+    rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_T] = v_tail(MTOW,...
     2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
 %%%%%%%%% ENTRY %%%%%%%%%%
 % MTOW      = Mass of airplane
@@ -101,6 +102,7 @@ l_cg = cg_pos;
 % rudder_chord      = proportion of the chord used for rudder
 % rudder_chord_root = rudder chord at the root of the rudder
 % rudder_chord_tip  = rudder chord at the tip of the rudder
+% AR_T              = aspect ratio of the tail
 
 S_T = Sh_tail; %Tailplane area
 l_T = l_arm; %Tail moment arm
@@ -119,6 +121,10 @@ vTR = c_tip_tail/c_root_tail; %vertical tail taper ratio
 vMAC = vrc*(2/3)*((1+vTR+vTR^2)/(1+vTR)); %vertical Tail Main Aerodynamic Chord
 xcg_v = 0.3*vMAC; %for the vertical tail [m]
 xac_v = 0.365*vMAC; 
+
+syms y
+c_tail    = (1-2*y/b_tail)*c_root_tail + (2*y/b_tail)*c_tip_tail;
+c_MAC_tail = double(2/S_tail*int(c_tail^2,0,b_tail/2));
 
 fprintf('Yaw coefficient derivative of the Aircraft whithout the fin: %.2dm\n',Cn_beta_Ah);
 
@@ -355,8 +361,8 @@ Cm_ih = 0;
 CL_heta = 0;
 Cm_heta = 0;
 % Lateral stability
-[Cn_beta, Cl_beta, Cy_beta] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
-    Cn_beta_Ah, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f);
+[Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r] = lat_dyn_stab(a_el, b_el, bw, sweep, A, Sv_tail, Sw,...
+    V_vf, dihedral_angle, CLw, l_f, cw_root, V_f, cgT(1), c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w);
 
 %% Static margin
 kf = hn - hf;
