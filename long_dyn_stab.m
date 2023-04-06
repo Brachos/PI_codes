@@ -77,7 +77,7 @@ M0=0;
 beta = sqrt(1-M0^2);
 k1 = cl_alphaw/(2*pi);
 CL0_alpha_wing = 2*pi*ARw/(2+sqrt(((ARw^2*beta^2)/k1^2)*(1+tan(sweep)^2/beta^2)+4));
-CL_qw = (ARw+2*cos(sweep))/ARw*
+% CL_qw = (ARw+2*cos(sweep))/ARw*
 
 [bw0,Sw0,CLw_alpha0,~,~,~,~,~,~,~,~,~,~,~,~,~] = wing(0,Altitude,0.95*MTOW,AOA);
 [~,Sh_tail0,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~] = v_tail(MTOW,2*b_el,...

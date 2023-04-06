@@ -40,7 +40,7 @@ rho = 0.48;
 V_c = speed1;
 
 %% Wing
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip] = wing(M,Altitude,0.95*MTOW,AOA);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip, A] = wing(M,Altitude,0.95*MTOW,AOA);
 disp('Sw =');
 disp(Sw);
 % bw        = wing span [m]
@@ -61,13 +61,13 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel);
-% a and b are the dimensions of the elliptical cross-section. 
+% a and b are the dimensions of the elliptical cross-section, semi-axes, a = long axe horizontal, b = small axe vertical. 
 % V_f is the volume of the fuselage. 
 %h_f_max = 2.888274e-01; %[m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 4.51;% ? revoir absolument !!!!
+cg_pos = 4.39;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
@@ -276,7 +276,7 @@ static_stability2 = (h2 - h0)-V_hT*a1/a*(1-(de_dAOA)); %in the case of the empty
 Z_w = b_el; %vertical distance from the wing root quarter chord to the fuselage center line (positive downward)
 av_area = pi*a_el*b_el; %average fuselage cross section area
 d = sqrt(av_area/0.7854);
-A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
+% A = 7; %aspect ratio of the wing ? (=3.5 for the tail)
 ds_db = -0.276+3.06*Sv_tail/Sw*1/(1+cosd(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewash derivative w.r.t. the yaw angle
 V_v = 1; %vertical tailplane airspeed
 V = 1; %airspeed
@@ -289,10 +289,10 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 % Longitudinal stability
-[CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,CD_adot,...
-    Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
-    a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
-    de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alphaw,cl_alphaT,l_arm);
+% [CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,CD_adot,...
+%     Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
+%     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
+%     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alphaw,cl_alphaT,l_arm);
 % Lateral stability
 [Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot...
     , Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
@@ -308,7 +308,46 @@ writetable(T, 'lateralStab.xls');
 % Criterium for stability, eq. see slide 34 course 02 Flight dynamic :
 % x_dot = A*x + B*u, and eigen value of A should have a negative real part
 % to ensure stability !
+% Ci-dessous à revoir !! 
+Ixz = 2952;               % Inertia product kg m^2
+Ix = 33898;               % Roll moment of inertia kg m^2
+Iz = 189496;              % Yaw moment of inertia kg m^2
+V0 = V_c;
 
+Yv = Cy_beta *(1/2*rho*V0*Sw);
+Yp = Cy_p *(1/2*rho*V0*Sw*bw);
+Yr = Cy_r *(1/2*rho*V0*Sw*bw);
+% Yksi=-0.0159*(1/2*rho*V0^2*Sw);
+% Yzeta=0.1193*(1/2*rho*V0^2*Sw);
+Lv = Cl_beta *(1/2*rho*V0*Sw*bw);
+Lp = Cl_p *(1/2*rho*V0*Sw*bw^2);
+Lr = Cl_r *(1/2*rho*V0*Sw*bw^2);
+% Lksi=0.0454*(1/2*rho*V0^2*Sw*bw);
+% Lzeta=0.0086*(1/2*rho*V0^2*Sw*bw);
+Nv = Cn_beta *(1/2*rho*V0*Sw*bw);
+Np = Cn_p *(1/2*rho*V0*Sw*bw^2);
+Nr = Cn_r *(1/2*rho*V0*Sw*bw^2);
+% Nksi=0.00084*(1/2*rho*V0^2*Sw*bw);
+% Nzeta=-0.0741*(1/2*rho*V0^2*Sw*bw);
+gamae = 0;
+thetae = AOA*pi/180 + gamae;
+We = V0*sin(thetae);
+Ue = V0*cos(thetae);
+g = 9.81; %[m/s^2]
+
+M_lat=[MTOW 0 0 0 0;0 Ix -Ixz 0 0;0 -Ixz Iz 0 0;0 0 0 1 0;0 0 0 0 1];
+K=[-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae);
+        -Lv -Lp -Lr 0 0; -Nv -Np -Nr 0 0;0 -1 0 0 0;0 0 -1 0 0];
+% F=[Yksi Yzeta;Lksi Lzeta;Nksi Nzeta;0 0;0 0];
+
+A_lat = -M_lat\K;
+% B_lat = M_lat\F;
+eig_lat = eig(A_lat);
+if real(eig_lat) <= 0
+    LAT_STAB = 'OK';
+else 
+    LAT_STAB = 'NOT OK';
+end
 %% Static margin
 kf = hn - hf;
 fprintf('Static margin fuel no payload is about : %.2dm\n',kf);
@@ -391,19 +430,19 @@ x2 = (hn-0.2)*cw_MAC+x_wLE;
 % xlim([0 0.2]);
 % ylim([0 2]);
 % 
-% % tail plot
-% p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
-% p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
-% figure
-% plot([0 0 c_root_tail tand(Lambda_T)*bv_tail;...
-%     c_root_tail tand(Lambda_T)*bv_tail tand(Lambda_T)*bv_tail+c_tip_tail tand(Lambda_T)*bv_tail+c_tip_tail],...
-%     [0 0 0 bv_tail; 0 bv_tail bv_tail bv_tail],'color',[0 0.4470 0.7410]);
-% hold on
-% plot([0 0;-bh_tail/2/3 bh_tail/2/3]-0.2,[0 0; bv_tail/3 bv_tail/3]+0.5,'color',[0.8500 0.3250 0.0980])
-% hold on 
-% plot([p1 p1 p2; ...
-%     p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
-%     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
-% title('V-tail geometry')
-% axis equal
+% tail plot
+p1 = tand(Lambda_T)*hight_root + rudder_chord_root/rudder_chord - rudder_chord_root;
+p2 = tand(Lambda_T)*hight_tip + rudder_chord_tip/rudder_chord - rudder_chord_tip;
+figure
+plot([0 0 c_root_tail tand(Lambda_T)*bv_tail;...
+    c_root_tail tand(Lambda_T)*bv_tail tand(Lambda_T)*bv_tail+c_tip_tail tand(Lambda_T)*bv_tail+c_tip_tail],...
+    [0 0 0 bv_tail; 0 bv_tail bv_tail bv_tail],'color',[0 0.4470 0.7410]);
+hold on
+plot([0 0;-bh_tail/2/3 bh_tail/2/3]-0.2,[0 0; bv_tail/3 bv_tail/3]+0.5,'color',[0.8500 0.3250 0.0980])
+hold on 
+plot([p1 p1 p2; ...
+    p1 + rudder_chord_root p2 p2+rudder_chord_tip],...
+    [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
+title('V-tail geometry')
+axis equal
 %% 
