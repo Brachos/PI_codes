@@ -34,13 +34,15 @@ MTOW = 4243; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx -->
 
 %% Speed
 [speed1,rho] = speed(Altitude,M);
-% disp('rho is');
-% disp(rho);
+disp('rho is');
+disp(rho);
 rho = 0.48;
 V_c = speed1;
 
 %% Wing
 [bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip, A] = wing(M,Altitude,0.95*MTOW,AOA);
+disp('xw_AC =');
+disp(xw_AC);
 % bw        = wing span [m]
 % Sw        = surface of the wings [m?]
 % CLw_alpha = wing 3D lift coefficient slope [1/rad]
@@ -291,8 +293,8 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 % Longitudinal stability
 [Long_derivatives] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
-    de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
-    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,Xw*feet,cw_root*feet,xw_AC*feet);
+    de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,...
+    cl_alphaw,cl_alphaT,l_arm*feet,V_hT,cw_MAC*feet,Xw*feet,cw_root*feet,xw_AC*feet);
 writetable(Long_derivatives, 'longitudinalStab.txt');
 
 % Z = L (normal force), X = D (axial force), M (pitching moment)
@@ -301,7 +303,6 @@ Ix = 33898;               % Roll moment of inertia kg m^2
 Iy = 165669;              % Pitch moment of inertia in kg m^2
 Iz = 189496;              % Yaw moment of inertia kg m^2
 
-V0 = V_c;
 gamae = 0;
 thetae = AOA*pi/180 + gamae;
 We = V0*sin(thetae);
@@ -328,14 +329,12 @@ K_long = [-Xu -Xw -(Xq-MTOW*We) MTOW*cos(thetae);-Zu -Zw -(Zq+MTOW*Ue) MTOW*sin(
 A_long = -K_long/M_long;
 
 eig_long = eig(A_long);
-disp('eigen values of A_long :');
-disp(eig_long);
 if real(eig_long) <= 0
     LONG_STAB = 'OK';
 else 
     LONG_STAB = 'NOT OK';
 end
-fprintf('Longitudinal stability is %s\n',LONG_STAB);
+fprintf('Longitudinal stability is %c',
 
 % Lateral stability
 [Lat_derivatives] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
@@ -351,6 +350,8 @@ writetable(Lat_derivatives, 'lateralStab.txt');
 % x_dot = A*x + B*u, and eigen value of A should have a negative real part
 % to ensure stability !
 % Ci-dessous ? revoir !! 
+
+V0 = V_c;
 
 Yv = Lat_derivatives.Cy_beta *(1/2*rho*V0*Sw);
 Yp = Lat_derivatives.Cy_p *(1/2*rho*V0*Sw*bw);
@@ -376,14 +377,12 @@ K_lat = [-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae)
 A_lat = -M_lat\K_lat;
 % B_lat = M_lat\F;
 eig_lat = eig(A_lat);
-disp('eigen values of A_lat :');
-disp(eig_lat);
 if real(eig_lat) <= 0
     LAT_STAB = 'OK';
 else 
     LAT_STAB = 'NOT OK';
 end
-fprintf('Lateral stability is %s\n',LAT_STAB);
+
 %% Lateral Modes of vibrations, according to M.V. COOK
 % Spiral mode -> p.216
 Ts = -V_c*(Lat_derivatives.Cl_beta*Lat_derivatives.Cn_p - Lat_derivatives.Cl_p*Lat_derivatives.Cn_beta)/(g*(Lat_derivatives.Cl_r*Lat_derivatives.Cn_beta - Lat_derivatives.Cl_beta*Lat_derivatives.Cn_r));

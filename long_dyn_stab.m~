@@ -1,6 +1,7 @@
-function [T] = long_dyn_stab(MTOW,...
+function [CL_alpha,CD_alpha,Cm_alpha,CL_u,CD_u,Cm_u,CL_q,CD_q,Cm_q,CL_adot,...
+    CD_adot,Cm_adot,CL_df,Cm_df,CL_ih,Cm_ih,CL_heta,Cm_heta] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,de_dAOA1,...
-    static_stability,AOA,alpha_L0,l_f,l_cg,sweep,cl_alphaw,...
+    static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,cl_alphaw,cl_alphaT,...
     l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC)
 % Parameters
 
@@ -11,6 +12,7 @@ CL_alphaWB = K_WB*CLw_alpha;
 heta_H = 0.95; %[0.9;1]
 
     % CD_alpha
+V0 = 0;
 CL = MTOW*9.81/(1/2*rho*V_c^2*Sw);
 CD = 0.017+CL^2/(0.8*pi*ARw);
 e = 0.8;
@@ -48,8 +50,8 @@ CD_DM = 0.017+CL_DM^2/(0.8*pi*ARw);
 CD_Cm = (CD_DM+CD_M)/DM;
 
     % Cm_u
-% param1 = tan(sweep)/sqrt(1-M^2);
-% param2 = tan(sweepDM)/sqrt(1-MDM^2);
+param1 = tan(sweep)/sqrt(1-M^2);
+param2 = tan(sweepDM)/sqrt(1-MDM^2);
 K1 = 1.4;
 K2 = 0.25;
 xac_cr = 0.45;
@@ -127,7 +129,7 @@ Cm_ih = -CL_alphaT*V_hT;
 CL_heta = CL_df*Sh_tail/Sw;
 Cm_heta = -CL_df*V_hT;
 
-T = table(CL_alpha, CD_alpha, Cm_alpha, CL_u, CD_u, Cm_u, CL_q, CD_q, Cm_q, CL_adot, CD_adot, Cm_adot, CL_df, Cm_df, CL_ih, Cm_ih, CL_heta, Cm_heta,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
+T = table(CL_alpha, CD_alpha, Cm_alpha, CL_u, CD_u, Cm_u, CL_q, CD_q, Cm_q, CL_adot, CD_adot, Cm_adot, CL_df, Cm_df, CL_if, Cm_'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
 
 
 end
