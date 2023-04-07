@@ -10,7 +10,7 @@ function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
 %Cette m?thode est it?rative et s'appuie sur les ?quilibre statiques
 %et dynamique.
 
-show_prints = 0;
+show_prints = 1;
 %% Figures settings
 feature('DefaultCharacterSet','UTF8');
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
@@ -42,7 +42,7 @@ feet = 3.28; % m to ft
 % consult? plusieur sources statistiques, ce cefficient sera fix? ? une
 % premi?re valeur de 0.6;
 V_h_bar = 0.6;
-l_arm = 3.5;
+l_arm = l_f - l_cg - 0.75;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*Sw/l_arm;
 
@@ -89,7 +89,7 @@ W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(a
 % disp(W_tail_v);
 Sw = Sw/feet^2;
 
-
+W_tail = (W_tail_v + W_tail_h)/pound;
 %% control surfaces
 %Based on Raymer tab
 span_covered = 0.7; %proportion of total span
@@ -106,10 +106,9 @@ if show_prints
     fprintf('Tail horizontal span : %.2dm\n',b_h);
     fprintf('Tail vertical span : %.2dm\n',b_v);
     fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
-    fprintf('Surface ratio : %.2d\n',S_h/S);
+    fprintf('Surface ratio : %.2d\n',S_h/Sw);
     fprintf('Rudder surface : %.2d\n', S_rudder);
     fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
     fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
     fprintf('Total weight of the tail : %.2dkg\n', W_tail);
 end
-W_tail = (W_tail_v + W_tail_h)/pound;

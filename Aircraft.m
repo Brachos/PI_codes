@@ -89,7 +89,7 @@ l_cg = cg_pos;
 % S_tail            = total surface of the tail
 % Sh_tail           = horizontal surface of the tail
 % Sv_tail           = vertical surface of the tail
-% S_ruuder          = Surface of the rudder
+% S_rudder          = Surface of the rudder
 % c_root_tail       = chord at the root of the tail
 % c_tip_tail        = chord at the tip of the tail
 % b_tail            = total span of the tail along itself
@@ -316,7 +316,7 @@ V0 = V_c;
 % to ensure stability !
 
 eig_lat = eig(A_lat);
-if real(eig_lat) <= 0
+if real(round(eig_lat,10)) <= 0
     LAT_STAB = 'OK';
 else 
     LAT_STAB = 'NOT OK';
