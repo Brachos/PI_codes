@@ -303,7 +303,7 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
     c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T,...
     Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA);
 T = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot,'RowNames',{'For alpha = 2.5 deg and beta = 2 deg'});
-%writetable(T, 'lateralStab.xls');
+writetable(T, 'lateralStab.xls');
 % Cn_beta -- Per RADIANS (// Nv in slides)
 % Cl_beta -- Per RADIANS (// Lv in slides)
 % Clp seems good         (// Lp in slides)
@@ -314,6 +314,7 @@ T = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta
 % Ci-dessous ? revoir !! 
 Ixz = 2952;               % Inertia product kg m^2
 Ix = 33898;               % Roll moment of inertia kg m^2
+Iy = 165669;              % Pitch moment of inertia in kg m^2
 Iz = 189496;              % Yaw moment of inertia kg m^2
 V0 = V_c;
 
@@ -338,8 +339,8 @@ We = V0*sin(thetae);
 Ue = V0*cos(thetae);
 g = 9.81; %[m/s^2]
 
-M_lat=[MTOW 0 0 0 0;0 Ix -Ixz 0 0;0 -Ixz Iz 0 0;0 0 0 1 0;0 0 0 0 1];
-K=[-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae);
+M_lat = [MTOW 0 0 0 0;0 Ix -Ixz 0 0;0 -Ixz Iz 0 0;0 0 0 1 0;0 0 0 0 1];
+K = [-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae);
         -Lv -Lp -Lr 0 0; -Nv -Np -Nr 0 0;0 -1 0 0 0;0 0 -1 0 0];
 % F=[Yksi Yzeta;Lksi Lzeta;Nksi Nzeta;0 0;0 0];
 
@@ -351,6 +352,15 @@ if real(eig_lat) <= 0
 else 
     LAT_STAB = 'NOT OK';
 end
+
+%% Lateral Modes of vibrations, according to M.V. COOK
+% Spiral mode -> p.216
+Ts = -V_c*(Cl_beta*Cn_p - Cl_p*Cn_beta)/(g*(Cl_r*Cn_beta - Cl_beta*Cn_r));
+% Roll subsidence -> p.214
+Tr = -(Ix*Iz - Ixz^2)/(Iz*Lp + Ixz*Np);
+% Dutch roll -> p.217
+omega_d = sqrt(Nr*Yv/(Iz*MTOW) + V_c*Nv/Iz);
+damp_ratio = - (Nr/Iz + Yv/MTOW)*1/(2*omega_d);
 %% Static margin
 kf = hn - hf;
 fprintf('Static margin fuel no payload is about : %.2dm\n',kf);

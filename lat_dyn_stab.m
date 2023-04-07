@@ -214,4 +214,8 @@ Cn_beta_dot = - Cy_beta_dot * (lp*cos(alphaF) + zp*sin(alphaF))/bw;
 
 % Cn_zeta =
 % Cl_zeta , see slide 66 course 07
-% Cy_zeta =
+%% Cy_zeta -> slide 64 course 07
+% K_prime = %p.1910
+% neta = %p.2029
+% Kb = %slide 65
+% Cy_zeta = c1*alphadeltacL_alphadeltacl * alphadeltacl*K_prime * Kb * Sf/Sw; %slide 64
