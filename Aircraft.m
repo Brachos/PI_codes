@@ -297,13 +297,11 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,feet,pound,...
     cl_alphaw,cl_alphaT,l_arm,V_hT,cw_MAC,Xw,cw_root);
 % Lateral stability
-[Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot...
-    , Cl_beta_dot, Cn_beta_dot] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
+[Lat_derivatives] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
     Sv_tail, Sw, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f, cgT(1), ...
     c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T,...
     Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA);
-T = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot,'RowNames',{'For alpha = 2.5 deg and beta = 2 deg'});
-writetable(T, 'lateralStab.xls');
+writetable(Lat_derivatives, 'lateralStab.xls');
 % Cn_beta -- Per RADIANS (// Nv in slides)
 % Cl_beta -- Per RADIANS (// Lv in slides)
 % Clp seems good         (// Lp in slides)
@@ -318,19 +316,19 @@ Iy = 165669;              % Pitch moment of inertia in kg m^2
 Iz = 189496;              % Yaw moment of inertia kg m^2
 V0 = V_c;
 
-Yv = Cy_beta *(1/2*rho*V0*Sw);
-Yp = Cy_p *(1/2*rho*V0*Sw*bw);
-Yr = Cy_r *(1/2*rho*V0*Sw*bw);
+Yv = Lat_derivatives.Cy_beta *(1/2*rho*V0*Sw);
+Yp = Lat_derivatives.Cy_p *(1/2*rho*V0*Sw*bw);
+Yr = Lat_derivatives.Cy_r *(1/2*rho*V0*Sw*bw);
 % Yksi=-0.0159*(1/2*rho*V0^2*Sw);
 % Yzeta=0.1193*(1/2*rho*V0^2*Sw);
-Lv = Cl_beta *(1/2*rho*V0*Sw*bw);
-Lp = Cl_p *(1/2*rho*V0*Sw*bw^2);
-Lr = Cl_r *(1/2*rho*V0*Sw*bw^2);
+Lv = Lat_derivatives.Cl_beta *(1/2*rho*V0*Sw*bw);
+Lp = Lat_derivatives.Cl_p *(1/2*rho*V0*Sw*bw^2);
+Lr = Lat_derivatives.Cl_r *(1/2*rho*V0*Sw*bw^2);
 % Lksi=0.0454*(1/2*rho*V0^2*Sw*bw);
 % Lzeta=0.0086*(1/2*rho*V0^2*Sw*bw);
-Nv = Cn_beta *(1/2*rho*V0*Sw*bw);
-Np = Cn_p *(1/2*rho*V0*Sw*bw^2);
-Nr = Cn_r *(1/2*rho*V0*Sw*bw^2);
+Nv = Lat_derivatives.Cn_beta *(1/2*rho*V0*Sw*bw);
+Np = Lat_derivatives.Cn_p *(1/2*rho*V0*Sw*bw^2);
+Nr = Lat_derivatives.Cn_r *(1/2*rho*V0*Sw*bw^2);
 % Nksi=0.00084*(1/2*rho*V0^2*Sw*bw);
 % Nzeta=-0.0741*(1/2*rho*V0^2*Sw*bw);
 gamae = 0;
@@ -355,12 +353,13 @@ end
 
 %% Lateral Modes of vibrations, according to M.V. COOK
 % Spiral mode -> p.216
-Ts = -V_c*(Cl_beta*Cn_p - Cl_p*Cn_beta)/(g*(Cl_r*Cn_beta - Cl_beta*Cn_r));
+Ts = -V_c*(Lat_derivatives.Cl_beta*Lat_derivatives.Cn_p - Lat_derivatives.Cl_p*Lat_derivatives.Cn_beta)/(g*(Lat_derivatives.Cl_r*Lat_derivatives.Cn_beta - Lat_derivatives.Cl_beta*Lat_derivatives.Cn_r));
 % Roll subsidence -> p.214
 Tr = -(Ix*Iz - Ixz^2)/(Iz*Lp + Ixz*Np);
 % Dutch roll -> p.217
 omega_d = sqrt(Nr*Yv/(Iz*MTOW) + V_c*Nv/Iz);
 damp_ratio = - (Nr/Iz + Yv/MTOW)*1/(2*omega_d);
+Lat_modes = table(Ts, Tr, omega_d, damp_ratio);
 %% Static margin
 kf = hn - hf;
 fprintf('Static margin fuel no payload is about : %.2dm\n',kf);
