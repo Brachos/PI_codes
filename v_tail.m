@@ -10,7 +10,7 @@ function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
 %Cette m?thode est it?rative et s'appuie sur les ?quilibre statiques
 %et dynamique.
 
-
+show_prints = 0;
 %% Figures settings
 feature('DefaultCharacterSet','UTF8');
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
@@ -52,7 +52,9 @@ S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/Sw/bw; %à revoir !!
 CN_beta_i = -0.017; %because high wings
 CN_tot = CN_beta_f + CN_beta_i;
-fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
+if show_prints
+    fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
+end
 % voir graphique slide 57
 V_v = 0.1; % avec V_v = S_F*l_F/(S*b)
 l_F = l_arm; % first guess, distance between cg and fin ac
@@ -98,14 +100,16 @@ rudder_chord_root = interp1([0 b_v],[c_root_tail c_tip_tail],hight_root)*rudder_
 rudder_chord_tip = interp1([0 b_v],[c_root_tail c_tip_tail],hight_tip)*rudder_chord;
 S_rudder = (rudder_chord_root + rudder_chord_tip)*(hight_tip-hight_root)/2;
 %% Prints
-% fprintf('Tail surface : %.2dft?\n',S_tail);
-% fprintf('Tail span : %.2dm\n',b_tail);
-% fprintf('Tail horizontal span : %.2dm\n',b_h);
-% fprintf('Tail vertical span : %.2dm\n',b_v);
-% fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
-% fprintf('Surface ratio : %.2d\n',S_h/S);
-% fprintf('Rudder surface : %.2d\n', S_rudder);
-% fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
-% fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
+if show_prints
+    fprintf('Tail surface : %.2dft?\n',S_tail);
+    fprintf('Tail span : %.2dm\n',b_tail);
+    fprintf('Tail horizontal span : %.2dm\n',b_h);
+    fprintf('Tail vertical span : %.2dm\n',b_v);
+    fprintf('Dihedral angle (degrees) : %.2d\n',angle*180/pi);
+    fprintf('Surface ratio : %.2d\n',S_h/S);
+    fprintf('Rudder surface : %.2d\n', S_rudder);
+    fprintf('Weight of the horizontal tail : %.2dkg\n', W_tail_h/pound);
+    fprintf('Weight of the vertical tail : %.2dkg\n', W_tail_v/pound);
+    fprintf('Total weight of the tail : %.2dkg\n', W_tail);
+end
 W_tail = (W_tail_v + W_tail_h)/pound;
-% fprintf('Total weight of the tail : %.2dkg\n', W_tail);

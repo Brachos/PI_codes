@@ -1,6 +1,6 @@
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
-clear all;
+clear
 %% Figures settings
 clc
 close all
@@ -73,7 +73,7 @@ l_cg = cg_pos;
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_T] = v_tail(MTOW,...
     2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
-%%%%%%%%% ENTRY %%%%%%%%%%
+%%%%%%%%% INPUTS %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
 % h_f_max   = height of airplaine fuselage (side view)
@@ -89,6 +89,7 @@ l_cg = cg_pos;
 % S_tail            = total surface of the tail
 % Sh_tail           = horizontal surface of the tail
 % Sv_tail           = vertical surface of the tail
+% S_ruuder          = Surface of the rudder
 % c_root_tail       = chord at the root of the tail
 % c_tip_tail        = chord at the tip of the tail
 % b_tail            = total span of the tail along itself
