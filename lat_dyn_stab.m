@@ -1,6 +1,6 @@
-function [T] = lat_dyn_stab(a_El, b_El, bw, sweep, A, Sf, ...
+function [Lat_der, Lat_dim_deriv, Lat_modes, A_lat] = lat_dyn_stab(a_El, b_El, bw, sweep, A, Sf, ...
     Sw, Vf, dihedral_angle, CLw, l_f, cw_root, VB, cg, ...
-    c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA)
+    c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T, Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA, Inertia, rho, MTOW)
 %----------INPUTS-----------
 % a_el           = lentgh of long semi-dimension of elliptic fuselage
 % b_el           = lentgh of short semi-dimension of elliptic fuselage
@@ -220,6 +220,51 @@ Cn_beta_dot = - Cy_beta_dot * (lp*cos(alphaF) + zp*sin(alphaF))/bw;
 % Kb = %slide 65
 % Cy_zeta = c1*alphadeltacL_alphadeltacl * alphadeltacl*K_prime * Kb * Sf/Sw; %slide 64
 
-%% Table for lateral stability
-T = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
+% Table for lateral stability derivatives
+Lat_der = table(Cn_beta, Cl_beta, Cy_beta, Cn_p, Cl_p, Cy_p, Cn_r, Cl_r, Cy_r, Cy_beta_dot, Cl_beta_dot, Cn_beta_dot,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
 
+% Computation of A matrix
+V0 = V_c;
+Ix = Inertia.Ix;
+Iy = Inertia.Iy;
+Iz = Inertia.Iz;
+Ixz = Inertia.Ixz;
+
+Yv = Cy_beta *(1/2*rho*V0*Sw);
+Yp = Cy_p *(1/2*rho*V0*Sw*bw);
+Yr = Cy_r *(1/2*rho*V0*Sw*bw);
+% Yksi=-0.0159*(1/2*rho*V0^2*Sw);
+% Yzeta=0.1193*(1/2*rho*V0^2*Sw);
+Lv = Cl_beta *(1/2*rho*V0*Sw*bw);
+Lp = Cl_p *(1/2*rho*V0*Sw*bw^2);
+Lr = Cl_r *(1/2*rho*V0*Sw*bw^2);
+% Lksi=0.0454*(1/2*rho*V0^2*Sw*bw);
+% Lzeta=0.0086*(1/2*rho*V0^2*Sw*bw);
+Nv = Cn_beta *(1/2*rho*V0*Sw*bw);
+Np = Cn_p *(1/2*rho*V0*Sw*bw^2);
+Nr = Cn_r *(1/2*rho*V0*Sw*bw^2);
+% Nksi=0.00084*(1/2*rho*V0^2*Sw*bw);
+% Nzeta=-0.0741*(1/2*rho*V0^2*Sw*bw);
+Lat_dim_deriv = table(Yv, Yp, Yr, Lv, Lp, Lr, Nv, Np, Nr);
+gamae = 0;
+thetae = AOA*pi/180 + gamae;
+We = V0*sin(thetae);
+Ue = V0*cos(thetae);
+g = 9.81; %[m/s^2]
+
+M_lat = [MTOW 0 0 0 0;0 Ix -Ixz 0 0;0 -Ixz Iz 0 0;0 0 0 1 0;0 0 0 0 1];
+K = [-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae);
+        -Lv -Lp -Lr 0 0; -Nv -Np -Nr 0 0;0 -1 0 0 0;0 0 -1 0 0];
+% F=[Yksi Yzeta;Lksi Lzeta;Nksi Nzeta;0 0;0 0];
+
+A_lat = -M_lat\K;
+
+%% Lateral Modes of vibrations, according to M.V. COOK
+% Spiral mode -> p.216
+Ts = -V_c*(Cl_beta*Cn_p - Cl_p*Cn_beta)/(g*(Cl_r*Cn_beta - Cl_beta*Cn_r));
+% Roll subsidence -> p.214
+Tr = -(Ix*Iz - Ixz^2)/(Iz*Lp + Ixz*Np);
+% Dutch roll -> p.217
+omega_d = sqrt(Nr*Yv/(Iz*MTOW) + V_c*Nv/Iz);
+damp_ratio = - (Nr/Iz + Yv/MTOW)*1/(2*omega_d);
+Lat_modes = table(Ts, Tr, omega_d, damp_ratio);

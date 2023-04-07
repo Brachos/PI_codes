@@ -110,6 +110,6 @@ p_b=2*b_val-m_b*x_fuel;
 syms a_x(x) b_x(x)
 a_x(x)=m_a*x+p_a;
 b_x(x)=m_b*x+p_b;
-double(1000*a_x(x_air_inlet))
-double(1000*b_x(x_air_inlet)/2)
+double(1000*a_x(x_air_inlet));
+double(1000*b_x(x_air_inlet)/2);
 end

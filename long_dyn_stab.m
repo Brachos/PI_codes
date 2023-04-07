@@ -3,7 +3,7 @@ function [T] = long_dyn_stab(MTOW,...
     static_stability,AOA,alpha_L0,l_f,l_cg,sweep,cl_alphaw,...
     l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC)
 % Parameters
-
+show_prints = 0;
     % CL_alpha
 d = (2*a_el+2*b_el)/2;
 K_WB = 1-0.25*(d/bw)^2+0.025*(d/bw);
@@ -45,11 +45,23 @@ WDM = [W_fuselageDM;W_wingDM;W_tailDM;W_installed_engineDM;W_landing_gear_noseDM
 MTOWDM = sum(WDM);
 CL_DM = MTOWDM*9.81/(1/2*rhoDM*V_cDM^2*SwDM);
 CD_DM = 0.017+CL_DM^2/(0.8*pi*ARw);
-CD_Cm = (CD_DM+CD_M)/DM;
 
+% if show_prints
+%     fprintf('CD_DM = %.2f.\n',CD_DM);
+%     fprintf('CD_M = %.2f.\n',CD_M);
+%     fprintf('DM = %.2f.\n',DM);
+% end
+CD_Cm = (CD_DM+CD_M)/DM;
     % Cm_u
 % param1 = tan(sweep)/sqrt(1-M^2);
 % param2 = tan(sweepDM)/sqrt(1-MDM^2);
+% if show_prints
+%     fprintf('Param1 slide 31 = %.2f.\n',param1);
+% end
+% if show_prints
+%     fprintf('Param2 slide 31 = %.2f.\n',param2);
+% end
+
 K1 = 1.4;
 K2 = 0.25;
 xac_cr = 0.45;
