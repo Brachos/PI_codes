@@ -30,7 +30,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4243; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4343; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed1,rho] = speed(Altitude,M);
@@ -159,13 +159,13 @@ xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
-xcg_p = 5; %for the payload
+xcg_p = 5.2; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
-xcg_sub = 6; %for the subsystems
+xcg_sub = 6.2; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 3.05; %position of the wings
+x_w = 2.88; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4; %for the fuel
+xcg_fuel = 4.1; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
