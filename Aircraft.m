@@ -268,7 +268,7 @@ X_ac = X_c4 + D_ac*sqrt(Sw);
 wAC = xw_AC + x_wLE; %Position of the wing aerodynamic center from nose
 hAC = xac_h + x_hLE;
 vAC = xac_v + x_vLE;
-Xw = h*cw_MAC-xw_AC;
+X_w = h*cw_MAC-xw_AC;
 
 %% Pitching moment equation
 static_stability = h-(h0+V_hT*a1/a*(1-(de_dAOA1))); %in the case of the MTOW dCm/dalpha
@@ -302,45 +302,8 @@ V0 = V_c;
 [Long_derivatives] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
-    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,Xw*feet,cw_root*feet,xw_AC*feet);
+    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia);
 writetable(Long_derivatives, 'longitudinalStab.txt');
-
-% Z = L (normal force), X = D (axial force), M (pitching moment)
-
-gamae = 0;
-thetae = AOA*pi/180 + gamae;
-We = V0*sin(thetae);
-Ue = V0*cos(thetae);
-g = 9.81; %[m/s^2]
-
-Zu = Long_derivatives.CL_u *(1/2*rho*V0*Sw);
-Zw = Long_derivatives.CL_alpha *(1/2*rho*V0*Sw);
-Zq = Long_derivatives.CL_q *(1/2*rho*V0*Sw*cw_MAC);
-Zwdot = Long_derivatives.CL_adot *(1/2*rho*Sw*cw_MAC);
-
-Xu = Long_derivatives.CD_u *(1/2*rho*V0*Sw);
-Xw = Long_derivatives.CD_alpha *(1/2*rho*V0*Sw);
-Xq = Long_derivatives.CD_q *(1/2*rho*V0*Sw*cw_MAC);
-Xwdot = Long_derivatives.CD_adot *(1/2*rho*Sw*cw_MAC);
-
-Mu = Long_derivatives.Cm_u *(1/2*rho*V0*Sw*cw_MAC);
-Mw = Long_derivatives.Cm_alpha *(1/2*rho*V0*Sw*cw_MAC);
-Mq = Long_derivatives.Cm_q *(1/2*rho*V0*Sw*cw_MAC^2);
-Mwdot = Long_derivatives.Cm_adot *(1/2*rho*Sw*cw_MAC^2);
-
-M_long = [MTOW -Xwdot 0 0;0 (MTOW-Zwdot) 0 0;0 -Mwdot Iy 0;0 0 0 1];
-K_long = [-Xu -Xw -(Xq-MTOW*We) MTOW*cos(thetae);-Zu -Zw -(Zq+MTOW*Ue) MTOW*sin(thetae);-Mu -Mw -Mq 0;0 0 -1 0];
-A_long = -K_long/M_long;
-
-eig_long = eig(A_long);
-disp('eigen values of A_long :');
-disp(eig_long);
-if real(eig_long) <= 0
-    LONG_STAB = 'OK';
-else 
-    LONG_STAB = 'NOT OK';
-end
-fprintf('Longitudinal stability is %s\n',LONG_STAB);
 
 % Lateral stability
 [LatDeriv, LatDimDeriv, LatModes, A_lat] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...

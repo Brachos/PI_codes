@@ -1,7 +1,7 @@
-function [T] = long_dyn_stab(MTOW,...
+function [Long_derivatives] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,de_dAOA1,...
     static_stability,AOA,alpha_L0,l_f,l_cg,sweep,cl_alphaw,...
-    l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC)
+    l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC,Inertia)
 % Parameters
 show_prints = 0;
     % CL_alpha
@@ -118,17 +118,22 @@ CL = CL_alpha*(AOA*pi/180-alpha_L0); % Correct value
 % fprintf('Lift computed with dynamic stability = %.2f.\n',L);
 
 CL_u = M^2/(1-M^2)*CL;
-CD_u = M*CD_Cm;
-Cm_u = -CL*dxac_dm;
+CD_u = M*CD_Cm; % ? revoir (trop grand, doit ~0)
+% CD_u = 0;
+Cm_u = -CL*dxac_dm; % =0
 
 % fprintf('CL_qw = %.4d and CL_qH = %.4d\n',CL_qw, CL_qH);
-CL_q = CL_qw + CL_qH;
+CL_q = CL_qw + CL_qH; % Peut ?tre deux fois plus grand sans probl?me
+% CL_q = 12;
 CD_q = 0; %usually neglected
-Cm_q = Cm_qw + Cm_qH;
+Cm_q = Cm_qw + Cm_qH; % pas assez grand ? priori
+% Cm_q = 20;
 
-CL_adot = CL_adotw + CL_adotH;
+CL_adot = CL_adotw + CL_adotH; % valeur cheloue (-9)
+% CL_adot = 1.2;
 CD_adot = 0; %usually neglegted
-Cm_adot = Cm_adotw + Cm_adotH;
+Cm_adot = Cm_adotw + Cm_adotH; % peut ?tre plus grand
+% Cm_adot = -12;
 
 CL_df = cl_df*beta*CLw_alpha/cl_alphaw*alphaCL_cl*Kb;
 Cm_df = 0; %neglected
@@ -139,8 +144,63 @@ Cm_ih = -CL_alphaT*V_hT;
 CL_heta = CL_df*Sh_tail/Sw;
 Cm_heta = -CL_df*V_hT;
 
-T = table(CL_alpha, CD_alpha, Cm_alpha, CL_u, CD_u, Cm_u, CL_q, CD_q, Cm_q, CL_adot, CD_adot, Cm_adot, CL_df, Cm_df, CL_ih, Cm_ih, CL_heta, Cm_heta,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
+Long_derivatives = table(CL_alpha, CD_alpha, Cm_alpha, CL_u, CD_u, Cm_u, CL_q, CD_q, Cm_q, CL_adot, CD_adot, Cm_adot, CL_df, Cm_df, CL_ih, Cm_ih, CL_heta, Cm_heta,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
 
+gamae = 0;
+thetae = AOA*pi/180 + gamae;
+We = V_c*sin(thetae);
+Ue = V_c*cos(thetae);
+alphae = atan(We/Ue);
+g = 9.81; %[m/s^2]
+V0 = V_c;
+
+% Z = L (normal force), X = D (axial force), M (pitching moment)
+
+Cz_e = -(Long_derivatives.CL_alpha*cos(alphae) + Long_derivatives.CD_alpha*sin(alphae));
+Xu = (Long_derivatives.CL_u*sin(thetae) - Long_derivatives.CD_u*cos(thetae));
+Xw = 1/cos(alphae)*(-Cz_e + Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
+Xq = (Long_derivatives.CL_q*sin(alphae) - Long_derivatives.CD_q*cos(alphae));
+Xwdot = 1/cos(alphae)*(Long_derivatives.CL_adot*sin(alphae) - Long_derivatives.CD_adot*cos(alphae));
+
+Cx_e = (Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
+Zu = -(Long_derivatives.CL_u*cos(alphae) + Long_derivatives.CD_u*sin(alphae));
+Zw = 1/cos(alphae)*(Cx_e - Long_derivatives.CL_alpha*cos(alphae) - Long_derivatives.CD_alpha*sin(alphae));
+Zq = -(Long_derivatives.CL_q*cos(alphae) + Long_derivatives.CD_q*sin(alphae));
+Zwdot = -1/cos(alphae)*(Long_derivatives.CL_adot*cos(alphae) + Long_derivatives.CD_adot*sin(alphae));
+
+Mu = Long_derivatives.Cm_u;
+Mq = Long_derivatives.Cm_q;
+Mw = 1/cos(alphae)*Long_derivatives.Cm_alpha;
+Mwdot = 1/cos(alphae)*Long_derivatives.Cm_adot;
+
+Z_u = Zu * (1/2*rho*V0*Sw);
+Z_w = Zw * (1/2*rho*V0*Sw);
+Z_q = Zq * (1/2*rho*V0*Sw*cw_MAC);
+Z_wdot = Zwdot * (1/2*rho*Sw*cw_MAC);
+
+X_u = Xu * (1/2*rho*V0*Sw);
+X_w = Xw * (1/2*rho*V0*Sw);
+X_q = Xq * (1/2*rho*V0*Sw*cw_MAC);
+X_wdot = Xwdot * (1/2*rho*Sw*cw_MAC);
+
+M_u = Mu * (1/2*rho*V0*Sw*cw_MAC);
+M_w = Mw * (1/2*rho*V0*Sw*cw_MAC);
+M_q = Mq * (1/2*rho*V0*Sw*cw_MAC^2);
+M_wdot = Mwdot * (1/2*rho*Sw*cw_MAC^2);
+
+M_long = [MTOW -X_wdot 0 0;0 (MTOW-Z_wdot) 0 0;0 -M_wdot Inertia.Iy 0;0 0 0 1];
+K_long = [-X_u -X_w -(X_q-MTOW*We) MTOW*g*cos(thetae);-Z_u -Z_w -(Z_q+MTOW*Ue) MTOW*g*sin(thetae);-M_u -M_w -M_q 0;0 0 -1 0];
+A_long = -M_long\K_long;
+
+eig_long = eig(A_long);
+disp('eigen values of A_long :');
+disp(eig_long);
+if real(round(eig_long,10)) <= 0
+    LONG_STAB = 'OK';
+else 
+    LONG_STAB = 'NOT OK';
+end
+fprintf('Longitudinal stability is %s\n',LONG_STAB);
 
 end
 
