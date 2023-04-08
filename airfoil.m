@@ -1,6 +1,6 @@
 Mass = 4327; % [kg]
 
-[span,~,~,~,~,~,~,c_root,c_tip,~,~,~,~,~,~,~,~] = wing(0.7,30000,Mass,2.5)
+[span,~,~,~,~,~,~,c_root,c_tip,~,~,~,~,~,~,~,~] = wing(0.7,30000,0.915*Mass,2.5);
 
 % c_root = 1.5056;
 % c_tip  = 0.3*c_root;
@@ -80,6 +80,6 @@ xlim([-1 2]);
 ylim([-4 4]);
 zlim([-0.2 0.2]);
 
-% writematrix(curve_root,'coord_root.txt');
-% writematrix(curve_tip_left,'coord_tip_left.txt');
-% writematrix(curve_tip_right,'coord_tip_right.txt');
+writematrix(curve_root,'coord_root.txt');
+writematrix(curve_tip_left,'coord_tip_left.txt');
+writematrix(curve_tip_right,'coord_tip_right.txt');

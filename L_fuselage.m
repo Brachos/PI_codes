@@ -54,3 +54,8 @@ m = L/9.81;
 syms y
 c    = (1-2*y/1.42)*c_root_in + (2*y/1.42)*c_tip;
 c_AC = double(2/6.8*int(c^2,0,1.42/2));
+
+lw = 0.3266;
+lt = 3.5244;
+prp = lt/lw;
+prp/(prp+1)*100
