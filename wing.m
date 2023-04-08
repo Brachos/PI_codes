@@ -26,20 +26,21 @@ AR  = 7;   % Aspect ratio = [5.5-8] for ultralight aircraft
            % Aspect ratio = [7-9] for light aircraft
 tap = 0.3; % Tapper ratio (lambda = c_tip/c_root) best value
                                            
-AOA = AOA*pi/180; % AOA where the drag is minimum or cl/cd is maximum 
+AOA = AOA*pi/180; % AOA at root
 
 %% Computation of wings properties
 % Sweep angle
-% MD    = 0.725;
-% MObj  = 0.8;
-% sweep = acos(MD/MObj);
 sweep  = 15*pi/180; % [rad] Sweep angle 
 beta   = sqrt(1-Mach^2);
 L_beta = atan(tan(sweep)/beta); % Angle to graphically find x_AC
 
 % CL and CD
-cl_alpha  = (0.76-0.27)*180/(pi*(1+2)); % [1/rad]
-alpha_l0  = -(0.83/cl_alpha - 1.5*pi/180);
+    % cl_alpha  = (0.76-0.27)*180/(pi*(1+2)); % [1/rad] SC(2)-0714 (graph S23)
+    % alpha_l0  = -(0.83/cl_alpha - 1.5*pi/180); % [rad]
+    % cl_alpha  = (1.1175-0.3462)/(2+2)*180/pi; % [1/rad] SC(2)-0714 with XFoil
+    % alpha_l0  = -0.7867/cl_alpha; % [rad]
+cl_alpha  = (0.6751-0.1041)/(2+1.99)*180/pi; % [1/rad] SC(2)-0614 with XFoil
+alpha_l0  = -0.3971/cl_alpha; % [rad]
 alpha_01  = -0.23;     % See L5 - P30
 theta_tip = -2*pi/180; % [rad] Twist angle
 alpha_L0  = alpha_l0 + alpha_01*theta_tip;
@@ -68,17 +69,14 @@ c_AC = double(2/S*int(c^2,0,b/2));
 
 % Aerodynamic center
 y_AC    = double(2/S*int(c*y,0,b/2));
-x_AC    = 0.365*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR 
+x_AC    = 0.26*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR 
 
 % Flaps design
 
-rho = 1.225;  % [kg/m^3] Air density at sea level
-mu = 1.79e-5; % [Ns/m^2] Air dynamic viscosity at sea level
-% Vs = 
-% Re = rho*Vs*(c_root+c_tip)/(2*mu);
-CL_max = 0.95*cos(sweep)*1.55*1.1;
-DCL_max = 0.2;
-S_flapped = S*DCL_max/(0.9*0.9*cosd(28.8));
+CL_max_base = 0.95*cos(sweep)*1.75*1.1; % Maximum CL without device
+CL_max = 2.5;
+DCL_max = CL_max - CL_max_base;
+S_flapped = S*DCL_max/(1.3*0.9*cosd(10)); % 1.3 because slotted flap
 
 %% Computation of fuel volume in the wings
 
