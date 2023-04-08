@@ -1,9 +1,13 @@
-c_root = 1.4888;
-c_tip  = 0.3*c_root;
-span   = 6.7740;
+Mass = 4327; % [kg]
+
+[span,~,~,~,~,~,~,c_root,c_tip,~,~,~,~,~,~,~,~] = wing(0.7,30000,Mass,2.5)
+
+% c_root = 1.5056;
+% c_tip  = 0.3*c_root;
+% span   = 6.8505;
 sweep  = 15;
 
-coord  = dlmread('SC(2)-0714.txt');
+coord  = dlmread('SC(2)-0614.txt');
 c_upper = coord(1:103,:);
 c_lower = coord(end:-1:104,:);
 cont = [c_lower;c_upper];
