@@ -58,11 +58,10 @@ CD_Cm = (CD_DM+CD_M)/DM;
 % if show_prints
 %     fprintf('Param1 slide 31 = %.2f.\n',param1);
 % end
-param2 = tan(sweepDM)/sqrt(1-MDM^2);
-if show_prints
-    fprintf('Param2 slide 31 = %.2f.\n',param2);
-end
->>>>>>> cfcf02ce7fb51adf5bd4bf84460d534973b28c29
+% if show_prints
+%     fprintf('Param2 slide 31 = %.2f.\n',param2);
+% end
+
 K1 = 1.4;
 K2 = 0.25;
 xac_cr = 0.45;
@@ -119,7 +118,7 @@ CL = CL_alpha*(AOA*pi/180-alpha_L0); % Correct value
 % fprintf('Lift computed with dynamic stability = %.2f.\n',L);
 
 CL_u = M^2/(1-M^2)*CL;
-CD_u = M*CD_Cm;
+CD_u = M*CD_Cm; % ? revoir
 Cm_u = -CL*dxac_dm;
 
 % fprintf('CL_qw = %.4d and CL_qH = %.4d\n',CL_qw, CL_qH);

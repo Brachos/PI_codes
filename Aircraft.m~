@@ -40,7 +40,7 @@ rho = 0.48;
 V_c = speed1;
 
 %% Wing
-[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip, A] = wing(M,Altitude,0.915*MTOW,AOA);
+[bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip, A] = wing(M,Altitude,0.95*MTOW,AOA);
 % disp('Sw =');
 % disp(Sw);
 % bw        = wing span [m]
@@ -302,8 +302,60 @@ V0 = V_c;
 [Long_derivatives] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
-    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia);
+    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet);
 writetable(Long_derivatives, 'longitudinalStab.txt');
+
+% Z = L (normal force), X = D (axial force), M (pitching moment)
+
+gamae = 0;
+thetae = AOA*pi/180 + gamae;
+We = V0*sin(thetae);
+Ue = V0*cos(thetae);
+alphae = atan(We/Ue);
+g = 9.81; %[m/s^2]
+
+Cz_e = -(Long_derivatives.CL_alpha*cos(alphae) + Long_derivatives.CD_alpha*sin(alphae));
+Xu = (Long_derivatives.CL_u*sin(thetae) - Long_derivatives.CD_u*cos(thetae));
+Xw = 1/cos(alphae)*(-Cz_e + Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
+Xq = (Long_derivatives.CL_q*sin(alphae) - Long_derivatives.CD_q*cos(alphae));
+Xwdot = 1/cos(alphae)*(Long_derivatives.CL_adot*sin(alphae) - Long_derivatives.CD_adot*cos(alphae));
+
+Cx_e = (Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
+Zu = -(Long_derivatives.CL_u*cos(alphae) + Long_derivatives.CD_u*sin(alphae));
+Zw = 1/cos(alphae)*(Cx_e - Long_derivatives.CL_alpha*cos(alphae) - Long_derivatives.CD_alpha*sin(alphae));
+Zq = -(Long_derivatives.CL_q*cos(alphae) + Long_derivatives.CD_q*sin(alphae));
+Zwdot = -1/cos(alphae)*(Long_derivatives.CL_adot*cos(alphae) + Long_derivatives.CD_adot*sin(alphae));
+
+M_u = Cx_e = (Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
+
+Z_u = Long_derivatives.CL_u *(1/2*rho*V0*Sw);
+Z_w = Long_derivatives.CL_alpha *(1/2*rho*V0*Sw);
+Z_q = Long_derivatives.CL_q *(1/2*rho*V0*Sw*cw_MAC);
+Z_wdot = Long_derivatives.CL_adot *(1/2*rho*Sw*cw_MAC);
+
+X_u = Long_derivatives.CD_u *(1/2*rho*V0*Sw);
+X_w = Long_derivatives.CD_alpha *(1/2*rho*V0*Sw);
+X_q = Long_derivatives.CD_q *(1/2*rho*V0*Sw*cw_MAC);
+X_wdot = Long_derivatives.CD_adot *(1/2*rho*Sw*cw_MAC);
+
+M_u = Long_derivatives.Cm_u *(1/2*rho*V0*Sw*cw_MAC);
+M_w = Long_derivatives.Cm_alpha *(1/2*rho*V0*Sw*cw_MAC);
+M_q = Long_derivatives.Cm_q *(1/2*rho*V0*Sw*cw_MAC^2);
+M_wdot = Long_derivatives.Cm_adot *(1/2*rho*Sw*cw_MAC^2);
+
+M_long = [MTOW -X_wdot 0 0;0 (MTOW-Z_wdot) 0 0;0 -M_wdot Iy 0;0 0 0 1];
+K_long = [-X_u -X_w -(X_q-MTOW*We) MTOW*g*cos(thetae);-Z_u -Z_w -(Z_q+MTOW*Ue) MTOW*g*sin(thetae);-M_u -M_w -M_q 0;0 0 -1 0];
+A_long = -M_long\K_long;
+
+eig_long = eig(A_long);
+disp('eigen values of A_long :');
+disp(eig_long);
+if real(round(eig_long,10)) <= 0
+    LONG_STAB = 'OK';
+else 
+    LONG_STAB = 'NOT OK';
+end
+fprintf('Longitudinal stability is %s\n',LONG_STAB);
 
 % Lateral stability
 [LatDeriv, LatDimDeriv, LatModes, A_lat] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
