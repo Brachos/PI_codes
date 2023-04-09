@@ -1,4 +1,4 @@
-function [Long_derivatives] = long_dyn_stab(MTOW,...
+function [Long_deriv,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,de_dAOA1,...
     static_stability,AOA,alpha_L0,l_f,l_cg,sweep,cl_alphaw,...
     l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC,Inertia)
@@ -144,7 +144,7 @@ Cm_ih = -CL_alphaT*V_hT;
 CL_heta = CL_df*Sh_tail/Sw;
 Cm_heta = -CL_df*V_hT;
 
-Long_derivatives = table(CL_alpha, CD_alpha, Cm_alpha, CL_u, CD_u, Cm_u, CL_q, CD_q, Cm_q, CL_adot, CD_adot, Cm_adot, CL_df, Cm_df, CL_ih, Cm_ih, CL_heta, Cm_heta,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
+Long_deriv = table(CL_alpha, CD_alpha, Cm_alpha, CL_u, CD_u, Cm_u, CL_q, CD_q, Cm_q, CL_adot, CD_adot, Cm_adot, CL_df, Cm_df, CL_ih, Cm_ih, CL_heta, Cm_heta,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
 
 gamae = 0;
 thetae = AOA*pi/180 + gamae;
@@ -156,22 +156,22 @@ V0 = V_c;
 
 % Z = L (normal force), X = D (axial force), M (pitching moment)
 
-Cz_e = -(Long_derivatives.CL_alpha*cos(alphae) + Long_derivatives.CD_alpha*sin(alphae));
-Xu = (Long_derivatives.CL_u*sin(thetae) - Long_derivatives.CD_u*cos(thetae));
-Xw = 1/cos(alphae)*(-Cz_e + Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
-Xq = (Long_derivatives.CL_q*sin(alphae) - Long_derivatives.CD_q*cos(alphae));
-Xwdot = 1/cos(alphae)*(Long_derivatives.CL_adot*sin(alphae) - Long_derivatives.CD_adot*cos(alphae));
+Cz_e = -(Long_deriv.CL_alpha*cos(alphae) + Long_deriv.CD_alpha*sin(alphae));
+Xu = (Long_deriv.CL_u*sin(thetae) - Long_deriv.CD_u*cos(thetae));
+Xw = 1/cos(alphae)*(-Cz_e + Long_deriv.CL_alpha*sin(alphae) - Long_deriv.CD_alpha*cos(alphae));
+Xq = (Long_deriv.CL_q*sin(alphae) - Long_deriv.CD_q*cos(alphae));
+Xwdot = 1/cos(alphae)*(Long_deriv.CL_adot*sin(alphae) - Long_deriv.CD_adot*cos(alphae));
 
-Cx_e = (Long_derivatives.CL_alpha*sin(alphae) - Long_derivatives.CD_alpha*cos(alphae));
-Zu = -(Long_derivatives.CL_u*cos(alphae) + Long_derivatives.CD_u*sin(alphae));
-Zw = 1/cos(alphae)*(Cx_e - Long_derivatives.CL_alpha*cos(alphae) - Long_derivatives.CD_alpha*sin(alphae));
-Zq = -(Long_derivatives.CL_q*cos(alphae) + Long_derivatives.CD_q*sin(alphae));
-Zwdot = -1/cos(alphae)*(Long_derivatives.CL_adot*cos(alphae) + Long_derivatives.CD_adot*sin(alphae));
+Cx_e = (Long_deriv.CL_alpha*sin(alphae) - Long_deriv.CD_alpha*cos(alphae));
+Zu = -(Long_deriv.CL_u*cos(alphae) + Long_deriv.CD_u*sin(alphae));
+Zw = 1/cos(alphae)*(Cx_e - Long_deriv.CL_alpha*cos(alphae) - Long_deriv.CD_alpha*sin(alphae));
+Zq = -(Long_deriv.CL_q*cos(alphae) + Long_deriv.CD_q*sin(alphae));
+Zwdot = -1/cos(alphae)*(Long_deriv.CL_adot*cos(alphae) + Long_deriv.CD_adot*sin(alphae));
 
-Mu = Long_derivatives.Cm_u;
-Mq = Long_derivatives.Cm_q;
-Mw = 1/cos(alphae)*Long_derivatives.Cm_alpha;
-Mwdot = 1/cos(alphae)*Long_derivatives.Cm_adot;
+Mu = Long_deriv.Cm_u;
+Mq = Long_deriv.Cm_q;
+Mw = 1/cos(alphae)*Long_deriv.Cm_alpha;
+Mwdot = 1/cos(alphae)*Long_deriv.Cm_adot;
 
 Z_u = Zu * (1/2*rho*V0*Sw);
 Z_w = Zw * (1/2*rho*V0*Sw);
@@ -192,6 +192,11 @@ M_long = [MTOW -X_wdot 0 0;0 (MTOW-Z_wdot) 0 0;0 -M_wdot Inertia.Iy 0;0 0 0 1];
 K_long = [-X_u -X_w -(X_q-MTOW*We) MTOW*g*cos(thetae);-Z_u -Z_w -(Z_q+MTOW*Ue) MTOW*g*sin(thetae);-M_u -M_w -M_q 0;0 0 -1 0];
 A_long = -M_long\K_long;
 
+% The eigenvalues of the matrix A_long determine the dynamic stability of
+% the aircraft : if the real part of its eigenvalues is negative the system
+% is stable, if at least one is positive the system is unstable, if at
+% least one is zero the system is neutrally stable
+
 eig_long = eig(A_long);
 disp('eigen values of A_long :');
 disp(eig_long);
@@ -201,6 +206,17 @@ else
     LONG_STAB = 'NOT OK';
 end
 fprintf('Longitudinal stability is %s\n',LONG_STAB);
+
+% Modes of vibration
+% Phugoid
+wp = g*sqrt(2)/V0; %Oscillation frequency [rad/s]
+zetap = ((g*CD)/(CL*V0))/wp; %Damping ratio
+
+% Short term oscillations
+ws = sqrt(M_q*Z_w/(Inertia.Iy*MTOW)-M_w/Inertia.Iy*Ue);
+zetas = -(M_q/Inertia.Iy+Z_w/MTOW+M_w/Inertia.Iy*Ue);
+
+Long_modes = table(wp,zetap,ws,zetas,'RowNames',{'For AOA = 2.5 deg and cruise cdtn'});
 
 end
 

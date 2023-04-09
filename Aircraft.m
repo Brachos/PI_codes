@@ -299,7 +299,7 @@ Inertia = table(Ix, Iy, Iz, Ixz);
 V0 = V_c;
 
 % Longitudinal stability
-[Long_derivatives] = long_dyn_stab(MTOW,...
+[Long_derivatives,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
     cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia);
@@ -320,49 +320,6 @@ writetable(LatDeriv, 'lateralStab.txt');
 % to ensure stability !
 % Ci-dessous ? revoir !! 
 
-% Yv = LatDeriv.Cy_beta *(1/2*rho*V0*Sw);
-% Yp = LatDeriv.Cy_p *(1/2*rho*V0*Sw*bw);
-% Yr = LatDeriv.Cy_r *(1/2*rho*V0*Sw*bw);
-% % Yksi=-0.0159*(1/2*rho*V0^2*Sw);
-% % Yzeta=0.1193*(1/2*rho*V0^2*Sw);
-% Lv = Lat_derivatives.Cl_beta *(1/2*rho*V0*Sw*bw);
-% Lp = Lat_derivatives.Cl_p *(1/2*rho*V0*Sw*bw^2);
-% Lr = Lat_derivatives.Cl_r *(1/2*rho*V0*Sw*bw^2);
-% % Lksi=0.0454*(1/2*rho*V0^2*Sw*bw);
-% % Lzeta=0.0086*(1/2*rho*V0^2*Sw*bw);
-% Nv = Lat_derivatives.Cn_beta *(1/2*rho*V0*Sw*bw);
-% Np = Lat_derivatives.Cn_p *(1/2*rho*V0*Sw*bw^2);
-% Nr = Lat_derivatives.Cn_r *(1/2*rho*V0*Sw*bw^2);
-% % Nksi=0.00084*(1/2*rho*V0^2*Sw*bw);
-% % Nzeta=-0.0741*(1/2*rho*V0^2*Sw*bw);
-% 
-% M_lat = [MTOW 0 0 0 0;0 Ix -Ixz 0 0;0 -Ixz Iz 0 0;0 0 0 1 0;0 0 0 0 1];
-% K_lat = [-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae);
-%         -Lv -Lp -Lr 0 0; -Nv -Np -Nr 0 0;0 -1 0 0 0;0 0 -1 0 0];
-% % F=[Yksi Yzeta;Lksi Lzeta;Nksi Nzeta;0 0;0 0];
-% 
-% A_lat = -M_lat\K_lat;
-% B_lat = M_lat\F;
-
-eig_lat = eig(A_lat);
-disp('eigen values of A_lat :');
-disp(eig_lat);
-if real(round(eig_lat,10)) <= 0
-    LAT_STAB = 'OK';
-else 
-    LAT_STAB = 'NOT OK';
-end
-
-fprintf('Lateral stability is %s\n',LAT_STAB);
-% %% Lateral Modes of vibrations, according to M.V. COOK
-% % Spiral mode -> p.216
-% Ts = -V_c*(Lat_derivatives.Cl_beta*Lat_derivatives.Cn_p - Lat_derivatives.Cl_p*Lat_derivatives.Cn_beta)/(g*(Lat_derivatives.Cl_r*Lat_derivatives.Cn_beta - Lat_derivatives.Cl_beta*Lat_derivatives.Cn_r));
-% % Roll subsidence -> p.214
-% Tr = -(Ix*Iz - Ixz^2)/(Iz*Lp + Ixz*Np);
-% % Dutch roll -> p.217
-% omega_d = sqrt(Nr*Yv/(Iz*MTOW) + V_c*Nv/Iz);
-% damp_ratio = - (Nr/Iz + Yv/MTOW)*1/(2*omega_d);
-% Lat_modes = table(Ts, Tr, omega_d, damp_ratio);
 %% Static margin
 kf = hn - hf;
 fprintf('Static margin fuel no payload is about : %.2dm\n',kf);

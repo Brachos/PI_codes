@@ -34,8 +34,8 @@ show_prints = 0;
 %Hypothesis 
 % - no wing dihedral angle
 % - no delfection angle for flaps
-% - cruise conditions with AOA of 2.5�
-% - sidewash angle of 2�
+% - cruise conditions with AOA of 2.5???
+% - sidewash angle of 2???
 alpha = AOA*pi/180; % assuming an angle of attack of 2.5 degrees
 alphaF = alpha; % assuming AOA of fuselage of alpha
 
@@ -258,6 +258,18 @@ K = [-Yv -(Yp+MTOW*We) -(Yr-MTOW*Ue) -MTOW*g*cos(thetae) -MTOW*g*sin(thetae);
 % F=[Yksi Yzeta;Lksi Lzeta;Nksi Nzeta;0 0;0 0];
 
 A_lat = -M_lat\K;
+% B_lat = M_lat\F;
+
+eig_lat = eig(A_lat);
+disp('eigen values of A_lat :');
+disp(eig_lat);
+if real(round(eig_lat,10)) <= 0
+    LAT_STAB = 'OK';
+else 
+    LAT_STAB = 'NOT OK';
+end
+
+fprintf('Lateral stability is %s\n',LAT_STAB);
 
 %% Lateral Modes of vibrations, according to M.V. COOK
 % Spiral mode -> p.216
