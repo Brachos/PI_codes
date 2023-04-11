@@ -1,21 +1,29 @@
-function [speed,rho] = speed(altitude,mach)
+function [speed] = speed(altitude,mach)
+    %SPEED returns the speed corresponding to mach at altitude.
+    % -----
+    %
+    % Syntax:
+    %   [speed] = speed(altitude,mach) returns an array with
+    %   the speed [m/s] at altitude [ft].
+    %
+    % Inputs:
+    %   altitude: the altitude at which the speed and the air density must
+    %   be computed [ft]
+    %   mach: the mach of the aircraft
+    %
+    % Outputs:
+    %   speed: the speed of the aircraft flying at mach and at altitude
+    %   [m/s]
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+T0 = 15 + 273.15;                       %temperature at sea level
 
-delta_T = altitude / 1000 * 2; %diminution de 2 degrés par 1000 ft
-K = 273.15;
-T = 15 - delta_T + K;
-R_s = 287.058; %[J/kg/K] constante spécifique de l'air sec
-gamma = 1.4; %hypothèse des gaz parfaits, coeff de Laplace
-speed = mach * sqrt(gamma * T * R_s);%vitesse [m/s]
+%speed computation
+delta_T = altitude / 1000 * 2;          %decrease of 2 degrees every 1000ft
+T = T0 - delta_T;                       %temperature at altitude [K]
+R_s = 287.058;                          %dry air specific constant[J/kg/K] 
+gamma = 1.4;                            %Laplace coefficient (perfect gases)
+speed = mach * sqrt(gamma * T * R_s);   %speed at the design altitude[m/s]
 
-R  = 8314.32;
-P0 = 101325;
-T0 = 15+K;
-g  = 9.81;
-z  = altitude*0.3048;
-Cp = 1006;
-P  = P0*exp(-7*g*z/(2*Cp*T0));
-
-rho = P*28.9644/(R*T); % Gaz parfait
 
 end
-
