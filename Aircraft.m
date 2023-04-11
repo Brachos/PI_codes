@@ -33,7 +33,7 @@ Nelem = 10; %number of differents elements, of different mass
 MTOW = 4429; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
-[speed1,rho] = speed(Altitude,M);
+[speed1] = speed(Altitude,M);
 % disp('rho is');
 % disp(rho);
 rho = 0.48;

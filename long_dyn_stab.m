@@ -29,8 +29,9 @@ e = 0.8;
 CD_M = CD;
 DM = M/20;
 MDM = M+DM;
-[speedDM,rhoDM] = speed(Altitude,MDM);
+[speedDM] = speed(Altitude,MDM);
 V_cDM = speedDM;
+rhoDM = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m^3] Density at 30 000 ft
 [bwDM,SwDM,~,~,~,~,~,cw_rootDM,cw_tipDM,cw_MACDM,~,~,~,sweepDM,~,~] = wing(MDM,...
     Altitude,0.95*MTOW,AOA);
 
