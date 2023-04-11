@@ -152,7 +152,7 @@ PayW = sum(W)-W(8)+W_FS;
 FW = sum(W)-W(7);
 
 %% Center of gravity
-le = 0.7; %length of the engine
+le = 1.35; %length of the engine [m]
 x_e = l_f-le; %position of the engine inlet [m]
 x_wv = l_arm; %distance between the wac and the vac [m]
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
@@ -163,9 +163,13 @@ xcg_p = 5.2; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 5; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 2.88; %position of the wings
+x_w = 2.8; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
+<<<<<<< Updated upstream
 xcg_fuel = 3.9; %for the fuel
+=======
+xcg_fuel = 4.05; %for the fuel
+>>>>>>> Stashed changes
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
