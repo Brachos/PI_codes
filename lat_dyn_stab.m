@@ -51,7 +51,7 @@ if show_prints
     fprintf('Param for p.1633 : xm_lB = %.2f, lB2_SBs = %.2f, sqrt_h1_h2 = %.2f and h_w = %.2f.\n',...
         cg/l_f, l_f^2/SBs, 1, b_el/a_el); %(? revoir !!)
 end
-KN = 0.0009; %p.1633
+KN = 0.0007; %p.1633
 nu = 0.000032436;
 Re_fus = V_c * l_f/nu;
 if show_prints
@@ -87,8 +87,8 @@ b_param = cos(sweep)*bw; %p.1625
 if show_prints
     fprintf('Param p.1625 lf_b = %.2f.\n', lf_param/b_param);
 end
-Kf = 0.94; %p.1625
-Clbeta_CL_A = 0.0001; %p.1564
+Kf = 0.95; %p.1625
+Clbeta_CL_A = 0.0001; %Figure p.1564
 zW = - b_el/2; %p.1603
 d = sqrt(a_el/2 * b_el/2 * pi/0.7854); %p.1603
 delta_Clbeta_zW = 1.2*sqrt(A)/57.3 * (zW/b_param)*(2*d/b_param); %p.1603
@@ -113,7 +113,7 @@ Lambda_beta = atan(tan(sweep)/bbeta);%p.2532
 if show_prints
     fprintf('WING : Param Lambda_beta p.2532 = %.3f and the other is %.3f.\n', Lambda_beta*180/pi, bbeta*A/kappa); %last check, 20.566 and 3.151 (? revoir !!)
 end
-bClp_kappa = -0.23; %p.2550, with param from the "frpintf" just before, per RADIANS
+bClp_kappa = -0.235; %p.2550, with param from the "frpintf" just before, per RADIANS
 % CLalpha_CL = CL_alpha_v%p.566 same as p.549
 CLalpha_CL0 = CL_alpha_v; %here assuming that there's no difference for CL_alpha with CL, per RADIANS
 Clp_Cdl_CL2 = -0.01; %p.2554
@@ -125,7 +125,7 @@ Re_ell = cw_MAC*V_c/nu;
 if show_prints
     fprintf('WING : Reynolds at 30000ft is %.5f.\n',Re_ell); %last check 7e6
 end
-Cf = 0.0031; %p.747
+Cf = 0.003; %p.747
 CD0 = Cf*(1 + L*t_c + 100*t_c^4)*R_LS*S_wet/Sw; %p.723
 delta_Clp_drag = Clp_Cdl_CL2 * CLw^2 - 1/8 * CD0; %p.2533, per RADIANS
 Cl_p_WB = bClp_kappa * kappa/bbeta * CL_alpha_v/CLalpha_CL0 * 1 + delta_Clp_drag; %p.2532 (factor 1 is =1 bcse no dihedral for wings, see eq.7.1.2.2-b), per RADIANS
@@ -178,7 +178,7 @@ if show_prints
     fprintf('Param x_bar/c_bar for graph p.2597 is %.2f.\n', x_bar/cw_MAC);
 end
 Cnr_CL2 = -0.01; %see Figure p.2597
-Cnr_CD0 = -0.33; %p.2598
+Cnr_CD0 = -0.37; %p.2598
 Cn_r_WB = Cnr_CL2 * CLw^2 + Cnr_CD0 * CD0; %p.2593, per RADIANS
 Cn_r = Cn_r_WB + 2/bw^2 * (lp*cos(alpha) + zp*sin(alpha))^2 * delta_Cy_beta_VWBH; %p.2805
 

@@ -30,7 +30,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 4343; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4429; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 
 %% Speed
 [speed1,rho] = speed(Altitude,M);
@@ -67,7 +67,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 4.39;% ? revoir absolument !!!!
+cg_pos = 4.38;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
@@ -161,11 +161,11 @@ xcg_l1= 1.5; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
 xcg_p = 5.2; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
-xcg_sub = 6.2; %for the subsystems
+xcg_sub = 5; %for the subsystems
 xcg_sen = 1.5; %for the sensors
 x_w = 2.88; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4.1; %for the fuel
+xcg_fuel = 3.9; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
