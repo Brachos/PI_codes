@@ -1,4 +1,6 @@
 function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
+%thickness of the fuselage
+t_fuselage=0.05; %[m]
 
 %volume of the payload
 V_sensors=0.5;%[m^3]
@@ -7,7 +9,7 @@ V_mission=0.15;%[m^3]
 L_engine=4/3.2808;
 V_engine=(1.9/(3.2808*2))^2*pi*L_engine;
 
-D_air_inlet=0.57912+0.1;
+D_air_inlet=0.57912+2*t_fuselage;
 L_air_inlet_fuselage=0.65;
 V_air_inlet=2*pi*(D_air_inlet/2)^2*L_air_inlet_fuselage;
 b_end=D_air_inlet/2;
@@ -86,8 +88,8 @@ while abs(L_f(i)-L_f(i-1))>0.01 && abs(Deq(i)-Deq(i-1))>0.001
     Deq(i+1)=sqrt(4*a(i+1)*b(i+1));
     i=i+1;
 end
-a_val=a(i);
-b_val=b(i);
+a_val=a(i)+t_fuselage;
+b_val=b(i)+t_fuselage;
 L_f_val=L_f(i);
 % Change the value of L_f after check of internal arrangement;
 

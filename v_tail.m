@@ -10,7 +10,7 @@ function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
 %Cette m?thode est it?rative et s'appuie sur les ?quilibre statiques
 %et dynamique.
 
-show_prints = 1;
+show_prints = 0;
 %% Figures settings
 feature('DefaultCharacterSet','UTF8');
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
@@ -56,7 +56,7 @@ if show_prints
     fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
 end
 % voir graphique slide 57
-V_v = 0.1; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.08; % avec V_v = S_F*l_F/(S*b)
 l_F = l_arm; % first guess, distance between cg and fin ac
 S_v = V_v*Sw*bw/l_F;
 
@@ -77,6 +77,8 @@ W_dg = Mass*pound - 0.45*W_fuel;
 N_z = 1.5*3; %Ultimate load factor = 1.5*limit load factor
 Sw = Sw*feet^2; %[ft^2]
 q = 8.6292e+03*pound/feet^2;
+
+% method p.576 Raymer (pdf p.606)
 W_tail_h = 0.016*(N_z*W_dg)^(0.414)*q^(0.168)*(S_tail*feet^2*sin(angle))^(0.896)*...
     (100*0.1/cosd(Lambda_LE))^(-0.12)*(AR_t/(cosd(Lambda_T))^2)^(0.043)*lambda_t^(-0.02);
 
@@ -89,7 +91,8 @@ W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(a
 % disp(W_tail_v);
 Sw = Sw/feet^2;
 
-W_tail = (W_tail_v + W_tail_h)/pound;
+% W_tail = (W_tail_v + W_tail_h)/pound;
+W_tail = 174; %CAD result, best approximation so far (à revoir !!!)
 %% control surfaces
 %Based on Raymer tab
 span_covered = 0.7; %proportion of total span

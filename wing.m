@@ -18,7 +18,7 @@ curve   = [c_upper;c_lower(end:-1:1,:)];
 g  = 9.81;   % [m/s^2]
 L  = Mass*g; % [N] Take off weight (= Lift at cruise)
 
-[V_inf,rho] = speed(Altitude,Mach);     % 30 000 ft = 9 144 m 
+[V_inf] = speed(Altitude,Mach);     % 30 000 ft = 9 144 m 
 rho = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m^3] Density at 30 000 ft
 mu  = (1.458+(1.458-1.493)*0.144)*1e-5; % [kg/m.s] Dynamic viscosity 
 

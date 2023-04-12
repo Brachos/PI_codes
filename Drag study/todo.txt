@@ -1,0 +1,5 @@
+C_L_h easy computaion
+
+deps/dC_L computation in E-10.1 
+
+adapt for midwing
