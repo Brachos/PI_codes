@@ -3,7 +3,7 @@ function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,sweep
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
 %                                   -> Maximum thickness ratio: t/c = 0.14
-coord   = dlmread('SC(2)-0714.txt');
+coord   = dlmread('SC(2)-0614.txt');
 c_upper = coord(1:103,:);
 c_lower = coord(104:end,:);
 curve   = [c_upper;c_lower(end:-1:1,:)];
@@ -64,7 +64,7 @@ D  = 0.5*CD*rho*V_inf^2*S;
 c_root = 2*S/((1+tap)*b); % Because for trapez, S = (c_tip+c_root)*b/2
 c_tip  = tap*c_root;
 syms y
-c    = (1-2*y/b)*c_root + (2*y/b)*c_tip;
+c(y) = (1-2*y/b)*c_root + (2*y/b)*c_tip;
 c_AC = double(2/S*int(c^2,0,b/2));
 
 % Aerodynamic center
@@ -72,12 +72,22 @@ y_AC    = double(2/S*int(c*y,0,b/2));
 x_AC    = 0.26*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR 
 
 % Flaps design
-
-CL_max_base = 0.95*cos(sweep)*1.75*1.1; % Maximum CL without device
-CL_max = 2.5;
+CL_max_base = 0.95*cos(sweep)*0.5*(1.75+1.55)*1.1; % Maximum CL without device
+CL_max = 2.19;
 DCL_max = CL_max - CL_max_base;
-S_flapped = S*DCL_max/(1.3*0.9*cosd(10)); % 1.3 because slotted flap
-
+L_HL = atan2(0.45*(c_tip-c_root)+b/2*tan(sweep),b/2);
+S_flapped = S*DCL_max/(1.3*0.9*cos(L_HL)); % 1.3 because slotted flap
+l_fuselage = 1.03; % [m] Fuselage width
+y_flap_in = l_fuselage/2 + 0.15; % Flaps start at 15 cm of the fuselage
+for i = y_flap_in : 0.01 : b/2
+    y_out = i;
+    S_tmp = (c(y_flap_in) + c(y_out))*(y_out-y_flap_in);
+    if abs(S_flapped-S_tmp) < 0.1
+        y_flap_out = y_out;
+    end
+end
+y_flap_out; % Flaps ending
+    
 %% Computation of fuel volume in the wings
 
 A_tip  = trapz(c_tip*curve(:,1),c_tip*curve(:,2));   % [m^2] Area of airfoil

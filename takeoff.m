@@ -1,15 +1,15 @@
 %% Code based on Gudmundsson book page 788 
 
-% function [S_TO] = takeoff(MTOW,CL_max,l_cg)
+function [S_TO] = takeoff(MTOW,CL_max,l_cg)
 % Infputs
     % MTOW = Maximum Take-Off Weight
-    MTOW = 4231;
-    CL_max = 2.5;
-    l_cg = 4.51;
+    % MTOW = 4243;
+    % CL_max = 2.5;
+    % l_cg = 4.39;
 
 % Conversion
     pound = 2.20462262; % kg to lbs
-    feet = 3.28; % m to ft
+    feet = 3.28084; % m to ft
     inche = 39.37; % m to in
     
 % Data at cruise
@@ -17,7 +17,7 @@
     Altitude = 30000; % [ft] Altitude at cruise
     AOA = 2.5; % [deg] At root
     
-    [bw,Sw,~,~,CLw,CD,~,~,~,cw_MAC,~,~,Vw_fuel,sweep,~] = wing(Mach,Altitude,0.95*MTOW,AOA);
+    [bw,Sw,~,~,CLw,CD,~,cw_root,cw_tip,cw_MAC,~,~,Vw_fuel,sweep,~] = wing(Mach,Altitude,0.95*MTOW,AOA);
     [~,~,b_el,l_f,~] = fuselage_design(MTOW,Vw_fuel);
     [~,Sh,~,~,~,~,~,CLt,~,~,~,~,~] = v_tail(MTOW,2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
     
@@ -44,14 +44,16 @@
     V_LOF = 1.1*Vs; % [m/s] Take-off velocity
     V_TR = 1.15*Vs; % [m/s] Transition velocity
     V2 = 1.2*Vs; % [m/s] Climb velocity
+    Re_root = rho*V_LOF*cw_root/mu_air;
+    Re_tip  = rho*V_LOF*cw_tip/mu_air;
     
 % Distances computation
-    CL_TO = 1.5;%To modify
+    CL_TO = 0.8;%To modify
     CD_TO = 0.017 + CL_TO^2/(0.8*pi*AR);
     D_TO = 0.5*rho*Sw*(V_TR/sqrt(2))^2*CD_TO;
     L_TO = 0.5*rho*Sw*(V_TR/sqrt(2))^2*CL_TO;
 
-    a = g*(T-D_TO-mu*(W-L_TO))/W;
+    a = g*(T_mean-D_TO-mu*(W-L_TO))/W;
     S_G = V_LOF^2/(2*a);
     S_R = 1*V_LOF; % [m] For small aircraft, t = 1s
     
@@ -68,5 +70,6 @@
         S_TO = S_G + S_R + S_TR + S_C;
     end
     
-   S=(S_G+S_R)*feet;
-% end 
+   S_ground = (S_G+S_R)*feet;
+   S_TO = S_TO*feet;
+end 
