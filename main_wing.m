@@ -22,20 +22,24 @@ sigma_max = ....
 coeff_boom1 = 10; %to have an area of the booms of the 1st cell 10 times bigger
 
 
+%voir s'il faut calculer tout ca au tip ou a la root
+%et voir si je fais un coeff d'importance relative d'aire ou pas
 for m = 1 : length(Mx)
     %tous les endroits de la maneuver
-[boom, stringers_root, area_min(m)] = Boom(cell_root,stringers_root, Mx(m), My(m), Mz(m), sigma_max, coeff_boom1);
+[boom_root, boom_tip stringers_root, area_min(m)] = Boom(cell_root,cell_tip,stringers_root, Mx(m), My(m), Mz(m), sigma_max, coeff_boom1);
 end
 
 Area = max(area_min);
 
-boom.Area(1) = Area*coeff_boom1;
-boom.Area(2) = Area;
+boom_root.Area(1) = Area*coeff_boom1;
+boom_root.Area(2) = Area;
 stringers_root.Area = Area;
 
 
 %------------------------------------------------
 %skin
+
+
 
 end
 
