@@ -430,4 +430,3 @@ plot([p1 p1 p2; ...
     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
 title('V-tail geometry')
 axis equal
-%% 
