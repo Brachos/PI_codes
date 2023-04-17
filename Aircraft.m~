@@ -30,7 +30,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 3790; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4429; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 % 4429 with 0.8 factor in mass for the fuselage
 
 %% Speed
@@ -68,13 +68,12 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 4.34;% ? revoir absolument !!!!
+cg_pos = 4.38;% ? revoir absolument !!!!
 l_cg = cg_pos;
-flag = 1;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_T] = v_tail(MTOW,...
-    2*b_el-0.08,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw,flag);
+    2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
 %%%%%%%%% INPUTS %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
@@ -149,13 +148,11 @@ W = [W_fuselage;W_wing;W_tail;242;30;148;W_payload;W_fuel+W_FS;W_subsyst;W_senso
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
 % New vector W with the CAD
-W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;W_landing_gear_main;W_payload;W_fuel+W_FS;W_subsyst;W_sensors];
-W = [576.3;235.3;90;242.8;29.5;148.2;110.8;1706+Vw_fuel*800;95;W_sensors];
-% minw = sum(W)-W(7)-W(8)+W_FS;
-minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
+W = [W_fuselage;W_wing;W_tail;242;30;148;W_payload;W_fuel+W_FS;W_subsyst;W_sensors];
+W = [576.3;235.3;50;242.8;29.5;148.2;110.8;1706+Vw_fuel*800;95;W_sensors];
+minW = sum(W)-W(7)-W(8)+W_FS; %minimum weight (or minimum mass)
 MTOW = sum(W);
-% PayW = sum(W)-W(8)+W_FS;
-PayW = sum(W)-W(8);
+PayW = sum(W)-W(8)+W_FS;
 FW = sum(W)-W(7);
 
 %% Center of gravity
@@ -196,8 +193,8 @@ zcg_p = 0; %for the payload [m] supposed align with the centerline
 zcg_f = a_el/2; %for the fuel [m] above the centerline because of the wing
 zcg_sen = 0; %for the sensors [m] supposed align with the centerline
 zcg_sub = 0; %for the subsystems [m] supposed align with the centerline
-xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg_sub;xcg_sen];
-xarm = [4.248;3.5;7.487;7.341;1.905;4.394;4.847;4.25;2.38;0.858];
+xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg_sen;xcg_sub];
+xarm = [4.248;3.688;7.487;7.341;1.905;4.394;4.847;3;2.38;0.858];
 yarm = [0;0;0;0;0;0;0;0;0;0]; %symetric
 zarm = [zcg_fus;zcg_w;zcg_t;zcg_e;zcg_ng;zcg_mg;zcg_p;zcg_f;zcg_sub;zcg_sen];
 zarm = [0.411;0.8328;0.949;0.339;0.182;0.258;0.407;0.6;0.485;0.360];

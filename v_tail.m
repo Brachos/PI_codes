@@ -1,7 +1,7 @@
 function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
     b_tail, b_v, b_h, W_tail,CN_tot, V_v, hight_root, hight_tip, ...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_t] = ...
-    v_tail(Mass, h_f_max, c_chord, Lambda_LE, Sw, l_f, l_cg, bw)
+    v_tail(Mass, h_f_max, c_chord, Lambda_LE, Sw, l_f, l_cg, bw, flag)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
 %l'ouvrage de r?f?rence "Aircraft design, A Systems Engineering Approach"
@@ -10,7 +10,7 @@ function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
 %Cette m?thode est it?rative et s'appuie sur les ?quilibre statiques
 %et dynamique.
 
-show_prints = 0;
+show_prints = flag;
 %% Figures settings
 feature('DefaultCharacterSet','UTF8');
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
@@ -49,14 +49,14 @@ S_h = V_h_bar*c_bar*Sw/l_arm;
 % Vertical fin, see slide 57 course Noels Preminilary design
 K_beta = 0.3*l_cg/l_f + 0.75 *h_f_max/l_f - 0.105;
 S_fs = 0.8*l_f*h_f_max;
-CN_beta_f = -K_beta*S_fs*l_f/Sw/bw; %à revoir !!
+CN_beta_f = -K_beta*S_fs*l_f/Sw/bw*(870/695)^(1/2)*(1072/1265)^(1/3); %? revoir !!
 CN_beta_i = -0.017; %because high wings
 CN_tot = CN_beta_f + CN_beta_i;
 if show_prints
     fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
 end
 % voir graphique slide 57
-V_v = 0.08; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.09; % avec V_v = S_F*l_F/(S*b)
 l_F = l_arm; % first guess, distance between cg and fin ac
 S_v = V_v*Sw*bw/l_F;
 
@@ -92,7 +92,7 @@ W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(a
 Sw = Sw/feet^2;
 
 W_tail = (W_tail_v + W_tail_h)/pound;
-% W_tail = 50; %CAD result, best approximation so far (à revoir !!!)
+% W_tail = 50; %CAD result, best approximation so far (? revoir !!!)
 %% control surfaces
 %Based on Raymer tab
 span_covered = 0.7; %proportion of total span
