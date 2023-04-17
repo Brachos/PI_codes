@@ -75,18 +75,18 @@ x_AC    = 0.26*c_AC; % L5 - P26 -> !!! Depend on Mach, Sweep and AR
 CL_max_base = 0.95*cos(sweep)*0.5*(1.75+1.55)*1.1; % Maximum CL without device
 CL_max = 2.19;
 DCL_max = CL_max - CL_max_base;
-L_HL = atan2(0.45*(c_tip-c_root)+b/2*tan(sweep),b/2);
-S_flapped = S*DCL_max/(1.3*0.9*cos(L_HL)); % 1.3 because slotted flap
-l_fuselage = 1.03; % [m] Fuselage width
-y_flap_in = l_fuselage/2 + 0.15; % Flaps start at 15 cm of the fuselage
-for i = y_flap_in : 0.01 : b/2
-    y_out = i;
-    S_tmp = (c(y_flap_in) + c(y_out))*(y_out-y_flap_in);
-    if abs(S_flapped-S_tmp) < 0.1
-        y_flap_out = y_out;
-    end
-end
-y_flap_out; % Flaps ending
+% L_HL = atan2(0.45*(c_tip-c_root)+b/2*tan(sweep),b/2);
+% S_flapped = S*DCL_max/(1.3*0.9*cos(L_HL)); % 1.3 because slotted flap
+% l_fuselage = 1.03; % [m] Fuselage width
+% y_flap_in = l_fuselage/2 + 0.15; % Flaps start at 15 cm of the fuselage
+% for i = y_flap_in : 0.01 : b/2
+%     y_out = i;
+%     S_tmp = (c(y_flap_in) + c(y_out))*(y_out-y_flap_in);
+%     if abs(S_flapped-S_tmp) < 0.1
+%         y_flap_out = y_out;
+%     end
+% end
+% y_flap_out; % Flaps ending
     
 %% Computation of fuel volume in the wings
 

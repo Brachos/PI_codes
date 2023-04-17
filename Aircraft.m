@@ -324,14 +324,14 @@ V0 = V_c;
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
     cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia);
-writetable(Long_derivatives, 'longitudinalStab.txt');
+% writetable(Long_derivatives, 'longitudinalStab.txt');
 
 % Lateral stability
 [LatDeriv, LatDimDeriv, LatModes, A_lat] = lat_dyn_stab(a_el, b_el, bw, sweep, A, ...
     Sv_tail, Sw, V_vf, dihedral_angle, CLw, l_f, cw_root, V_f, cgT(1), ...
     c_root_tail, bv_tail, Lambda_T, wAC, cw_MAC, theta_tip, M, V_c, AR_T,...
     Sh_tail, c_MAC_tail, CL_tail, bh_tail, x_w, AOA, Inertia, rho, MTOW);
-writetable(LatDeriv, 'lateralStab.txt');
+% writetable(LatDeriv, 'lateralStab.txt');
 % Cn_beta -- Per RADIANS (// Nv in slides)
 % Cl_beta -- Per RADIANS (// Lv in slides)
 % Clp seems good         (// Lp in slides)
@@ -438,4 +438,3 @@ plot([p1 p1 p2; ...
     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
 title('V-tail geometry')
 axis equal
-%% 
