@@ -68,7 +68,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 4.42;% ? revoir absolument !!!!
+cg_pos = 4.38;% ? revoir absolument !!!!
 l_cg = cg_pos;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
@@ -143,7 +143,7 @@ fprintf('Total weight of the tail : %.2dkg\n', W_tail);
 
 %% Weight
 [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot, W_subsyst, W_sensors] = mass(MTOW,bw,cw_root,cw_tip,l_arm);
-W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;W_landing_gear_main;W_payload;W_fuel+W_FS;W_subsyst;W_sensors]; 
+W = [576.3;235.27;W_tail;242;30;148;W_payload;W_fuel+W_FS;W_subsyst;W_sensors]; 
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
@@ -159,13 +159,13 @@ x_wv = l_arm; %distance between the wac and the vac [m]
 %Longitudinal position of the cg from nose
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
-xcg_l1= 1.5; %for the first landing gears
+xcg_l1= 1.3; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
-xcg_p = 5.2; %for the payload
+xcg_p = 5.5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 5; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 2.85; %position of the wings
+x_w = 2.83; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
 xcg_fuel = 4.05; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
@@ -304,10 +304,10 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 % Ci-dessous ? revoir !! 
-Ixz = 2952;               % Inertia product kg m^2
-Ix = 33898;               % Roll moment of inertia kg m^2
-Iy = 165669;              % Pitch moment of inertia in kg m^2
-Iz = 189496;              % Yaw moment of inertia kg m^2
+Ixz = 10.975204;               % Inertia product kg m^2
+Ix = 9448.622823;               % Roll moment of inertia kg m^2
+Iy = 10406.831792;              % Pitch moment of inertia in kg m^2
+Iz = 1382.996188;              % Yaw moment of inertia kg m^2
 Inertia = table(Ix, Iy, Iz, Ixz);
 V0 = V_c;
 
