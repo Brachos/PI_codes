@@ -25,7 +25,7 @@ XX = 1;
 %The back of the wing is referred as section A 
 
 %Aircraft:
-Aircraft.W = sum(W)*9.18;       %Aircraft weight [N]
+Aircraft.W = sum(W)*9.18;         %Aircraft weight [N]
 Aircraft.I_theta = XX;            %Aircraft inertia [kg.m²]
 Aircraft.C_DB = XX;               %Aicraft body drag [N]
 Aircraft.l_DB = XX;               %Aicraft drag lever arm [m]
@@ -81,10 +81,16 @@ Payload.W = W(7)*9.81;          %Payload weight [N]
 Payload.cg = xarm(7);           %Center of gravity of the Payload [m]
 
 %Fuselage:  
+Fuselage.x_min = XX;            %x-position of the minimum cross-section [m]
 Fuselage.a_min = XX;            %Minimum semi major axis of the elliptical fuselage (at the tail) [m]
-Fuselage.b_min = XX;
+Fuselage.b_min = XX;            %Minimum semi minor axis of the elliptical fuselage (at the tail) [m]
+Fuselage.x_max = XX;            %x-position of the cross-section A [m]
 Fuselage.a_max = XX;            %Semi major axis of the fuselage at section A [m]
-Fuselage.b_max = XX;
+Fuselage.b_max = XX;            %Semi minor axis of the fuselage at section A [m]
+Fuselage.x_cs = [x_max x_max+(x_min - x_max)*0.5  x_min];   %x-position of the considered cross-section [m]
+Fuselage.a = [a_max a_max+(a_min - a_max)*0.5 a_min];       %Semi major axis of the considered cross-section [m]
+Fuselage.b = [b_max b_max+(b_min - b_max)*0.5 b_min];       %Semi-minor axis of the considered cross-section [m]
+Fuselage.A_h = pi.*Fuselage.a.*Fuselage.b;                  %Area of the cross-sections[m²]
 Fuselage.L = 8.49;              %Total length of the fuselage [m]
 Fuselage.W = W(1)*9.81;         %Total weight of the fuselage [N]
     

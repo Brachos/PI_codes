@@ -17,7 +17,7 @@ function [Tx,Ty,Tz,Mx,My,Mz] = wing_load(W,Wing_loading,i,y_cg,y_ac,Mom_wing,n,W
     %   Mom_wing: Wing moment [Nm].
     %   Wing:       Wing.S: Wing surface [m²]
     %               Wing.C_D: Wing drag coefficient
-    %               Wing.c: Wing mean aerodynamic chord [m]
+    %               Wing.MAC: Wing mean aerodynamic chord [m]
     %               Wing.C_M: Wing pitching moment coefficient [Nm]
     %               Wing.l: Wing lever arm [m]
     %               Wing.aoa: Angle of attack between the wing lever

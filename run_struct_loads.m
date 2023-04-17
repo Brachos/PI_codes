@@ -57,12 +57,12 @@ D_B = zeros(1,length(n));
 M_tail = zeros(1,length(n));
 
 %Strucutural loads: Fuselage
-TY =zeros(1,length(n));
-TZ =zeros(1,length(n));
-My =zeros(1,length(n));
-Mz =zeros(1,length(n));
-Mx =zeros(1,length(n));
-TX=zeros(1,length(n));
+TY =zeros(2,length(n));
+TZ =zeros(2,length(n));
+My =zeros(2,length(n));
+Mz =zeros(2,length(n));
+Mx =zeros(2,length(n));
+TX =zeros(2,length(n));
 
 %Strucutural loads: wing
 Txw=zeros(1,length(n));
@@ -103,7 +103,7 @@ for i = 1 : length(n)
     [L_W(i), L_E(i), M_fus(i), F_fin(i), D_B(i), M_tail(i)] = aerodynamic_loads(Aircraft, Wing, Empennage, Fin, Flight);
     
     %%Strucutural loads: Fuselage
-    [TX(i), TY(i), TZ(i), Mx(i), My(i), Mz(i)] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Fin,Flight.aoa,Flight.n, L_E, F_fin, M_fus); 
+    [TX(:,i), TY(:,i), TZ(:,i), Mx(:,i), My(:,i), Mz(:,i)] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Fin,Flight.aoa,Flight.n, L_E, F_fin, M_fus); 
     
     %%Strucutural loads: Wing 
     Wing_loading.L = L_W(i);
