@@ -31,6 +31,7 @@ Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
 MTOW = 4429; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+% 4429 with 0.8 factor in mass for the fuselage
 
 %% Speed
 [speed1] = speed(Altitude,M);
@@ -128,7 +129,7 @@ cl_alphaT = (1.4-1)/(0+4)*180/pi; % Approximated [1/rad]
 syms y
 c_tail    = (1-2*y/b_tail)*c_root_tail + (2*y/b_tail)*c_tip_tail;
 c_MAC_tail = double(2/S_tail*int(c_tail^2,0,b_tail/2));
-
+y_MAC_tail    = double(2/S_tail*int(c_tail*y,0,b_tail/2));
 % fprintf('Yaw coefficient derivative of the Aircraft whithout the fin: %.2dm\n',Cn_beta_Ah);
 
 % Prints
@@ -142,7 +143,7 @@ fprintf('Total weight of the tail : %.2dkg\n', W_tail);
 
 %% Weight
 [W_wing, W_fuselage, W_landing_gear_nose, W_landing_gear_main, W_installed_engine, W_payload, W_FS, W_fuel, W_system, W_tot, W_subsyst, W_sensors] = mass(MTOW,bw,cw_root,cw_tip,l_arm);
-W = [W_fuselage;W_wing;W_tail;W_installed_engine;W_landing_gear_nose;W_landing_gear_main;W_payload;W_fuel+W_FS;W_subsyst;W_sensors]; 
+W = [576.3;235.27;W_tail;242;30;148;W_payload;W_fuel+W_FS;W_subsyst;W_sensors]; 
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
@@ -155,11 +156,12 @@ FW = sum(W)-W(7);
 le = 1.35; %length of the engine [m]
 x_e = l_f-le; %position of the engine inlet [m]
 x_wv = l_arm; %distance between the wac and the vac [m]
+%Longitudinal position of the cg from nose
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
-xcg_l1= 1.5; %for the first landing gears
+xcg_l1= 1.3; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
-xcg_p = 5.2; %for the payload
+xcg_p = 5.5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 5; %for the subsystems
 xcg_sen = 1.5; %for the sensors
@@ -176,10 +178,21 @@ x_tLE = x_t+sin(41.3361*pi/180)*y_tmac;
 x_hLE = x_t+sin(41.3361*pi/180)*y_hmac;
 x_vLE = x_t+sin(41.3361*pi/180)*y_vmac;
 thick = 0; %thickness of the plane
-zcg_w = 0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
+%Vertical position of the cg for the diferent components w.r.t the
+%centerline
+zcg_fus = 0; %for the fuselage [m]
+zcg_w = a_el-0.30+0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
+zcg_t = y_MAC_tail/tan(dihedral_angle); %for the tail [m]
+zcg_e = 0; %for the engine [m] align with the fuselage
+zcg_ng = -(a_el+0.8); %for the nose landing gear [m]
+zcg_mg = -(a_el+0.8); %for the main landing gear [m]
+zcg_p = 0; %for the payload [m] supposed align with the centerline
+zcg_f = a_el/2; %for the fuel [m] above the centerline because of the wing
+zcg_sen = 0; %for the sensors [m] supposed align with the centerline
+zcg_sub = 0; %for the subsystems [m] supposed align with the centerline
 xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg_sen;xcg_sub];
 yarm = [0;0;0;0;0;0;0;0;0;0]; %symetric
-zarm = [zcg_w;0;0;0;0;0;0;0;0;0];
+zarm = [zcg_fus;zcg_w;zcg_t;zcg_e;zcg_ng;zcg_mg;zcg_p;zcg_f;zcg_sen;zcg_sub];
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.Sensors;10.Subsystems)
 % vector of all the different arms corresponding to the different
@@ -291,10 +304,10 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 % Ci-dessous ? revoir !! 
-Ixz = 2952;               % Inertia product kg m^2
-Ix = 33898;               % Roll moment of inertia kg m^2
-Iy = 165669;              % Pitch moment of inertia in kg m^2
-Iz = 189496;              % Yaw moment of inertia kg m^2
+Ixz = 10.975204;               % Inertia product kg m^2
+Ix = 9448.622823;               % Roll moment of inertia kg m^2
+Iy = 10406.831792;              % Pitch moment of inertia in kg m^2
+Iz = 1382.996188;              % Yaw moment of inertia kg m^2
 Inertia = table(Ix, Iy, Iz, Ixz);
 V0 = V_c;
 

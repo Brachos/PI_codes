@@ -106,7 +106,7 @@ Ki = -1; %p.1588
 Cy_beta_WB = Ki*Cy_beta_B*(BRA/Sw) + delta_Cy_beta_Gam; %p.1582
 Cy_beta = Cy_beta_WB + delta_Cy_beta_VWBH; %p.1812
 
-%% Cl_p
+%% Cl_p -> p.2783 + p.2532
 
 %--------- WING-------------
 Lambda_beta = atan(tan(sweep)/bbeta);%p.2532

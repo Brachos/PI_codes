@@ -91,8 +91,8 @@ W_tail_v = 0.073*(1+0.2*Ht/Hv)*(N_z*W_dg)^(0.376)*q^(0.122)*(S_tail*feet^2*cos(a
 % disp(W_tail_v);
 Sw = Sw/feet^2;
 
-% W_tail = (W_tail_v + W_tail_h)/pound;
-W_tail = 174; %CAD result, best approximation so far (à revoir !!!)
+W_tail = (W_tail_v + W_tail_h)/pound;
+% W_tail = 50; %CAD result, best approximation so far (à revoir !!!)
 %% control surfaces
 %Based on Raymer tab
 span_covered = 0.7; %proportion of total span

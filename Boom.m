@@ -1,13 +1,15 @@
-function [boom, stringers, area] = Boom(cell,stringers, M_x, M_y, M_z, sigma_max,coeff_boom1)
+function [boom,boom_tip, stringers, area] = Boom(cell,cell_tip,stringers, M_x, M_y, M_z, sigma_max,coeff_boom1)
 
 %fonction that computes the min area of the cross section of the booms
 %in function of the moments given by the loads of the wing
 
-%voir s'il faut calculer tout ca au tip ou a la root
-%et voir si je fais un coeff d'importance relative d'aire ou pas
-
 boom.XZ_up = cell.XZ_up;
 boom.XZ_low = cell.XZ_low;
+boom.Y = zeros(length(boom.XZ_up(1,:)),1);
+
+boom_tip.XZ_up = cell_tip.XZ_up;
+boom_tip.XZ_low = cell_tip.XZ_low;
+boom_tip.Y = zeros(length(boom_tip.XZ_up(1,:)),1);
 
 %Centroid computation
 centroid.X = (boom.XZ_up(1,1)*coeff_boom1 + boom.XZ_up(1,2) + boom.XZ_low(1,1)*coeff_boom1 + boom.XZ_low(1,2) + sum(stringers.XZ_up1(1,:)) + sum(stringers.XZ_low1(1,:)) + sum(stringers.XZ_up2(1,:)) + sum(stringers.XZ_low2(1,:)))/(stringers.nb+2*coeff_boom1);
@@ -57,7 +59,11 @@ area = sigma_xx_max/sigma_max;
 end
 
 function[sigma_xx] = sigma_xxx(I,M_x,M_z,XZc)
-    sigma_xx = (-(I.xz*M_x + I.xx*M_z).*XZc(1,:)+(I.zz*M_x + I.xz*M_z).*XZc(2,:))./(I.xx*I.zz - I.xz^2);
-end
+%function to compute the direct stress: sigma_xx
+%I are the second moments of inertia
+%M_x and M_z the differents momentum along the wing
 
+    sigma_xx = (-(I.xz*M_x + I.xx*M_z).*XZc(1,:)+(I.zz*M_x + I.xz*M_z).*XZc(2,:))./(I.xx*I.zz - I.xz^2);
+    
+end
 
