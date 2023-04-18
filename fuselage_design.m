@@ -6,10 +6,10 @@ t_fuselage=0.05; %[m]
 V_sensors=0.5;%[m^3]
 V_subsystems=0.4;%[m^3]
 V_mission=0.15;%[m^3]
-L_engine=4/3.2808;
-V_engine=(1.9/(3.2808*2))^2*pi*L_engine;
+L_engine=1.58;
+V_engine=(0.8/2)^2*pi*L_engine;
 
-D_air_inlet=0.57912+2*t_fuselage;
+D_air_inlet=0.8+2*t_fuselage;
 L_air_inlet_fuselage=0.65;
 V_air_inlet=2*pi*(D_air_inlet/2)^2*L_air_inlet_fuselage;
 b_end=D_air_inlet/2;

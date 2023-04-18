@@ -1,6 +1,6 @@
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, WEIGHT, FUSELAGE] = Aircraft(MTOW,cg,prop_lift)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
-clear
 %% Figures settings
 clc
 close all
@@ -15,7 +15,7 @@ set(groot, 'defaultLegendLocation','best');
 set(0, 'DefaultLineLineWidth', 1.8);
 pt = 12;
 %% Parameters
-AOA = 2; % AOA where the drag is minimum or cl/cd is maximum [deg]
+AOA = 1; % AOA where the drag is minimum or cl/cd is maximum [deg]
 ARw = 7; %Wing Aspect ratio
 TAPw = 0.3; %Wing tapper ratio
 M = 0.7; %Mach number
@@ -30,15 +30,14 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 3550; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 4127; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 % 4429 with 0.8 factor in mass for the fuselage
 
 %% Speed
-[speed1] = speed(Altitude,M);
+[V_c] = speed(Altitude,M);
 % disp('rho is');
 % disp(rho);
-rho = 0.48;
-V_c = speed1;
+rho = 0.4594;
 
 %% Wing
 [bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip, A] = wing(M,Altitude,0.915*MTOW,AOA);
@@ -59,6 +58,7 @@ V_c = speed1;
 % theta_tip = twist angle in RADIANS
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
+WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip);
 
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel, D);
@@ -66,15 +66,15 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 % V_f is the volume of the fuselage. 
 %h_f_max = 2.888274e-01; %[m]
 %l_f = 7; %[m]
+FUSELAGE = table(D_f_max, a_el, b_el, l_f, V_f);
 
 %% V-Tail
-cg_pos = 3.57;% ? revoir absolument !!!!
-l_cg = cg_pos;
+l_cg = cg;
 flag = 1;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_T] = v_tail(MTOW,...
-    2*b_el-0.08,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw,flag, D);
+    2*b_el-0.08,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw,flag, D,prop_lift,rho);
 %%%%%%%%% INPUTS %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
@@ -107,6 +107,9 @@ flag = 1;
 % rudder_chord_root = rudder chord at the root of the rudder
 % rudder_chord_tip  = rudder chord at the tip of the rudder
 % AR_T              = aspect ratio of the tail
+
+V_TAIL = table(AR_T, S_tail, Sh_tail, Sv_tail, c_root_tail, c_tip_tail, b_tail, bv_tail, bh_tail, dihedral_angle, l_arm, Lambda_T, W_tail);
+RUDDER = table(hight_root, hight_tip, rudder_chord, rudder_chord_root, rudder_chord_tip);
 
 S_T = Sh_tail; %Tailplane area
 l_T = l_arm; %Tail moment arm
@@ -147,16 +150,20 @@ fprintf('Total weight of the tail : %.2dkg\n', W_tail);
 % W = [W_fuselage;W_wing;W_tail;242;30;148;W_payload;W_fuel+W_FS;W_subsyst;W_sensors]; 
 %vector of all the different weights (or mass)
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
-% gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
+% gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors;11.batteries)
 % New vector W with the CAD
-W = [W_fuselage;W_wing;W_tail;242.8;W_landing_gear_nose;W_landing_gear_main;150;W_fuel+W_FS;W_subsyst;W_sensors];
+W_batteries = 0; % 550 Sources: Laura [kg]
+W_engine = 242.8; %based on the engine choice
+W = [W_fuselage;W_wing;W_tail;W_engine;W_landing_gear_nose;W_landing_gear_main;150;W_fuel+W_FS;W_subsyst;W_sensors;W_batteries];
 % W = [576.3;235.3;90;242.8;29.5;148.2;110.8;1706+Vw_fuel*800;95;W_sensors];
-% minw = sum(W)-W(7)-W(8)+W_FS;
-minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
-MTOW = sum(W) +550;
-% PayW = sum(W)-W(8)+W_FS;
-PayW = sum(W)-W(8);
+minW = sum(W)-W(7)-W(8)+W_FS;
+%minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
+MTOW = sum(W); %+550;
+PayW = sum(W)-W(8)+W_FS;
+%PayW = sum(W)-W(8);
 FW = sum(W)-W(7);
+
+WEIGHT = table(W_fuselage, W_wing, W_tail, W_landing_gear_nose, W_landing_gear_main,W_fuel, W_subsyst, W_sensors, W_payload);
 
 %% Center of gravity
 le = 1.35; %length of the engine [m]
@@ -169,20 +176,20 @@ xcg_l1= 1.3; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
 xcg_p = 5.5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
-xcg_sub = 4; %for the subsystems
+xcg_sub = 3; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 3.4; %position of the wings
+x_w = 3.55; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4.2; %for the fuel
+xcg_fuel = 4; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
 y_hmac = double(2/Sh_tail*int(c*y,0,bh_tail/2));
 y_vmac = double(2/Sv_tail*int(c*y,0,bv_tail/2));
-x_wLE = x_w+sin(36.3361*pi/180)*y_wmac; %position of the wing leading edge at the mac
-x_tLE = x_t+sin(41.3361*pi/180)*y_tmac;
-x_hLE = x_t+sin(41.3361*pi/180)*y_hmac;
-x_vLE = x_t+sin(41.3361*pi/180)*y_vmac;
+x_wLE = x_w+sin(sweep*pi/180)*y_wmac; %position of the wing leading edge at the mac
+x_tLE = x_t+sin(Lambda_T*pi/180)*y_tmac;
+x_hLE = x_t+sin(Lambda_T*pi/180)*y_hmac;
+x_vLE = x_t+sin(Lambda_T*pi/180)*y_vmac;
 thick = 0; %thickness of the plane
 %Vertical position of the cg for the diferent components w.r.t the
 %centerline
@@ -190,8 +197,8 @@ zcg_fus = 0; %for the fuselage [m]
 zcg_w = a_el-0.30+0.07*thick; %for the wing [0.05*thick;0.10*thick] [m]
 zcg_t = y_MAC_tail/tan(dihedral_angle); %for the tail [m]
 zcg_e = 0; %for the engine [m] align with the fuselage
-zcg_ng = -(a_el+0.8); %for the nose landing gear [m]
-zcg_mg = -(a_el+0.8); %for the main landing gear [m]
+zcg_ng = -(b_el+0.8); %for the nose landing gear [m]
+zcg_mg = -(b_el+0.8); %for the main landing gear [m]
 zcg_p = 0; %for the payload [m] supposed align with the centerline
 zcg_f = a_el/2; %for the fuel [m] above the centerline because of the wing
 zcg_sen = 0; %for the sensors [m] supposed align with the centerline
@@ -323,7 +330,7 @@ V0 = V_c;
 [Long_derivatives,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
-    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, D);
+    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, D,prop_lift);
 % writetable(Long_derivatives, 'longitudinalStab.txt');
 
 % Lateral stability
@@ -438,3 +445,8 @@ plot([p1 p1 p2; ...
     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
 title('V-tail geometry')
 axis equal
+
+W_arm = cgT(1)-(xw_cg+x_wLE);
+prop_lift = l_arm / (l_arm+W_arm);
+
+end

@@ -118,7 +118,7 @@ bClp_kappa = -0.235; %p.2550, with param from the "frpintf" just before, per RAD
 CLalpha_CL0 = CL_alpha_v; %here assuming that there's no difference for CL_alpha with CL, per RADIANS
 Clp_Cdl_CL2 = -0.01; %p.2554
 L = 1.2; %p.723 bcse t_c_max is at 0.37 of chord (see data from http://airfoiltools.com/airfoil/details?airfoil=sc20714-il)
-S_wet = Sw - cw_root*a_el;
+S_wet = 2*(Sw - cw_root*a_el*2);
 R_LS = 1.2; %p.749
 
 Re_ell = cw_MAC*V_c/nu;
