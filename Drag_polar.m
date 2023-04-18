@@ -2,7 +2,7 @@
 
 Mach = 0.7;
 Altitude = 30000; % [ft]
-Mass = 4429;
+Mass = 1000;
 AR = 7;
 AOA = -10 : 0.1 : 10;
 CL_vector = zeros(length(AOA),1);
