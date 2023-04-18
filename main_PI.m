@@ -1,6 +1,6 @@
 clear
-MTOW = 3050; %first guess
-cg = 3.5; %first guess
+MTOW = 4089; %first guess
+cg = 4.5732; %first guess
 error = 1;
 prop_lift = 0.9;
 while error >  1e-4
