@@ -1,6 +1,7 @@
+function [MTOW, cgT, WING, V_TAIL, RUDDER] = Aircraft(MTOW, cg)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
-clear
+% clear
 %% Figures settings
 clc
 close all
@@ -15,7 +16,7 @@ set(groot, 'defaultLegendLocation','best');
 set(0, 'DefaultLineLineWidth', 1.8);
 pt = 12;
 %% Parameters
-AOA = 2; % AOA where the drag is minimum or cl/cd is maximum [deg]
+AOA = 1.5; % AOA where the drag is minimum or cl/cd is maximum [deg]
 ARw = 7; %Wing Aspect ratio
 TAPw = 0.3; %Wing tapper ratio
 M = 0.7; %Mach number
@@ -30,7 +31,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 3062; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+% MTOW = 3062; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 % 4429 with 0.8 factor in mass for the fuselage
 
 %% Speed
@@ -60,6 +61,7 @@ V_c = speed1;
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 
+WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip); 
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel, D);
 % a and b are the dimensions of the elliptical cross-section, semi-axes, a = long axe horizontal, b = small axe vertical. 
@@ -68,8 +70,7 @@ xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 %l_f = 7; %[m]
 
 %% V-Tail
-cg_pos = 3.57;% ? revoir absolument !!!!
-l_cg = cg_pos;
+l_cg = cg;
 flag = 1;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
@@ -107,6 +108,9 @@ flag = 1;
 % rudder_chord_root = rudder chord at the root of the rudder
 % rudder_chord_tip  = rudder chord at the tip of the rudder
 % AR_T              = aspect ratio of the tail
+
+V_TAIL = table(AR_T, S_tail, Sh_tail, Sv_tail, c_root_tail, c_tip_tail, b_tail, bv_tail, bh_tail, dihedral_angle, l_arm, Lambda_T, W_tail);
+RUDDER = table(hight_root, hight_tip, rudder_chord, rudder_chord_root, rudder_chord_tip);
 
 S_T = Sh_tail; %Tailplane area
 l_T = l_arm; %Tail moment arm
@@ -153,7 +157,7 @@ W = [W_fuselage;W_wing;W_tail;242.8;W_landing_gear_nose;W_landing_gear_main;150;
 % W = [576.3;235.3;90;242.8;29.5;148.2;110.8;1706+Vw_fuel*800;95;W_sensors];
 % minw = sum(W)-W(7)-W(8)+W_FS;
 minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
-MTOW = sum(W) +550;
+MTOW = sum(W);
 % PayW = sum(W)-W(8)+W_FS;
 PayW = sum(W)-W(8);
 FW = sum(W)-W(7);

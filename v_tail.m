@@ -70,6 +70,7 @@ b_v = cos(angle)*b_tail/2;
 lambda_t = 0.6;
 c_root_tail = 2*S_tail/b_tail/(1+lambda_t);
 c_tip_tail = lambda_t * c_root_tail;
+
 %% Weight
 [W_mass] = fuel_weight(net_thrust);
 W_fuel = W_mass*pound;
@@ -93,6 +94,7 @@ Sw = Sw/feet^2;
 
 W_tail = (W_tail_v + W_tail_h)/pound;
 % W_tail = 50; %CAD result, best approximation so far (? revoir !!!)
+
 %% control surfaces
 %Based on Raymer tab
 span_covered = 0.7; %proportion of total span
