@@ -1,4 +1,4 @@
-function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER] = Aircraft(MTOW, cg,prop_lift)
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, WEIGHT, FUSELAGE] = Aircraft(MTOW, cg,prop_lift)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 % clear
@@ -66,6 +66,7 @@ WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sw
 %h_f_max = 2.888274e-01; %[m]
 %l_f = 7; %[m]
 
+FUSELAGE = table(D_f_max, a_el, b_el, l_f, V_f);
 %% V-Tail
 l_cg = cg;
 flag = 1;
@@ -150,7 +151,8 @@ fprintf('Total weight of the tail : %.2dkg\n', W_tail);
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
 % New vector W with the CAD
-W = [W_fuselage;W_wing;W_tail;242.8;W_landing_gear_nose;W_landing_gear_main;150;W_fuel+W_FS;W_subsyst;W_sensors];
+W_engine = 242.8; %based on the engine choice
+W = [W_fuselage;W_wing;W_tail;W_engine;W_landing_gear_nose;W_landing_gear_main;150;W_fuel+W_FS;W_subsyst;W_sensors; W_payload];
 % W = [576.3;235.3;90;242.8;29.5;148.2;110.8;1706+Vw_fuel*800;95;W_sensors];
 % minw = sum(W)-W(7)-W(8)+W_FS;
 minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
@@ -159,6 +161,7 @@ MTOW = sum(W);
 PayW = sum(W)-W(8);
 FW = sum(W)-W(7);
 
+WEIGHT = table(W_fuselage, W_wing, W_tail, W_landing_gear_nose, W_landing_gear_main,W_fuel, W_subsyst, W_sensors, W_payload);
 %% Center of gravity
 le = 1.35; %length of the engine [m]
 x_e = l_f-le; %position of the engine inlet [m]
@@ -172,7 +175,7 @@ xcg_p = 5.5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 4; %for the subsystems
 xcg_sen = 1.5; %for the sensors
-x_w = 3.4; %position of the wings
+x_w = 3.3; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
 xcg_fuel = 4.2; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y

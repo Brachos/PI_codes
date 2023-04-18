@@ -56,7 +56,7 @@ if show_prints
     fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
 end
 % voir graphique slide 57
-V_v = 0.06; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.07; % avec V_v = S_F*l_F/(S*b)
 l_F = l_arm; % first guess, distance between cg and fin ac
 S_v = V_v*Sw*bw/l_F;
 

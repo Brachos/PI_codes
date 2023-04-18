@@ -46,7 +46,7 @@ Lt = l_arm*feet;
 W_press = 0;
 
 W_fuselage = (0.052*(pi*D_f*L_f+pi*D_f^2/2)^1.086*(N_z*W_dg)^0.177*Lt^-0.051*(L_f/D_f)^-0.072*q^0.241+W_press)/pound; %Raymer p.606
-% W_fuselage = 460;
+% W_fuselage = 466;
 %% Nose landing gear Raymer
 N_l = 1.5; % nombre de landing gear * 1.5
 W_l = MTOW*pound; %in [lbs]
