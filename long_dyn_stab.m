@@ -1,7 +1,7 @@
 function [Long_deriv,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,de_dAOA1,...
     static_stability,AOA,alpha_L0,l_f,l_cg,sweep,cl_alphaw,...
-    l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC,Inertia)
+    l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC,Inertia, net_thrust)
 % Parameters
 show_prints = 0;
     % CL_alpha
@@ -36,11 +36,11 @@ rhoDM = 0.4671+(0.4135-0.4671)*0.144;     % [kg/m^3] Density at 30 000 ft
     Altitude,0.95*MTOW,AOA);
 
 [~,~,~,~,~,~,l_armDM,~,~,~,~,~,W_tailDM,~, ~, ~, ~,~,~, ~, ~] = v_tail(MTOW,...
-    2*b_el,cw_MACDM,sweepDM*180/pi,SwDM,l_f,l_cg,bwDM,show_prints);
+    2*b_el,cw_MACDM,sweepDM*180/pi,SwDM,l_f,l_cg,bwDM,show_prints, net_thrust);
 
 [W_wingDM, W_fuselageDM, W_landing_gear_noseDM, W_landing_gear_mainDM,...
     W_installed_engineDM, W_payloadDM, W_FSDM, W_fuelDM, ~, ~,...
-    W_subsystDM, W_sensorsDM] = mass(MTOW,bwDM,cw_rootDM,cw_tipDM,l_armDM);
+    W_subsystDM, W_sensorsDM] = mass(MTOW,bwDM,cw_rootDM,cw_tipDM,l_armDM, net_thrust);
 
 WDM = [W_fuselageDM;W_wingDM;W_tailDM;W_installed_engineDM;W_landing_gear_noseDM;W_landing_gear_mainDM;W_payloadDM;W_fuelDM+W_FSDM;W_subsystDM;W_sensorsDM];
 MTOWDM = sum(WDM);

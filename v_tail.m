@@ -1,7 +1,7 @@
 function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
     b_tail, b_v, b_h, W_tail,CN_tot, V_v, hight_root, hight_tip, ...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_t] = ...
-    v_tail(Mass, h_f_max, c_chord, Lambda_LE, Sw, l_f, l_cg, bw, flag)
+    v_tail(Mass, h_f_max, c_chord, Lambda_LE, Sw, l_f, l_cg, bw, flag, net_thrust)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
 %l'ouvrage de r?f?rence "Aircraft design, A Systems Engineering Approach"
@@ -71,7 +71,7 @@ lambda_t = 0.6;
 c_root_tail = 2*S_tail/b_tail/(1+lambda_t);
 c_tip_tail = lambda_t * c_root_tail;
 %% Weight
-[W_mass] = fuel_weight();
+[W_mass] = fuel_weight(net_thrust);
 W_fuel = W_mass*pound;
 W_dg = Mass*pound - 0.45*W_fuel;
 N_z = 1.5*3; %Ultimate load factor = 1.5*limit load factor

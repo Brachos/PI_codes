@@ -1,4 +1,4 @@
-function [fuel_mass] = fuel_weight()
+function [fuel_mass] = fuel_weight(net_thrust)
 %%Quantity of fuel in kg
 
 ingress_range = 850 * 1.852; % [nm] to [km] at 30 000 ft % KPP02 O
@@ -14,7 +14,7 @@ loiter_time_landing = 0.75; %[hours] %KPP10 O
 loiter2_speed = speed(30000,0.7);
 loiter2_speed = loiter2_speed*3.6;
 TSFC = 0.586 *0.45 / 4.49; %[lb/lbf/h] to [kg/h/N]
-net_thrust = 2200;%[N]
+% net_thrust = 2200;%[N]
 
 %estimated flying time 
 ingress_time = ingress_range / ingress_speed; %[hours] 
@@ -34,4 +34,5 @@ loiter2_range = loiter_time_landing * loiter2_speed;
 
 range = ingress_range + egress_range + loiter1_range + loiter2_range;
 range2 = total_flying_time * ingress_speed; 
+% fuel_mass = 2200;
 end

@@ -1,4 +1,4 @@
-function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel)
+function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel, net_thrust)
 %thickness of the fuselage
 t_fuselage=0.05; %[m]
 
@@ -15,7 +15,7 @@ V_air_inlet=2*pi*(D_air_inlet/2)^2*L_air_inlet_fuselage;
 b_end=D_air_inlet/2;
 a_end=b_end;
 
-m_fuel=fuel_weight();
+m_fuel=fuel_weight(net_thrust);
 V_tot_fuel=m_fuel/800;%hypothesis: kerozen is used as the fuel.
 Vf_fuel=V_tot_fuel-Vw_fuel;
 
