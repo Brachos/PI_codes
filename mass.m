@@ -73,7 +73,7 @@ W_payload = 110; %[kg]
 
 %% System
 IESuP = 222/pound; % Initial Estimated Subsystem Payload
-IESeP = 228/pound; % Initial Estimated Sensors Payload
+IESeP = 27; % Initial Estimated Sensors Payload
 W_syst = IESuP+IESeP;
 W_subsyst = IESuP;
 W_sensors = IESeP;
