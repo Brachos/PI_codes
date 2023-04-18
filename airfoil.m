@@ -79,7 +79,7 @@ axis equal
 xlim([-1 2]);
 ylim([-4 4]);
 zlim([-0.2 0.2]);
-
-writematrix(curve_root,'coord_root.txt');
-writematrix(curve_tip_left,'coord_tip_left.txt');
-writematrix(curve_tip_right,'coord_tip_right.txt');
+ 
+% writematrix(curve_root,'coord_root.txt');
+% writematrix(curve_tip_left,'coord_tip_left.txt');
+% writematrix(curve_tip_right,'coord_tip_right.txt');

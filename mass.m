@@ -42,11 +42,11 @@ W_wing = W_wing/pound;
 [D_f_max,~,~,l_f,~] = fuselage_design(MTOW,Vw_fuel,net_thrust);
 L_f = l_f*feet; % [m] fuselage length
 D_f = D_f_max*0.8*feet; %[ft] fuselage max diameter of the eq. circ. cross-sect??
-Lt = l_arm;
+Lt = l_arm*feet;
 W_press = 0;
 
 W_fuselage = (0.052*(pi*D_f*L_f+pi*D_f^2/2)^1.086*(N_z*W_dg)^0.177*Lt^-0.051*(L_f/D_f)^-0.072*q^0.241+W_press)/pound; %Raymer p.606
-
+% W_fuselage = 460;
 %% Nose landing gear Raymer
 N_l = 1.5; % nombre de landing gear * 1.5
 W_l = MTOW*pound; %in [lbs]

@@ -1,4 +1,4 @@
-function [MTOW, cgT, WING, V_TAIL, RUDDER] = Aircraft(MTOW, cg)
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER] = Aircraft(MTOW, cg,prop_lift)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 % clear
@@ -16,7 +16,7 @@ set(groot, 'defaultLegendLocation','best');
 set(0, 'DefaultLineLineWidth', 1.8);
 pt = 12;
 %% Parameters
-AOA = 1.5; % AOA where the drag is minimum or cl/cd is maximum [deg]
+AOA = 2; % AOA where the drag is minimum or cl/cd is maximum [deg]
 ARw = 7; %Wing Aspect ratio
 TAPw = 0.3; %Wing tapper ratio
 M = 0.7; %Mach number
@@ -35,11 +35,8 @@ Nelem = 10; %number of differents elements, of different mass
 % 4429 with 0.8 factor in mass for the fuselage
 
 %% Speed
-[speed1] = speed(Altitude,M);
-% disp('rho is');
-% disp(rho);
-rho = 0.48;
-V_c = speed1;
+[V_c] = speed(Altitude,M);
+rho = 0.4594;
 
 %% Wing
 [bw,Sw,CLw_alpha,CDw_alpha,CLw,CDw,D,cw_root,cw_tip,cw_MAC,xw_AC,yw_AC,Vw_fuel,sweep,c,alpha_L0,tap,cl_alphaw,theta_tip, A] = wing(M,Altitude,0.915*MTOW,AOA);
@@ -75,7 +72,7 @@ flag = 1;
 [S_tail,Sh_tail,Sv_tail,c_root_tail,c_tip_tail, dihedral_angle, l_arm, CL_tail, Lambda_T,...
     b_tail, bv_tail, bh_tail, W_tail, Cn_beta_Ah, V_vf, hight_root, hight_tip,...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_T] = v_tail(MTOW,...
-    2*b_el-0.08,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw,flag, D);
+    2*b_el-0.08,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw,flag, D,prop_lift,rho);
 %%%%%%%%% INPUTS %%%%%%%%%%
 % MTOW      = Mass of airplane
 % D_f_max   = maximal diameter of fuselage
@@ -183,10 +180,10 @@ y_tmac = 1; %position of the tail mac along y
 syms y
 y_hmac = double(2/Sh_tail*int(c*y,0,bh_tail/2));
 y_vmac = double(2/Sv_tail*int(c*y,0,bv_tail/2));
-x_wLE = x_w+sin(36.3361*pi/180)*y_wmac; %position of the wing leading edge at the mac
-x_tLE = x_t+sin(41.3361*pi/180)*y_tmac;
-x_hLE = x_t+sin(41.3361*pi/180)*y_hmac;
-x_vLE = x_t+sin(41.3361*pi/180)*y_vmac;
+x_wLE = x_w+sin(sweep)*y_wmac; %position of the wing leading edge at the mac
+x_tLE = x_t+sin(Lambda_T*pi/180)*y_tmac;
+x_hLE = x_t+sin(Lambda_T*pi/180)*y_hmac;
+x_vLE = x_t+sin(Lambda_T*pi/180)*y_vmac;
 thick = 0; %thickness of the plane
 %Vertical position of the cg for the diferent components w.r.t the
 %centerline
@@ -327,7 +324,7 @@ V0 = V_c;
 [Long_derivatives,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
-    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, D);
+    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, D,prop_lift);
 % writetable(Long_derivatives, 'longitudinalStab.txt');
 
 % Lateral stability
@@ -442,3 +439,6 @@ plot([p1 p1 p2; ...
     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
 title('V-tail geometry')
 axis equal
+
+W_arm = cgT(1)-(xw_cg+x_wLE);
+prop_lift = l_arm / (l_arm+W_arm);

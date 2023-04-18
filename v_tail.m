@@ -1,7 +1,7 @@
 function [S_tail, S_h,S_v,c_root_tail, c_tip_tail, angle,l_arm,C_L,Lambda_T, ...
     b_tail, b_v, b_h, W_tail,CN_tot, V_v, hight_root, hight_tip, ...
     rudder_chord_root, rudder_chord_tip, rudder_chord, S_rudder, AR_t] = ...
-    v_tail(Mass, h_f_max, c_chord, Lambda_LE, Sw, l_f, l_cg, bw, flag, net_thrust)
+    v_tail(Mass, h_f_max, c_chord, Lambda_LE, Sw, l_f, l_cg, bw, flag,net_thrust,prop_lift,rho)
 %Code destin? ? obtenir les principaux param?tres g?om?trique de la tail en
 %fonction des caract?ristiques des ailes. Cette m?thode est bas?e sur
 %l'ouvrage de r?f?rence "Aircraft design, A Systems Engineering Approach"
@@ -56,12 +56,16 @@ if show_prints
     fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
 end
 % voir graphique slide 57
-V_v = 0.09; % avec V_v = S_F*l_F/(S*b)
+V_v = 0.06; % avec V_v = S_F*l_F/(S*b)
 l_F = l_arm; % first guess, distance between cg and fin ac
 S_v = V_v*Sw*bw/l_F;
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
-C_L = 0.15*cos(angle);
+
+Velocity = speed(30000,0.7);
+C_L = Mass*9.81*(1-prop_lift)/(0.5*rho*S_h*Velocity^2);
+% cl_alpha = (0.3303+0.3302)/4; % From xfoil
+% C_L = 0.15*cos(angle);
 
 S_tail = S_h + S_v;
 b_tail = sqrt(AR_t*S_tail);% span along the tail (one side)
