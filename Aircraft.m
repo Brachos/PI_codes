@@ -30,7 +30,7 @@ Mt = zeros(3,1); %vector of the total moment 3 different directions for the min 
 Nelem = 10; %number of differents elements, of different mass
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.System)
-MTOW = 3062; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
+MTOW = 3550; %sum(W); [kg] %Maximum Take-Off Weight (Converged, first approx --> 4471)
 % 4429 with 0.8 factor in mass for the fuselage
 
 %% Speed
