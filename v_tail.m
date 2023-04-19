@@ -42,7 +42,7 @@ feet = 3.28; % m to ft
 % consult? plusieur sources statistiques, ce cefficient sera fix? ? une
 % premi?re valeur de 0.6;
 V_h_bar = 0.6;
-l_arm = l_f - l_cg - 0.75;
+l_arm = l_f - l_cg - 0.5;
 % Ainsi, on peut maintenant d?temriner S_h :
 S_h = V_h_bar*c_bar*Sw/l_arm;
 
@@ -52,19 +52,17 @@ S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/Sw/bw*(870/695)^(1/2)*(1072/1265)^(1/3); %? revoir !!
 CN_beta_i = -0.017; %because high wings
 CN_tot = CN_beta_f + CN_beta_i;
-if show_prints
-    fprintf('Param slide 57 for vertical tail is %.3f.\n', CN_tot);
+Vv_data = load("Vtail_data.csv");
+if abs(CN_tot) >= abs(Vv_data(end,1))
+    V_v = 0.09;
+else
+    V_v = interp1(Vv_data(:,1),Vv_data(:,2),CN_tot);
 end
-% voir graphique slide 57
-V_v = 0.07; % avec V_v = S_F*l_F/(S*b)
+
 l_F = l_arm; % first guess, distance between cg and fin ac
 S_v = V_v*Sw*bw/l_F;
 
 angle = atan(sqrt(S_v/S_h)); % angle de la v_tail
-Velocity = speed(30000,0.7);
-C_L = Mass*9.81*(1-prop_lift)/(0.5*rho*S_h*Velocity^2);
-% cl_alpha = (0.3303+0.3302)/4; % From xfoil
-% C_L = 0.15*cos(angle);
 
 Velocity = speed(30000,0.7);
 C_L = Mass*9.81*(1-prop_lift)/(0.5*rho*S_h*Velocity^2);
