@@ -2,7 +2,7 @@
 % aerodynamic and structural loads.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cg = [4.4824 0 0];  %Aircraft center of gravity position with respect to the nose
+cg = [4.42 0 0];  %Aircraft center of gravity position with respect to the nose
 
 % Aerodynamic center position of the components with respect to the nose
 y_ac_wing = 0.5;
@@ -20,19 +20,18 @@ x_ac_thrust = 7.3540;
 xarm =[3.6324 4.2821 8.0799 7.8144 1.5000 4.8000 5.0000 4.0000 1.5000 6.0000]; %[m]
 W = 1.0e+03 * [0.6743 0.1784 0.0477 0.4079 0.0287 0.0986 0.2050 2.4407 0.1007 0.1034]; %[kg]
     
-XX = 1;
 %All positions are computed with respect to the nose of the aircraft
 %The back of the wing is referred as section A 
 
 %Aircraft:
 Aircraft.W = sum(W)*9.18;         %Aircraft weight [N]
-Aircraft.I_theta = XX;            %Aircraft inertia [kg.m²]
-Aircraft.C_DB = XX;               %Aicraft body drag [N]
-Aircraft.l_DB = XX;               %Aicraft drag lever arm [m]
+Aircraft.I_theta = 165669;            %Aircraft inertia [kg.m²]
+Aircraft.C_DB = 0.03;               %Aicraft body drag [-]
+Aircraft.l_DB = 0.1;               %Aicraft drag lever arm [m]
 
 % Wing:       
 Wing.S = 119.5*0.09290304;                                  %Wing surface [m²]
-Wing.W = 29.8*9.81;                                         %Wing weight [N]
+Wing.W = W(2);                                              %Wing weight [N]
 Wing.AR = 7;                                                %Wing aspect ratio [-]
 Wing.MAC = 1.07;                                            %Wing mean aerodynamic chord [m]
 Wing.l = sqrt((y_ac_wing-cg(2))^2 + (x_ac_wing-cg(1))^2);   %Wing lever arm [m]
@@ -54,6 +53,7 @@ Empennage.aoa = atan2(y_ac_empennage - cg(2), x_ac_empennage - cg(1));  %Angle o
 Empennage.aoa_T = atan2(y_ac_thrust - cg(2), x_ac_thrust - cg(1));      %Angle of attack between the thrust lift lever arm and the chord [rad]
 Empennage.ac = 8.42;                                                    %Aerodynamic centre of the empennage [m]
 Empennage.aoa_fuselage = 0;                                             %Angle of attack between the empennage and the fuselage [rad]
+Empennage.AR = 4;                                                       %Aspect ratio
 
 %Fin:
 Fin.AR = 3;                                                 %Fin aspect ratio [-]
@@ -81,16 +81,13 @@ Payload.W = W(7)*9.81;          %Payload weight [N]
 Payload.cg = xarm(7);           %Center of gravity of the Payload [m]
 
 %Fuselage:  
-Fuselage.x_min = XX;            %x-position of the minimum cross-section [m]
-Fuselage.a_min = XX;            %Minimum semi major axis of the elliptical fuselage (at the tail) [m]
-Fuselage.b_min = XX;            %Minimum semi minor axis of the elliptical fuselage (at the tail) [m]
-Fuselage.x_max = XX;            %x-position of the cross-section A [m]
-Fuselage.a_max = XX;            %Semi major axis of the fuselage at section A [m]
-Fuselage.b_max = XX;            %Semi minor axis of the fuselage at section A [m]
-Fuselage.x_cs = [x_max x_max+(x_min - x_max)*0.5  x_min];   %x-position of the considered cross-section [m]
-Fuselage.a = [a_max a_max+(a_min - a_max)*0.5 a_min];       %Semi major axis of the considered cross-section [m]
-Fuselage.b = [b_max b_max+(b_min - b_max)*0.5 b_min];       %Semi-minor axis of the considered cross-section [m]
-Fuselage.A_h = pi.*Fuselage.a.*Fuselage.b;                  %Area of the cross-sections[m²]
+Fuselage.x_min = 8.15;          %x-position of the minimum cross-section [m]
+Fuselage.a_min = 0.339;         %Minimum semi major axis of the elliptical fuselage (at the tail) [m]
+Fuselage.b_min = 0.339;         %Minimum semi minor axis of the elliptical fuselage (at the tail) [m]
+Fuselage.x_max = 4;             %x-position of the cross-section A [m]
+Fuselage.a_max = 0.7461;        %Semi major axis of the fuselage at section A [m]
+Fuselage.b_max = 0.514;         %Semi minor axis of the fuselage at section A [m]
+Fuselage.A_h = pi*Fuselage.a_max*Fuselage.b_max;%Area of the cross-sections[m²]
 Fuselage.L = 8.49;              %Total length of the fuselage [m]
 Fuselage.W = W(1)*9.81;         %Total weight of the fuselage [N]
     
