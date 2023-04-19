@@ -1,4 +1,4 @@
-function [A_h_i] = ellipse_area(Stringer)
+function [A_h_i] = ellipse_area(Stringer, Fuselage)
     %ELLIPSE AREA computes the swept area between each stringer at each
     %considered cross-sectioN;
     % -----
@@ -27,13 +27,11 @@ function [A_h_i] = ellipse_area(Stringer)
     %   Output:     A_h_i: an array containing the swept area between each
     %               stringer for each considered cross-section of the fuselage[m²]
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-A_h_i = zeros(length(Stringer.positition_y(:,1)), Stringer.nb);
+A_h_i = zeros(1, Stringer.nb);
 theta = 2*pi/Stringer.nb;
-for i=1:length(Stringer.positition_y(:,1))
     for j=1:Stringer.nb/4
-        A_h_i(i, j) = 0.5*Stringer.a(i)*Stringer.b(i)*(atan((Stringer.a(i)*tan(theta*(j)))/Stringer.b(i)) - atan((Stringer.a(i)*tan(theta*(j-1)))/Stringer.b(i)));    
+        A_h_i(j) = 0.5*Fuselage.a_max*Fuselage.b_max*(atan((Fuselage.a_max*tan(theta*(j)))/Fuselage.b_max) - atan((Fuselage.a_max*tan(theta*(j-1)))/Fuselage.b_max));    
     end
-    A_h_i(i, Stringer.nb/4 + 1:Stringer.nb/2) = flip(A_h_i(i, 1:Stringer.nb/4));
-    A_h_i(i, Stringer.nb/2 + 1:Stringer.nb) = A_h_i(i, 1:Stringer/2);
-end
+    A_h_i(Stringer.nb/4 + 1:Stringer.nb/2) = flip(A_h_i(1:Stringer.nb/4));
+    A_h_i(Stringer.nb/2 + 1:Stringer.nb) = A_h_i(1:Stringer.nb/2);
 end

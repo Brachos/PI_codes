@@ -20,11 +20,11 @@ Stringer.max_load = 503e6/SF; %tensile Yield Strength [N/m]
 Stringer.tau_max = 331e6/SF;  %shear strength [N/m]
 
 %% computation of the stringer areas and the skin thickness
-cross_section_geometry(Fuselage, Stringer);
+[Stringer, Fuselage] = cross_section_geometry(Fuselage, Stringer);
 
-stringer(Stringer, T_fuselage, M_fuselage);
+Stringer = stringer(Stringer, T_fuselage, M_fuselage);
 
-thickness = skin(Stringer, T_fuselage, M_fuselage);
+thickness = skin(Stringer, T_fuselage, M_fuselage, Fuselage);
 
 %% Display
 disp('FUSELAGE:')

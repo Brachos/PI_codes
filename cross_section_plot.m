@@ -24,20 +24,8 @@ set(figure2,'defaulttextinterpreter','latex');
 hold on
 %Stringers
 plot3(Stringer.position_x(1, :), Stringer.position_y(1, :), Stringer.position_z(1, :) ,'.', 'Color', '#00707F','MarkerSize',20)
-plot3(Stringer.position_x(2, :), Stringer.position_y(2, :), Stringer.position_z(2, :) ,'.', 'Color', '#00707F','MarkerSize',20)
-plot3(Stringer.position_x(3, :), Stringer.position_y(3, :), Stringer.position_z(3, :) ,'.', 'Color', '#00707F','MarkerSize',20)
-
- 
-for i=1:Stringer.nb
-    plot3([Stringer.position_x(1, i) Stringer.position_x(3, i)], [Stringer.position_y(1, i) Stringer.position_y(3, i)], [Stringer.position_z(1, i) Stringer.position_z(3, i)],'color','#00707F', 'LineWidth', 2 )   
-end 
-%cross-section
 plot3(Fuselage.x(1, :), Fuselage.y(1, :),Fuselage.z(1, :),'color', '#00707F', 'LineWidth', 2); 
 plot3(Fuselage.x(1, :), Fuselage.y(1, :),-Fuselage.z(1, :),'color', '#00707F', 'LineWidth', 2);
-plot3(Fuselage.x(2, :), Fuselage.y(2, :),Fuselage.z(2, :),'color', '#00707F', 'LineWidth', 2); 
-plot3(Fuselage.x(2, :), Fuselage.y(2, :),-Fuselage.z(2, :),'color', '#00707F', 'LineWidth', 2);
-plot3(Fuselage.x(3, :), Fuselage.y(3, :),Fuselage.z(3, :),'color', '#00707F', 'LineWidth', 2); 
-plot3(Fuselage.x(3, :), Fuselage.y(3, :),-Fuselage.z(3, :),'color', '#00707F', 'LineWidth', 2);
 
 xlabel("$x$ [m] ")
 ylabel("$y$ [m] ")
