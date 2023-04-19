@@ -13,7 +13,8 @@ def VortexDragByFuselageLift(C_L, C_L_0, C_L_alpha, V_f):
     :return:
     """
     alpha_f = (C_L - C_L_0) / C_L_alpha
-    C_DS = .15 * alpha_f ** 2 * V_f ** (2 / 3)
+    C_DS = .15 * alpha_f ** 2 * V_f ** (2 / 3) #F-24
+
     return C_DS
 
 
@@ -21,5 +22,5 @@ def fuselag(C_F, S_f_wet, A_c, l_n, l_c, C_D_beta):
     phi_f = computing.phi_f(A_c, l_n, l_c)
     C_D__S_F = C_F * S_f_wet * (1 + phi_f / 2)
     D_f_eff = computing.D_f_eff(A_c)
-    C_D__S = C_D__S_F + C_D_beta * math.pi / 4 * D_f_eff ** 2
+    C_D__S = C_D__S_F + C_D_beta * math.pi / 4 * D_f_eff ** 2 #F-46
     return C_D__S

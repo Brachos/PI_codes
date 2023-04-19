@@ -4,7 +4,7 @@ import math
 
 def wingLiftCarryOver(eta_f, lambd, C_L_0, A):
     """
-    for mid wing
+    for mid-wing
     :param eta_f:
     :param lambd:
     :param C_L_0:
@@ -15,12 +15,12 @@ def wingLiftCarryOver(eta_f, lambd, C_L_0, A):
     return C_D_V
 
 
-def visoucsInterference(C_F, t_r, C_ci):
+def visoucsInterference(C_F, t_r, C_ci, Lambda_half):
     C_D__S = 1.5 * C_F * t_r * C_ci * math.cos(Lambda_half) ** 2  # F-66
     return C_D__S
 
 
-def wingBaseCorrection(C_F, c_r, D_F):
+def wingBaseCorrection(C_F, c_r, D_F,C_L):
     C_D__S = (-.81) * C_F * C_L * c_r * D_F  # F-67
     return C_D__S
 

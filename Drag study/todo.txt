@@ -1,5 +1,5 @@
-C_L_h easy computaion
+C_L_h easy computaion E-44
+Fuselage correction for angle of attack and upsweep effects? equation F-49 
 
-deps/dC_L computation in E-10.1 
 
-adapt for midwing
+Separation of the book categories

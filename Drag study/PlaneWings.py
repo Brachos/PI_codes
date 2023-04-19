@@ -12,7 +12,7 @@ import math
 
 def untwistedPlaneWings(C_1, C_2, C_3, taper_ratio, swept_angle, C_L, A):
     """
-    vortex induced drag from wing
+    vortex induced drag from wing F-11
     :param C_: Values of C_1,2,3 can be found in the fig "C_values.png" in this folder
     :param taper_ratio:
     :param swept_angle:
@@ -25,6 +25,9 @@ def untwistedPlaneWings(C_1, C_2, C_3, taper_ratio, swept_angle, C_L, A):
             3 * math.pi) + .001 * swept_angle * C_3
     delta = 46.264 * (eta_cp - 4 / (3 * math.pi)) ** 2
     C_D_v = (1 + delta) * C_L ** 2 / (math.pi * A)
+    A = 0
+    B = 0
+    C = C_D_v / C_L ** 2
     return C_D_v
 
 
@@ -55,6 +58,7 @@ def wing3D(C_L_max, t, c, C_L, C_L_i, C_F, shape, Lambda_half, S, S_net):
     C_D_p = wingSection(C_L_max, t, c, C_L, C_L_i, C_F * (S_net / S), shape, Lambda_half)
     return C_D_p
 
+
 def wingTwist(epsilon_t, C_o_l, C_L, C_l_l):
     """
     beta * A need to be computed to find the factors
@@ -64,4 +68,8 @@ def wingTwist(epsilon_t, C_o_l, C_L, C_l_l):
     :param C_l_l: actor found in figure "wingTwistFactors.png"
     :return: additionnal drag due to the twist
     """
-    return epsilon_t ** 2 * C_o_l, epsilon_t * C_L * C_l_l
+    C_D_v = epsilon_t ** 2 * C_o_l + epsilon_t * C_L * C_l_l  # F-21
+    A = 0
+    B = C_D_v / C_L
+    C = 0
+    return C_D_v

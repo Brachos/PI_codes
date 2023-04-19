@@ -18,7 +18,7 @@ def gasGeneratorCowlingDragComponent_ManInfo(C_F, M_f, M_inf, S_g_wet, C_D_beta,
     return C_D__S
 
 
-def gasGeneratorCowlingDragComponent_Estimation(C_F, S_p_wet, M_g, M_inf):
+def plugDragArea(C_F, S_p_wet, M_g, M_inf):
     C_D__S = C_F * S_p_wet * (M_g / M_inf) ** (11 / 6) * ((1 + .116 * M_inf ** 2) / (1 + .116 * M_g ** 2)) ** (
             2 / 3)  # F-60
     return C_D__S
