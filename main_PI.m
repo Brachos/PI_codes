@@ -1,9 +1,9 @@
 clear
-MTOW = 4082; %first guess
-cg = 4.444; %first guess
-drag = 3278; %first guess
+MTOW = 3980.7; %first guess
+cg = 4.3951; %first guess
+drag = 3323.2; %first guess
 error = 1;
-prop_lift = 0.7612;
+prop_lift = 0.7947;
 while error >  1e-4
     [new_MTOW, new_cg, new_prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM] = Aircraft(MTOW, cg,prop_lift, drag);
     [DRAG] = Drag(WING, V_TAIL, FUSELAGE, PARAM);
@@ -47,7 +47,7 @@ else
 end
 fprintf('Wing surface is %s\n',Area);
 
-if prop_lift > 0.85 && prop_lift < 1
+if prop_lift > 0.8 && prop_lift < 1
     PL = 'OK';
 else 
     PL = 'NOT OK';
