@@ -41,12 +41,12 @@ ZFW = MTOW*pound - W_fuel; % Zero fuel weight [lb]
 % W_wing = W_wing/pound;
 
 % Raymer Cargo approximation p.604
-% W_wing = 0.0051 * (W_dg * N_z)^0.557 * S_w^0.649 * AR_w^0.5 * tc_root^-0.4 * (1 + tap)^0.1 * cos(sweep)^-1 * S_csw^0.1; % [lbs]
-% W_wing = W_wing/pound; %[kg]
+W_wing = 0.0051 * (W_dg * N_z)^0.557 * S_w^0.649 * AR_w^0.5 * tc_root^-0.4 * (1 + tap)^0.1 * cos(sweep)^-1 * S_csw^0.1; % [lbs]
+W_wing = W_wing/pound; %[kg]
 
 % Noels approximation
-W_wing = 4.22*S_w + 1.642*10^-6 * (N_z*bw^3*sqrt(MTOW*pound*ZFW)*(1+2*tap))/(tc_root*cos(sweep)^2*S_w*(1+tap));
-W_wing = W_wing/pound;
+% W_wing = 4.22*S_w + 1.642*10^-6 * (N_z*bw^3*sqrt(MTOW*pound*ZFW)*(1+2*tap))/(tc_root*cos(sweep)^2*S_w*(1+tap));
+% W_wing = W_wing/pound;
 
 %% Installed engine weight Raymer
 N_E = 1; %[-] nbre of engines
@@ -76,24 +76,28 @@ D = D_f; % Fuselage structural depth [ft]
 % W_fuselage = (0.052 * (Swet)^1.086 * (N_z*W_dg)^0.177 * (Lt^(-0.051)) * (L_f/D_f)^-0.072 * q^0.241 + W_press)/pound; % General aviation Raymer p.606
 
 % Noels approximation
-% Dpmax = 73773.90*lbf/feet^2; % Cabin pressure at 2600 m [Pa]-->[lb/ft^2] Conceptual design slide 71
-% Nlim = 3; % Limit load factor
-% I_p = 1.5*10^-3 * Dpmax * D_f; % Pressure index
-% ZFW = MTOW*pound - W_fuel; % Zero fuel weight [lb]
-% Ww = W_wing*pound; % Wing weight
-% We = W_installed_weight*pound; % Engine weight
-% I_b = 1.91*10^-4 * Nlim * (ZFW - Ww - We) * L_f/D_f^2; % Bending index
-% if I_p>I_b
-%     I_fus = I_p;
-% elseif I_p<I_b
-%     I_fus = (I_p^2 + I_b^2)/(2*I_b);
-% end
-% W_fuselage = (1.051 + 0.102*I_fus) * Swet;
-% W_fuselage = W_fuselage/pound;
+Dpmax = 73773.90*lbf/feet^2; % Cabin pressure at 2600 m [Pa]-->[lb/ft^2] Conceptual design slide 71
+Nlim = 3; % Limit load factor
+I_p = 1.5*10^-3 * Dpmax * D_f; % Pressure index
+ZFW = MTOW*pound - W_fuel; % Zero fuel weight [lb]
+Ww = W_wing*pound; % Wing weight
+We = W_installed_weight*pound; % Engine weight
+I_b = 1.91*10^-4 * Nlim * (ZFW - Ww - We) * L_f/D_f^2; % Bending index
+if I_p>I_b
+    I_fus = I_p;
+elseif I_p<I_b
+    I_fus = (I_p^2 + I_b^2)/(2*I_b);
+end
+W_fuselage1 = (1.051 + 0.102*I_fus) * Swet;
+W_fuselage1 = W_fuselage1/pound;
 
 % Raymer Cargo approximation
-W_fuselage = 0.3280 * K_door * K_Lg * (W_dg * N_z)^0.5 * L^0.25 * Swet^0.302 * (1+Kws)^0.04 * (L/D)^0.10; % Cargo Raymer p.604 [lbs]
-W_fuselage = W_fuselage/pound; %[kg]
+W_fuselage2 = 0.3280 * K_door * K_Lg * (W_dg * N_z)^0.5 * L^0.25 * Swet^0.302 * (1+Kws)^0.04 * (L/D)^0.10; % Cargo Raymer p.604 [lbs]
+W_fuselage2 = W_fuselage2/pound; %[kg]
+
+W_fuselage = (W_fuselage1 + W_fuselage2)/1.9;
+
+
 
 %% Nose landing gear Raymer
 N_l = 1.5; % nombre de landing gear * 1.5

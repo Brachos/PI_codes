@@ -15,7 +15,7 @@ set(groot, 'defaultLegendLocation','best');
 set(0, 'DefaultLineLineWidth', 1.8);
 pt = 12;
 %% Parameters
-AOA = 2.5; % AOA where the drag is minimum or cl/cd is maximum [deg]
+AOA = 2; % AOA where the drag is minimum or cl/cd is maximum [deg]
 ARw = 7; %Wing Aspect ratio
 TAPw = 0.3; %Wing tapper ratio
 M = 0.7; %Mach number
@@ -171,16 +171,16 @@ x_e = l_f-le; %position of the engine inlet [m]
 x_wv = l_arm; %distance between the wac and the vac [m]
 %Longitudinal position of the cg from nose
 xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
-xcg_f = 0.44*l_f; %for the fuselage [40%L;48%L] [m]
+xcg_f = 0.4*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 1.3; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
-xcg_p = 6; %for the payload
+xcg_p = 4.5; %for the payload
 % xcg_s = 3.6; %for the system (radar...)
-xcg_sub = 3; %for the subsystems
-xcg_sen = 1.5; %for the sensors
-x_w = 3.7; %position of the wings
+xcg_sub = 1.8; %for the subsystems
+xcg_sen = 0.8; %for the sensors
+x_w = 3.5; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 3.9; %for the fuel
+xcg_fuel = 4.33; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
@@ -351,7 +351,7 @@ V0 = V_c;
 % Ci-dessous ? revoir !! 
 
 
-PARAM = table(M, rho, V_c, CL, de_dAOA);
+
 %% Static margin
 kf = hn - hf;
 fprintf('Static margin fuel no payload is about : %.2dm\n',kf);
@@ -361,6 +361,9 @@ k2 = hn - h2;
 fprintf('Static margin empty is about : %.2dm\n',k2);
 kp = hn - hp;
 fprintf('Static margin payload no fuel is about : %.2dm\n',kp);
+
+PARAM = table(M, rho, V_c, CL, de_dAOA, kf, k, k2, kp);
+
 %Range 
 x1 = (hn-0.05)*cw_MAC+x_wLE;
 x2 = (hn-0.2)*cw_MAC+x_wLE;

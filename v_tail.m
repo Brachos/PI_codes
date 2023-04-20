@@ -52,7 +52,7 @@ S_fs = 0.8*l_f*h_f_max;
 CN_beta_f = -K_beta*S_fs*l_f/Sw/bw*(870/695)^(1/2)*(1072/1265)^(1/3); %? revoir !!
 CN_beta_i = -0.017; %because high wings
 CN_tot = CN_beta_f + CN_beta_i;
-Vv_data = load("Vtail_data.csv");
+Vv_data = load('Vtail_data.csv');
 if abs(CN_tot) >= abs(Vv_data(end,1))
     V_v = 0.09;
 else

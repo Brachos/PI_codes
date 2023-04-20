@@ -1,7 +1,7 @@
 function Cf = getCF(length,M)
-    data0 = load("cf0.csv");
-    data07 = load("cf07.csv");
-    data1 = load("cf1.csv");
+    data0 = load('cf0.csv');
+    data07 = load('cf07.csv');
+    data1 = load('cf1.csv');
     
     a = 303.1; %30000ft
     v = M*a; %vitesse
