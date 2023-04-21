@@ -453,4 +453,46 @@ plot([p1 p1 p2; ...
 title('V-tail geometry')
 axis equal
 
+%% Cost Analysis
+[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,1)
+fprintf('Total Engineering man-hours: %.2dhours\n',HE);
+fprintf('Total Tooling man-hours: %.2dhours\n',HT);
+fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
+fprintf('Number Engineer required: %.2dengineers\n',N_eng);
+fprintf('Average time to manufacture: %.2dhours\n',t_ac);
+fprintf('CPI: %.2ddollars\n',CPI);
+fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
+fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
+fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
+fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
+fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
+fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
+fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
+fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
+fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
+fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
+fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
+fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
+fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
+fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
+fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 end
