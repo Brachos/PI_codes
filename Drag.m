@@ -18,11 +18,11 @@ tcv = 0.1; %Vtail thick ratio
 sweep12v = V_TAIL.Lambda_T; % Vtail mid sweep angle
 Sv = V_TAIL.Sv_tail; % Vertical tail surface
 cr = WING.cw_root; % root chord wing 
-Vf = 6; % Volume of the fuselage ->premi??re approx voir CAD 
+Vf = 8.5; % Volume of the fuselage ->premi??re approx voir CAD, prev = 6
 Ac = FUSELAGE.a_el * FUSELAGE.b_el * pi; %Cross section area 
 lf = FUSELAGE.l_f; %fuselage length 
-Sfwet = 24; %fuselage wetted area -> CAD
-Snwet = 5.5/2; %nacelle wetted area -> CAD
+Sfwet = 30; %fuselage wetted area -> CAD, prev = 24
+Snwet = 4.6/2; %nacelle wetted area -> CAD, prev = 5.5/2
 Spwet = 0.8*pi*1.57; %engine wetted area (disq of engine) ->>>>>>>>>>> ENGINE CARACT
 Mg = 0.7; %fully extended flow mach number p507
 Minf = 0.7; %Flying mach number
@@ -34,7 +34,7 @@ sweep = WING.sweep; %leading edge sweep angle [deg]
 deda = PARAM.de_dAOA; %Downash slope --<><<<<<<<<<<<<<<<<<<<<<>>>>> ligne 287 AIRCRAFT
 l = WING.cw_MAC; %length p500 (MAC je suppose) 
 SMC = WING.Sw /WING.bw; %Standard mean chord
-airEntryLength = 3.98;  %Longeur entre d'air -> CAD
+airEntryLength = 1.6;  %Longeur entre d'air -> CAD, prev = 3.98
 ch = V_TAIL.hMAC; %Htail mean chord ->rajouter depuis aircraft ligne 119
 cv = V_TAIL.vMAC; %Vtail mean chord ->rajouter depuis aircraft ligne 128
 e = 0.8; % Coef d'oswald ?????? 
@@ -51,10 +51,10 @@ Col = ((1.4*10^(-5) + 1.15*10^(-5))/(2*beta));%Voir figure 2 page 515 du pdf
 Cll = -0.25*10^(-4)/beta; % Voir figure 3 page 515 du pdf
 CDB = 0.02;%Paremetre voir graphique au dessus graphique et FR se calcule avec les dimensions du moteur
 B = 0; %Figure 13 page 524 du pdf ????????????????????????
-A1 = 4; %Figure 13 page 524 du pdf ??????????????????????
-A2 = 4.55; %Figure 13 page 524 du pdf ???? QUID PAVEL ?
+A1 = 4.8; %Figure 13 page 524 du pdf ??????????????????????, prev = 4
+A2 = 5.26; %Figure 13 page 524 du pdf ???? prev = 4.55
 Cci = 4 *cr; %Page 510 du livre ???????????????????????
-lN = 2.36; %Figure 10 page 524 du PDF + CAD 
+lN = 3; %Figure 10 page 524 du PDF + CAD, prev = 2.36
 lA = 4.191; %Figure 10 page 524 du PDF + CAD 
 
 %% Vortex

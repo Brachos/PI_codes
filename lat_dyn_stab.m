@@ -30,7 +30,7 @@ function [Lat_der, Lat_dim_deriv, Lat_modes, A_lat] = lat_dyn_stab(a_El, b_El, b
 % bh_tail        = horizontal span of the tail
 % x_w            = wing position from nose
 % AOA            = angle of attack in DEGRESS
-show_prints = 0;
+show_prints = 1;
 %Hypothesis 
 % - no wing dihedral angle
 % - no delfection angle for flaps
@@ -46,7 +46,7 @@ a_el = 2*a_El;
 bbeta = sqrt(1-M^2);
 c1 = 1.1/10 * sin(dihedral_angle); %[deg^-1] see http://airfoiltools.com/airfoil/details?airfoil=naca0010-il
 % ds_db = -0.276 + 3.06*Sf/Sw*1/(1+cos(sweep)) + 0.4*Zw/d + 0.0009*A;
-SBs = b_el*l_f*0.7; %p.1626, side area of the body (? revoir !!)
+SBs = 10.06; %p.1626, side area of the body (? revoir !!)
 if show_prints
     fprintf('Param for p.1633 : xm_lB = %.2f, lB2_SBs = %.2f, sqrt_h1_h2 = %.2f and h_w = %.2f.\n',...
         cg/l_f, l_f^2/SBs, 1, b_el/a_el); %(? revoir !!)
@@ -61,7 +61,7 @@ KRl = 1.52; %p.1634
 Cn_beta_WB = -KN*KRl * SBs/Sw * l_f/bw * 180/pi; %p.1626, per RADIANS
 
 sidewash_and_dyn_press_param = 0.724 + 3.06*(Sf/Sw)/(1 + cos(sweep)) + 0.4*(-1/2) + 0.009*A; %this param = (1+ds_db)*qv/q_inf, see p.1754
-t_c = 0.14; %see code wing.m, thickness to chord ratio
+t_c = 0.12; %see code wing.m, thickness to chord ratio
 clalpha_th = 6.99; %p.478, per RADIANS
 clalpha_clalphath = 0.97; %p.478
 clalpha = 1.05/bbeta * clalpha_clalphath *clalpha_th; % p.472, per RADIANS

@@ -59,7 +59,7 @@ V_c = speed1;
 % theta_tip = twist angle in RADIANS
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
-WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip, CD0); 
+WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip, CD0, Vw_fuel); 
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel, drag);
 % a and b are the dimensions of the elliptical cross-section, semi-axes, a = long axe horizontal, b = small axe vertical. 
@@ -154,15 +154,15 @@ RUDDER = table(hight_root, hight_tip, rudder_chord, rudder_chord_root, rudder_ch
 W_engine = 242.8; %based on the choice of the engine
 W_payload = 150; %estimation Charles and Lucie
 W_battery = 13; %estimation of the battery
-W = [W_fuselage;W_wing;W_tail;W_engine;W_landing_gear_nose;W_landing_gear_main;W_payload;W_fuel+W_FS;W_subsyst;W_sensors;W_battery];
+W = [W_fuselage;W_wing;W_tail;W_engine;W_landing_gear_nose;W_landing_gear_main;W_payload;W_fuel;W_subsyst;W_sensors;W_battery];
 % W = [576.3;235.3;90;242.8;29.5;148.2;110.8;1706+Vw_fuel*800;95;W_sensors];
-% minw = sum(W)-W(7)-W(8)+W_FS;
-minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
+minW = sum(W)-W(7)-W(8);
+% minW = sum(W)-W(7)-W(8); %minimum weight (or minimum mass)
 MTOW = sum(W);
 % PayW = sum(W)-W(8)+W_FS;
 PayW = sum(W)-W(8);
 FW = sum(W)-W(7);
-W_empty = sum(W) - W(7) - W(8);
+W_empty = sum(W) - W(7) - W(8) + W_FS;
 WEIGHT = table(W_fuselage, W_wing, W_tail, W_engine, W_landing_gear_nose, W_landing_gear_main, W_payload, W_fuel, W_subsyst, W_sensors, W_battery, W_empty);
 
 %% Center of gravity
@@ -174,13 +174,13 @@ xcg_e = 0.37*le; %for the engine [30%le;45%le] [m]
 xcg_f = 0.4*l_f; %for the fuselage [40%L;48%L] [m]
 xcg_l1= 1.3; %for the first landing gears
 xcg_l2= 4.8; %for the second landing gears
-xcg_p = 4.5; %for the payload
+xcg_p = 4.5; %for the payload, prev 4.5
 % xcg_s = 3.6; %for the system (radar...)
 xcg_sub = 1.8; %for the subsystems
 xcg_sen = 0.8; %for the sensors
-x_w = 3.5; %position of the wings
+x_w = 3.49; %position of the wings
 x_t = l_f-c_root_tail; %position of the tail
-xcg_fuel = 4.33; %for the fuel
+xcg_fuel = 4.278; %for the fuel
 y_wmac = yw_AC; %position of the wing mac along y
 y_tmac = 1; %position of the tail mac along y
 syms y
