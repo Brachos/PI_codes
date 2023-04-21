@@ -46,7 +46,7 @@ else
     Area = 'NOT OK';
 end
 fprintf('Wing surface is %s\n',Area);
-
+%coucou
 if prop_lift > 0.8 && prop_lift < 1
     PL = 'OK';
 else 
