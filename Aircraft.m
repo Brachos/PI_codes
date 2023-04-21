@@ -1,4 +1,4 @@
-function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM] = Aircraft(MTOW, cg, prop_lift, drag)
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM,COST] = Aircraft(MTOW, cg, prop_lift, drag)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 %% Figures settings
@@ -454,7 +454,8 @@ title('V-tail geometry')
 axis equal
 
 %% Cost Analysis
-[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,1)
+[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0)
+COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
 fprintf('Total Engineering man-hours: %.2dhours\n',HE);
 fprintf('Total Tooling man-hours: %.2dhours\n',HT);
 fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
@@ -476,23 +477,5 @@ fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
 fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
 fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
 fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 end

@@ -10,7 +10,7 @@ function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,
     Hmfg = 9.6613*We^(0.74)*V_max^(0.543)*N^(0.524)*Fcert*Fcf*Fcomp; %Manufacturing hours
     
     %% Number of engineer to developp the aircraft in 5 years and average time to manufacture
-    N_eng = HE/(5*48*40) % Number of engineer to developp the aircraft in 5 years
+    N_eng = HE/(5*48*40); % Number of engineer to developp the aircraft in 5 years
     t_ac = Hmfg/N;
     
     %% Fixed cost and variable cost
@@ -21,10 +21,10 @@ function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,
     Reng = 92; %Rate engineering labour [dollar/hour]
     Rmfg = 53; %Rate of manufacturing labour [dollar/hour]
     Rtool = 61; %Rate of tooling labour [dollar/hour]
-    Reng_evolution = []
-    Reng_evolution(1) = 92
+    Reng_evolution = [];
+    Reng_evolution(1) = 92;
     for i=2:length(CPI)
-        Reng_evolution(i) = Reng_evolution(i-1)*CPI(i)
+        Reng_evolution(i) = Reng_evolution(i-1)*CPI(i);
     end
     CPI = Reng_evolution(end)/Reng; %CPI 
     Ceng = 2.0969*HE*CPI *Reng; %Total Cost of engineering
@@ -36,5 +36,5 @@ function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,
     Cmat = 24.896*We^(0.689)*V_max^(0.624)*N^(0.792)*CPI*Fcert*Fcf*Fpress; %Total cost of materials
     Ccert = Ceng+Cdev+CFT+Ctool; %Total certification cost
     Cpp = 1035.9*Npp*T^(0.8366)*CPI; %Cost of power plant   
-    cost_per_aircraft = Ccert/N
+    cost_per_aircraft = Ccert/N;
 end
