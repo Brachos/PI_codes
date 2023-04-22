@@ -5,7 +5,7 @@ clear
 % Input.
 %% DATA
 g = 9.81; %gravity [m/s²]
-AOA = -15:0.1:15;                       %Angle of attack of the wing [deg]
+AOA = -50:0.1:50;                       %Angle of attack of the wing [deg]
 tol = 1e-1;
     
 run Input
@@ -31,8 +31,8 @@ CM_wings=Data_wings.CM;
 a_wings  = 6.015050996705918; %from the wing design
 
 %% Points from the manoeuvre enveloppe
-n = [4.5 -1.5 3 -1.5 3]; 
-V = [198.48 198.48 228.25 228.25 113]; %[m/s]
+n = [4.5 -1.5 3 -1.5];% 2.20]; 
+V = [198.48 198.48 228.25 228.25];% 97]; %[m/s]
 
 %% INITIALISATION:
 AoA_envelope=zeros(1,length(n));
@@ -60,28 +60,35 @@ Tzw=zeros(1,length(n));
 Mxw=zeros(1,length(n));
 Mzw=zeros(1,length(n));
 Myw=zeros(1,length(n));
-
+%% Angle of attack
+ for i = 1: length(n)                        %Flight speed [m/s]    
+     error = 1;
+     k = 0;
+     while error > tol
+         k = k + 1;
+         L_tot=1/2*Flight.rho*V(i)^2*Wing.S*a_wings*sind(AOA(k)) + 1/2*Flight.rho*V(i)^2*Empennage.S*a_empennage*sind(AOA(k) - Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi) ;
+         
+         error = abs((L_tot - n(i)*Aircraft.W)/(n(i)*Aircraft.W));
+     end
+     
+     AoA_envelope(i) = AOA(k);
+ end
 %% COMPUTATION
 for i = 1 : length(n)
     Flight.V = V(i);                        %Flight speed [m/s]
     Flight.Mach = Flight.V/speed(30000,1);  %Flight Mach number
     Flight.n = n(i);
     
-    error = 1;
-    k = 0;
-    while error > tol
-        k = k + 1;
-        Flight.aoa = AOA(k);                %Flight angle of attack computed with respect to the wings [deg]
-        L_tot=1/2*Flight.rho*Flight.V^2*Wing.S*a_wings*sind(Flight.aoa) + 1/2*Flight.rho*Flight.V^2*Empennage.S*a_empennage*sind(Flight.aoa - Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi) ;
-
-        error = abs((L_tot - Flight.n*Aircraft.W)/(Flight.n*Aircraft.W));
-    end
-    
-    AoA_envelope(i) = Flight.aoa;
+    Flight.aoa = AoA_envelope(i);
     if abs(Flight.aoa) < 10
          Wing.C_L  = a_wings * sind(Flight.aoa);
          Wing.C_D  = interp1(AoA_wings, CD_wings, Flight.aoa) + Wing.C_L^2 / (pi * Wing.AR );
          Wing.C_M  = interp1(AoA_wings, CM_wings, Flight.aoa);
+    else
+        Wing.C_L = a_wings * sind(Flight.aoa);
+        Wing.C_D = (CD_wings(AoA_wings == 10) - CD_wings(AoA_wings == 0))/10*Flight.aoa + Wing.C_L^2 / (pi * Wing.AR );
+        Wing.C_M = (CM_wings(AoA_wings == 10) - CM_wings(AoA_wings == 0))/10*Flight.aoa;
+    
     end
     
     if abs(Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi) < 5
@@ -89,10 +96,17 @@ for i = 1 : length(n)
         Empennage.C_D = interp1(AoA_empennage, CD_empennage, Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi) + Empennage.C_L^2 / (pi * Empennage.AR);
         Empennage.C_M = interp1(AoA_empennage, CM_empennage, Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
     else
-        AOA = Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi;
-        Empennage.C_L = a_empennage * sind(Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
-        Empennage.C_D = (CD_empennage(AoA_empennage == 5) - CD_empennage(AoA_empennage == 0))/5*AOA + Empennage.C_L^2 / (pi * Empennage.AR);
-        Empennage.C_M = (CM_empennage(AoA_empennage == 5) - CM_empennage(AoA_empennage == 0))/5*AOA;
+        if Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi > 5
+            AOA = Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi;
+            Empennage.C_L = a_empennage * sind(Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
+            Empennage.C_D = (CD_empennage(AoA_empennage == 5) - CD_empennage(AoA_empennage == 0))/5*AOA + Empennage.C_L^2 / (pi * Empennage.AR);
+            Empennage.C_M = (CM_empennage(AoA_empennage == 5) - CM_empennage(AoA_empennage == 0))/5*AOA;
+        else
+            AOA = Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi;
+            Empennage.C_L = a_empennage * sind(Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
+            Empennage.C_D = (CD_empennage(AoA_empennage == 0) - CD_empennage(AoA_empennage == -5))/5*(-AOA) + Empennage.C_L^2 / (pi * Empennage.AR);
+            Empennage.C_M = (CM_empennage(AoA_empennage == 0) - CM_empennage(AoA_empennage == -5))/5*(-AOA);
+        end
     end
     
     Flight.aoa = deg2rad(Flight.aoa);
@@ -100,7 +114,7 @@ for i = 1 : length(n)
     [L_W(i), L_E(i), M_fus(i), F_fin(i), D_B(i), M_tail(i)] = aerodynamic_loads(Aircraft, Wing, Empennage, Fin, Flight);
     
     %%Strucutural loads: Fuselage
-    [TX(i), TY(i), TZ(i), Mx(i), My(i), Mz(i)] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Fin,Flight.aoa,Flight.n, L_E, F_fin, M_fus); 
+    [TX(i), TY(i), TZ(i), Mx(i), My(i), Mz(i)] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Fin,Flight.aoa,Flight.n, L_E(i), F_fin(i), M_fus(i)); 
     
     %%Strucutural loads: Wing 
     Wing_loading.L = L_W(i);

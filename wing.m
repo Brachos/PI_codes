@@ -3,7 +3,7 @@ function [b,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,sweep
 %% Chosen airfoil: NASA SC(2)-0714  -> Optimal lift coefficient: cl = 0.7
 %                                   -> Design/divergence Mach #: MD = 0.725
 %                                   -> Maximum thickness ratio: t/c = 0.14
-coord   = dlmread('SC(2)-0614.txt');
+coord   = dlmread('SC(2)-0412.txt');
 c_upper = coord(1:103,:);
 c_lower = coord(104:end,:);
 curve   = [c_upper;c_lower(end:-1:1,:)];

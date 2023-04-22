@@ -29,7 +29,7 @@ nb_str_root_1 = 4;
 nb_str_root_2 = 8;
 Mach = 0.7;
 Altitude = 30000;
-AOA = 2.5;
+AOA = 2;
 
 [cell_root, cell_tip, stringers_root, stringers_tip,span,airf_root] = wing_geom(Mach, Altitude, MTOW,AOA,nb_str_root_1,nb_str_root_2);
 
@@ -40,7 +40,7 @@ coeff_boom1 = 1; %same area for the booms and the stringers
 for m = 1 : length(M_wing.X)
 [boom_root, boom_tip, stringers_root, area_min(m)] = Boom_area(cell_root,cell_tip,stringers_root, M_wing.X(m), M_wing.Y(m), M_wing.Z(m), sigma_max, coeff_boom1, span);
 end
-
+disp(area_min)
 Area = max(area_min);
 
 boom_root.Area(1) = Area*coeff_boom1;
@@ -53,7 +53,7 @@ stringers_root.Area = Area;
 for m = 1 : length(M_wing.X)
 [thickness(m)] = skin_size(boom_root,boom_tip, stringers_root, stringers_tip, M_wing.X(m), M_wing.Z(m), T_wing.X(m), T_wing.Z(m),airf_root,mu,mu_ref,tau_max);
 end
-
+disp(thickness)
 thickness_max = max(thickness);
 
 
