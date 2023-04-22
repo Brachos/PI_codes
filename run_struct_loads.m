@@ -31,8 +31,8 @@ CM_wings=Data_wings.CM;
 a_wings  = 6.015050996705918; %from the wing design
 
 %% Points from the manoeuvre enveloppe
-n = [4.5 -1.5 3 -1.5];% 2.20]; 
-V = [198.48 198.48 228.25 228.25];% 97]; %[m/s]
+n = [4.5 -1.5 3 -1.5 2.20]; 
+V = [198.48 198.48 228.25 228.25 97]; %[m/s]
 
 %% INITIALISATION:
 AoA_envelope=zeros(1,length(n));
