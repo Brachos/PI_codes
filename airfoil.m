@@ -1,13 +1,14 @@
-Mass = 4429; % [kg]
+c_root = WING.cw_root;
+c_tip  = WING.cw_tip;
+span   = WING.bw;
+sweep  = WING.sweep*180/pi;
 
-[span,~,~,~,~,~,~,c_root,c_tip,~,~,~,~,~,~,~,~] = wing(0.7,30000,0.915*Mass,2.5);
-
-% c_root = 1.5056;
+% c_root = 1.7205;
 % c_tip  = 0.3*c_root;
-% span   = 6.8505;
-sweep  = 15;
+% span   = 8.7549;
+% sweep  = 15;
 
-coord  = dlmread('SC(2)-0614.txt');
+coord  = dlmread('SC(2)-0412.txt');
 c_upper = coord(1:103,:);
 c_lower = coord(end:-1:104,:);
 cont = [c_lower;c_upper];
@@ -80,6 +81,6 @@ xlim([-1 2]);
 ylim([-4 4]);
 zlim([-0.2 0.2]);
 
-% writematrix(curve_root,'coord_root.txt');
-% writematrix(curve_tip_left,'coord_tip_left.txt');
-% writematrix(curve_tip_right,'coord_tip_right.txt');
+writematrix(curve_root,'coord_root.txt');
+writematrix(curve_tip_left,'coord_tip_left.txt');
+writematrix(curve_tip_right,'coord_tip_right.txt');

@@ -2,7 +2,7 @@ function [] = Maneuver_envelope(in, n, Ue)
 %At design altitude: 30 000ft
 
 W = in.MTOW * 9.81; %MTOW in N
-[~, rho] = speed(30000,1); %[kg/m^3]
+rho = density (30000); %[kg/m^3]
 rho_0 = 1.225; % [kg/m^3]
 
 [Vc, Vd] = Placard_diagram(); %[m/s] max thrust cruise speed and dive speed
