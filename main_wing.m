@@ -19,16 +19,16 @@ SF = 1.5;   %safety factor
 
 sigma_max = 503e6/SF; %tensile Yield Strength [N/m]
 tau_max = 331e6/SF;  %shear strength [N/m]
-%/!\ valeurs à vérifier :
-mu_ref = 27.6e9; %shear modulus [N/m] 
-mu = 25.5e9;
+
+mu_ref = 26.9e9; %shear modulus [N/m] 
+mu = 26.9e9;
 
 %% Input for all the functions computing the structure of the wing
-MTOW = 4500; %[kg]
+MTOW = 3.980700000000000e+03; %[kg]
 nb_str_root_1 = 4;
 nb_str_root_2 = 8;
 Mach = 0.7;
-Altitude = 3000;
+Altitude = 30000;
 AOA = 2.5;
 
 [cell_root, cell_tip, stringers_root, stringers_tip,span,airf_root] = wing_geom(Mach, Altitude, MTOW,AOA,nb_str_root_1,nb_str_root_2);
@@ -40,7 +40,6 @@ coeff_boom1 = 1; %same area for the booms and the stringers
 for m = 1 : length(M_wing.X)
 [boom_root, boom_tip, stringers_root, area_min(m)] = Boom_area(cell_root,cell_tip,stringers_root, M_wing.X(m), M_wing.Y(m), M_wing.Z(m), sigma_max, coeff_boom1, span);
 end
-%pq j'avais ajouté span? 
 
 Area = max(area_min);
 
