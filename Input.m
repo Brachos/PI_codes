@@ -6,13 +6,13 @@ cg = [4.3537 0 0.6];  %Aircraft center of gravity position with respect to the n
 
 % Aerodynamic center position of the components with respect to the nose
 y_ac_wing = 1;
-y_ac_empennage = 0;
-y_ac_fin = 0.7;
+y_ac_empennage = 0.67;
+y_ac_fin = 0.8796;
 y_ac_thrust = 0.33956;
 
 x_ac_wing = 2.7635;
-x_ac_empennage = 7.9864;
-x_ac_fin = 7.226;
+x_ac_empennage = 7.89;
+x_ac_fin = 7.89;
 x_ac_thrust = 8.1506;
 
 %Position of the center of gravity of all the components & their weight
