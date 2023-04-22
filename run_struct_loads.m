@@ -18,7 +18,7 @@ CL_empennage=Data_empennage.CL;
 CD_empennage=Data_empennage.CD;
 CM_empennage=Data_empennage.CM;
 
-a_empennage = (1.4-1)/(0+4)*180/pi;      %from the tail design
+a_empennage = 5.7296;      %from the tail design
 %% Wings 
 
 Data_wings=readtable('SC_visc.txt');    %xfoil computations
@@ -31,8 +31,8 @@ CM_wings=Data_wings.CM;
 a_wings  = 6.015050996705918; %from the wing design
 
 %% Points from the manoeuvre enveloppe
-n = [-1.5];
-V = [256];
+n = [4.5 -1.5 3 -1.5 3]; 
+V = [198.48 198.48 228.25 228.25 113]; %[m/s]
 
 %% INITIALISATION:
 AoA_envelope=zeros(1,length(n));
@@ -78,7 +78,7 @@ for i = 1 : length(n)
     end
     
     AoA_envelope(i) = Flight.aoa;
-    if abs(Flight.aoa) < 5
+    if abs(Flight.aoa) < 10
          Wing.C_L  = a_wings * sind(Flight.aoa);
          Wing.C_D  = interp1(AoA_wings, CD_wings, Flight.aoa) + Wing.C_L^2 / (pi * Wing.AR );
          Wing.C_M  = interp1(AoA_wings, CM_wings, Flight.aoa);
@@ -88,6 +88,11 @@ for i = 1 : length(n)
         Empennage.C_L = a_empennage * sind(Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
         Empennage.C_D = interp1(AoA_empennage, CD_empennage, Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi) + Empennage.C_L^2 / (pi * Empennage.AR);
         Empennage.C_M = interp1(AoA_empennage, CM_empennage, Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
+    else
+        AOA = Flight.aoa-Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi;
+        Empennage.C_L = a_empennage * sind(Flight.aoa -Wing.aoa_fuselage*180/pi + Empennage.aoa_fuselage*180/pi);
+        Empennage.C_D = (CD_empennage(AoA_empennage == 5) - CD_empennage(AoA_empennage == 0))/5*AOA + Empennage.C_L^2 / (pi * Empennage.AR);
+        Empennage.C_M = (CM_empennage(AoA_empennage == 5) - CM_empennage(AoA_empennage == 0))/5*AOA;
     end
     
     Flight.aoa = deg2rad(Flight.aoa);
