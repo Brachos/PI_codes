@@ -1,6 +1,6 @@
 %% Code based on Gudmundsson book page 788 
 
-function [S_TO] = takeoff(MTOW,CL_max,l_cg)
+function [S_G,S_R,S_obst,S_C,S_TO] = takeoff(MTOW,WING,V_TAIL,DRAG,WEIGHT,FUSELAGE)
 % Inputs
     % MTOW = Maximum Take-Off Weight
     % MTOW = 4243;
@@ -17,11 +17,17 @@ function [S_TO] = takeoff(MTOW,CL_max,l_cg)
     Altitude = 30000; % [ft] Altitude at cruise
     AOA = 2.5; % [deg] At root
     
-    [bw,Sw,~,~,CLw,CD,~,cw_root,cw_tip,cw_MAC,~,~,Vw_fuel,sweep,~] = wing(Mach,Altitude,0.95*MTOW,AOA);
-    [~,~,b_el,l_f,~] = fuselage_design(MTOW,Vw_fuel);
-    [~,Sh,~,~,~,~,~,CLt,~,~,~,~,~] = v_tail(MTOW,2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
+%     [bw,Sw,~,~,CLw,CD,~,cw_root,cw_tip,cw_MAC,~,~,Vw_fuel,sweep,~] = wing(Mach,Altitude,0.95*MTOW,AOA);
+%     [~,~,b_el,l_f,~] = fuselage_design(MTOW,Vw_fuel);
+%     [~,Sh,~,~,~,~,~,CLt,~,~,~,~,~] = v_tail(MTOW,2*b_el,cw_MAC,sweep*180/pi,Sw,l_f,l_cg,bw);
     
-    CL_cruise = CLw + Sh/Sw*CLt;
+    Sw = WING.Sw;
+    cw_root = WING.cw_root;
+    cw_tip  = WING.cw_tip;
+    [CL_max_TO, CL_max_L, fb_ratio, S_flap] = flaps(WING,FUSELAGE);
+    CL_TO = WING.CLw + V_TAIL.Sh_tail*V_TAIL.CL_tail/WING.Sw; % Lift at cruise
+    CD_TO = DRAG.CDTotal;
+    
     
 % Data at sea level
     rho = 1.225; % [kg/m^3] Air density at sea level 
@@ -42,16 +48,16 @@ function [S_TO] = takeoff(MTOW,CL_max,l_cg)
     T_mean = 0.75*T*((5 + BPR)/(4 + BPR)); %(18-34 pg 806)
     
 % Velocity computation
-    Vs = sqrt((2*W)/(rho*CL_max*Sw)); % [m/s] Stall velocity
+    Vs = sqrt((2*W)/(rho*CL_max_TO*Sw)); % [m/s] Stall velocity
     V_LOF = 1.1*Vs; % [m/s] Take-off velocity
     V_TR = 1.15*Vs; % [m/s] Transition velocity
     V2 = 1.2*Vs; % [m/s] Climb velocity
-    Re_root = rho*V_LOF*cw_root/mu_air;
-    Re_tip  = rho*V_LOF*cw_tip/mu_air;
+    Re_root = rho*V_LOF*cw_root/mu_air
+    Re_tip  = rho*V_LOF*cw_tip/mu_air
     
 % Distances computation
-    CL_TO = 0.8;%To modify
-    CD_TO = 0.017 + CL_TO^2/(0.8*pi*AR);
+%     CL_TO = 0.8;%To modify
+%     CD_TO = 0.017 + CL_TO^2/(0.8*pi*AR);
     D_TO = 0.5*rho*Sw*(V_TR/sqrt(2))^2*CD_TO;
     L_TO = 0.5*rho*Sw*(V_TR/sqrt(2))^2*CL_TO;
 
@@ -63,6 +69,8 @@ function [S_TO] = takeoff(MTOW,CL_max,l_cg)
     R = 0.2156*Vs^2; % [m]
     S_TR = R*sin(gamma); % [m]
     h_TR = R*(1-cos(gamma)); % [m]
+    S_obst = 0;
+    S_C = 0;
     
     if h_TR > h_obst
         S_obst = sqrt(R^2-(R-h_obst)^2);
@@ -73,5 +81,10 @@ function [S_TO] = takeoff(MTOW,CL_max,l_cg)
     end
     
    S_ground = (S_G+S_R)*feet;
-   S_TO = S_TO*feet;
+   S_G  = S_G*feet;  % [ft]
+   S_R  = S_R*feet;  % [ft]
+   S_TR = S_TR*feet; % [ft]
+   S_C  = S_C*feet;  % [ft]
+   S_obst = S_obst*feet; % [ft]
+   S_TO = S_TO*feet; % [ft]
 end 
