@@ -28,15 +28,7 @@ CL_wings=Data_wings.CL;
 CD_wings=Data_wings.CD;
 CM_wings=Data_wings.CM;
 
-%From the wing design
-M = 0.7;
-sweep  = 15*pi/180; %Sweep angle [rad]
-beta   = sqrt(1-M^2);
-L_beta = atan(tan(sweep)/beta); 
-
-cl_alpha  = (0.6751-0.1041)/(2+1.99)*180/pi; % [1/rad] SC(2)-0614 with XFoil
-k  = beta*cl_alpha/(2*pi);
-a_wings  = 2*pi/(2/(beta*Wing.AR)+sqrt((1/(k*cos(L_beta)))^2+(2/(beta*Wing.AR))^2))/beta;
+a_wings  = 6.015050996705918; %from the wing design
 
 %% Points from the manoeuvre enveloppe
 n = [-1.5];
