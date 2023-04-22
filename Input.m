@@ -6,13 +6,13 @@ cg = [4.3537 0 0.6];  %Aircraft center of gravity position with respect to the n
 
 % Aerodynamic center position of the components with respect to the nose
 y_ac_wing = 1;
-y_ac_empennage = 0;
-y_ac_fin = 0.7;
+y_ac_empennage = 0.67;
+y_ac_fin = 0.8796;
 y_ac_thrust = 0.33956;
 
 x_ac_wing = 2.7635;
-x_ac_empennage = 7.9864;
-x_ac_fin = 7.226;
+x_ac_empennage = 7.89;
+x_ac_fin = 7.89;
 x_ac_thrust = 8.1506;
 
 %Position of the center of gravity of all the components & their weight
@@ -38,7 +38,7 @@ Wing.l = sqrt((y_ac_wing-cg(3))^2 + (x_ac_wing-cg(1))^2);   %Wing lever arm [m]
 Wing.aoa = atan2(y_ac_wing - cg(3), x_ac_wing - cg(1));     %Angle of attack between the wing lever arm and the chord [rad]
 Wing.LE = 2.459;                                            %Position of the leading edge [m]
 Wing.root_chord = 1.643312976775196;                        %Root chord [m]
-Wing.aoa_fuselage = 1.5 * pi/180;                           %Angle of attack between the wing and the fuselage [rad] !!!
+Wing.aoa_fuselage = 1.59 * pi/180;                           %Angle of attack between the wing and the fuselage [rad] !!!
 
 
 %Empennage:  
@@ -67,7 +67,7 @@ Flight.rho = 0.4594;            %Density [kg/m³]
 %Engine:
 Engine.W = W(4)*9.81;           %Engine weight [N]
 Engine.cg = xarm(4);            %Center of gravity of the engine [m]
-Engine.l = 1.3200852;           %length of the engine [m]
+
 %Sensors:
 Sensors.W = W(10)*9.81;         %Sensors weight [N]
 Sensors.cg = xarm(10);          %Center of gravity of the sensors [m]
@@ -90,6 +90,7 @@ Fuselage.b_max = 0.514;         %Semi minor axis of the fuselage at section A [m
 Fuselage.A_h = pi*Fuselage.a_max*Fuselage.b_max;%Area of the cross-sections[m²]
 Fuselage.L = 8.589668283077916; %Total length of the fuselage [m]
 Fuselage.W = W(1)*9.81;         %Total weight of the fuselage [N]
+Fuselage.l_cst = 1.3200852;     %Length of the engine [m]
     
 %Tail:
 Tail.cg = xarm(3);              %Position of the cg of the tail [m]

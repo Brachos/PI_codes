@@ -1,11 +1,11 @@
-function [cell_root, cell_tip, stringers_root, stringers_tip] = wing_geom()
+function [cell_root, cell_tip, stringers_root, stringers_tip,span,airf_root] = wing_geom(Mach,Altitude,Mass,AOA,nb_str_root_1,nb_str_root_2)
 
 %WING_GEOM describes the geometry of the wing including the stringers and
 %the booms
 
-[span,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,sweep,c,alpha_L0,tap,cl_alpha,theta_tip, AR] = wing(0.7,30000, 4236,2.5)
+[span,S,CL_alpha,CD_alpha,CL,CD,D,c_root,c_tip,c_AC,x_AC,y_AC,V_fuel,sweep,c,alpha_L0,tap,cl_alpha,theta_tip, AR] = wing(Mach,Altitude,Mass,AOA);
 close all
-coord   = dlmread('SC(2)-0714.txt');
+coord   = dlmread('SC(2)-0412.txt');
 xz_up = coord(1:103,:);
 xz_low = coord(104:end,:);
 
@@ -42,16 +42,17 @@ plot([cell_root.XZ_up(1,1) cell_root.XZ_low(1,1)], [cell_root.XZ_up(2,1) cell_ro
 plot([cell_root.XZ_up(1,2) cell_root.XZ_low(1,2)], [cell_root.XZ_up(2,2) cell_root.XZ_low(2,2)],'o', 'linewidth', 5,'MarkerSize', 2)
 
 %stringers on the first cell
-nb_str_root_1 = 4;
-[stringers_root.XZ_up1] = stringers_coord(airf_root.XZ_up, nb_str_root_1, 1, cell_root.XZ_up);
+%nb_str_root_1 = 4;
+[stringers_root.XZ_up1, stringers_root.index_up1] = stringers_coord(airf_root.XZ_up, nb_str_root_1, 1, cell_root.XZ_up);
 stringers_0 = [0; 0];
 stringers_root.XZ_up1 = [stringers_0  stringers_root.XZ_up1];
-[stringers_root.XZ_low1] = stringers_coord(airf_root.XZ_low, nb_str_root_1, 1, cell_root.XZ_low);
+stringers_root.index_up1 = [1 stringers_root.index_up1];
+[stringers_root.XZ_low1, stringers_root.index_low1] = stringers_coord(airf_root.XZ_low, nb_str_root_1, 1, cell_root.XZ_low);
 
 %stringers on the second cell
-nb_str_root_2 = 7;
-[stringers_root.XZ_up2] = stringers_coord(airf_root.XZ_up, nb_str_root_2, 2,  cell_root.XZ_up);
-[stringers_root.XZ_low2] = stringers_coord(airf_root.XZ_low, nb_str_root_2, 2, cell_root.XZ_low);
+%nb_str_root_2 = 7;
+[stringers_root.XZ_up2, stringers_root.index_up2] = stringers_coord(airf_root.XZ_up, nb_str_root_2, 2,  cell_root.XZ_up);
+[stringers_root.XZ_low2, stringers_root.index_low2] = stringers_coord(airf_root.XZ_low, nb_str_root_2, 2, cell_root.XZ_low);
 
 plot(stringers_root.XZ_up1(1,:), stringers_root.XZ_up1(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
 plot(stringers_root.XZ_low1(1,:),stringers_root.XZ_low1(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
@@ -60,6 +61,11 @@ plot(stringers_root.XZ_up2(1,:), stringers_root.XZ_up2(2,:),'o', 'linewidth', 3,
 plot(stringers_root.XZ_low2(1,:),stringers_root.XZ_low2(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
 
 stringers_root.nb = nb_str_root_2 * 2 + nb_str_root_1 * 2 +5;
+
+
+%Along y
+%stringers_root.Y1 = zeros(1,length(stringers_root.XZ_up1(1,:)));
+%stringers_root.Y2 = zeros(1,length(stringers_root.XZ_up2(1,:)));
 
 
 %% At the tip
@@ -110,7 +116,14 @@ stringers_tip.XZ_up1 = [stringers_0_tip'  stringers_tip.XZ_up1];
 nb_str_tip_2 = nb_str_root_2;
 [stringers_tip.XZ_up2] = stringers_coord(airf_tip.XZ_up, nb_str_tip_2, 2, cell_tip.XZ_up);
 [stringers_tip.XZ_low2] = stringers_coord(airf_tip.XZ_low, nb_str_tip_2, 2, cell_tip.XZ_low);
-%[w, j, l] = Boom(cell_root,stringers_root,1,1,1,10,10)
+
+%Along y
+%stringers_tip.Y1 = zeros(1,length(stringers_tip.XZ_up1(1,:)))+span/2;
+%stringers_tip.Y2 = zeros(1,length(stringers_tip.XZ_up2(1,:)))+span/2;
+
+
+%/!\ à supprimer: test
+%[w, j, l] = Boom(cell_root,cell_tip,stringers_root,1,1,1,10,10,span)
 
 plot(stringers_tip.XZ_up1(1,:), stringers_tip.XZ_up1(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
 plot(stringers_tip.XZ_low1(1,:),stringers_tip.XZ_low1(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
@@ -118,8 +131,13 @@ plot(stringers_tip.XZ_low1(1,:),stringers_tip.XZ_low1(2,:),'o', 'linewidth', 3,'
 plot(stringers_tip.XZ_up2(1,:), stringers_tip.XZ_up2(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
 plot(stringers_tip.XZ_low2(1,:),stringers_tip.XZ_low2(2,:),'o', 'linewidth', 3,'MarkerSize', 2)
 
+
+
 end
 %%
+
+
+
 
 function [cell] = Cell_coord(airf, cell, num_cell)
 
@@ -137,7 +155,7 @@ end
 %donc deux fois pour le up, 2 fois pour le low
 %et puis encore x2 si on prend le tip et le root
 
-function[XZ] = stringers_coord(airf, nb_str, num_cell, cell)
+function[XZ,index] = stringers_coord(airf, nb_str, num_cell, cell)
 %airf = the x and Z coord of the airfoil
 if num_cell == 1
     dx = (cell(1,1)-airf(1,1))/(nb_str+1);

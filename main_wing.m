@@ -1,32 +1,44 @@
 function [] = main_wing()
 %MAIN_WING 
-%input for all the functions computing the structure of the wing
-[cell_root, cell_tip, stringers_root, stringers_tip] = wing_geom();
 
-sigma_max = ....
+%addpath(genpath('LOADS'));
+%addpath(genpath('WING'));
 
-%a voir les arguments qu'on lui donne, ou comment on le lance!!
-%pcq j'aimerais que en sortie j'ai des vecteurs Mx,My et Mz
-%soit on modifie les codes et on renvoie le vecteur
-%soit on forme le vecteur dans ce main ci
-%soit on lance avant la fonction loads, qui va renvoyer le bon vecteur!!
+%% Structural loads of the wing
+run run_struct_loads
 
-[Tx,Ty,Tz,Mx,My,Mz] = wing_load(W,Wing_loading,i,y_cg,y_ac,Mom_wing,n,Wing);
+save('wing_loads.mat', 'T_wing', 'M_wing')
+%save('fuselage.mat', 'Fuselage')
+clear 
+clc
+load('wing_loads.mat')
+%load('fuselage.mat')
 
+%% Material properties of aluminium alloy
+SF = 1.5;   %safety factor
 
-%--------------------------------
-%Boom area computation
+sigma_max = 503e6/SF; %tensile Yield Strength [N/m]
+tau_max = 331e6/SF;  %shear strength [N/m]
 
-%il faut voir si on garde ca ou si on ajoute aussi des coeff pour les
-%autres stringers et tout
-coeff_boom1 = 10; %to have an area of the booms of the 1st cell 10 times bigger
+mu_ref = 26.9e9; %shear modulus [N/m] 
+mu = 26.9e9;
 
+%% Input for all the functions computing the structure of the wing
+MTOW = 3.980700000000000e+03; %[kg]
+nb_str_root_1 = 4;
+nb_str_root_2 = 8;
+Mach = 0.7;
+Altitude = 30000;
+AOA = 2.5;
 
-%voir s'il faut calculer tout ca au tip ou a la root
-%et voir si je fais un coeff d'importance relative d'aire ou pas
-for m = 1 : length(Mx)
-    %tous les endroits de la maneuver
-[boom_root, boom_tip stringers_root, area_min(m)] = Boom(cell_root,cell_tip,stringers_root, Mx(m), My(m), Mz(m), sigma_max, coeff_boom1);
+[cell_root, cell_tip, stringers_root, stringers_tip,span,airf_root] = wing_geom(Mach, Altitude, MTOW,AOA,nb_str_root_1,nb_str_root_2);
+
+%% Boom area computation
+
+coeff_boom1 = 1; %same area for the booms and the stringers
+
+for m = 1 : length(M_wing.X)
+[boom_root, boom_tip, stringers_root, area_min(m)] = Boom_area(cell_root,cell_tip,stringers_root, M_wing.X(m), M_wing.Y(m), M_wing.Z(m), sigma_max, coeff_boom1, span);
 end
 
 Area = max(area_min);
@@ -36,10 +48,20 @@ boom_root.Area(2) = Area;
 stringers_root.Area = Area;
 
 
-%------------------------------------------------
-%skin
+%% Skin thickness computation
+
+for m = 1 : length(M_wing.X)
+[thickness(m)] = skin_size(boom_root,boom_tip, stringers_root, stringers_tip, M_wing.X(m), M_wing.Z(m), T_wing.X(m), T_wing.Z(m),airf_root,mu,mu_ref,tau_max);
+end
+
+thickness_max = max(thickness);
 
 
+%% Display
+disp('WING:')
+disp(['Stringer area: ', num2str(stringers_root.Area * 1e6), ' [mm2]']);
+disp(['Skin thickness: ', num2str(thickness_max* 1e3), ' [mm]']);
+disp(['Number of stringers: ', num2str(stringers_root.nb)]);
 
 end
 
