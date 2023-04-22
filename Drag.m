@@ -1,5 +1,5 @@
 function [DRAG] = Drag(WING,V_TAIL,FUSELAGE,PARAM)
-
+R = 7.26*10^6; % reynolds number
 M = PARAM.M; % mach number
 S = WING.Sw; % Surface wing ;
 Snet = WING.Sw - FUSELAGE.a_el*2 * WING.cw_root; % Surface net (wing-fusellage) ??????????
@@ -21,7 +21,8 @@ cr = WING.cw_root; % root chord wing
 Vf = 8.5; % Volume of the fuselage ->premi??re approx voir CAD, prev = 6
 Ac = FUSELAGE.a_el * FUSELAGE.b_el * pi; %Cross section area 
 lf = FUSELAGE.l_f; %fuselage length 
-Sfwet = 30; %fuselage wetted area -> CAD, prev = 24
+% Sfwet = 30; %fuselage wetted area -> CAD, prev = 24
+Sfwet = 15.76; % wetted area of the FOREBODY
 Snwet = 4.6/2; %nacelle wetted area -> CAD, prev = 5.5/2
 Spwet = 0.8*pi*1.57; %engine wetted area (disq of engine) ->>>>>>>>>>> ENGINE CARACT
 Mg = 0.7; %fully extended flow mach number p507
@@ -71,12 +72,13 @@ CDVortex = CDVortexWing + CDVortexFus +CDVortexTail;
 %% Profile drag
 phiw = 2.7 * tc + 100 * tc^4;
 cdpminF35 = 2 * getCF(real(SMC),M) * (1 + phiw *cosd(sweep12)^2);
-dlcdpref = 0.1 * clmax - 0.0046 * (l + 2.75 *tc);
-CDpF36 = cdpminF35 * Snet/S + 0.75 * dlcdpref * ((CL-CLi)/(CLmax-CLi))^2;
-Dfeff = sqrt(4/pi*Ac);
+%dlcdpref = 0.1 * clmax - 0.0046 * (l + 2.75 *tc); % for Re>10^7
+dlcdpref = 67*clmax/((log(R))^(4.5))- 0.0046 *(1 + 2.75*tc) ; % for Re<10^7
+CDpF36 = cdpminF35 * Snet/S + 0.75 * dlcdpref * ((CL-CLi)/(CLmax-CLi))^2; % profile drag of the wing
+Dfeff = sqrt(4/pi*Ac); % equivalent diameter of the fuselage.
 sigmaeff = min(lf/Dfeff,(lN+lA)/Dfeff + 2);
-phif = 2.2/(sigmaeff^1.5) + 3.8/(sigmaeff^3);% bcse lA/Dfeff > 2 (see p.523 pdf)
-CDSF = getCF(real(lf),M) * Sfwet * (1 + phif);
+phif = 1.1/(sigmaeff^1.5) + 1.9/(sigmaeff^3);% bcse lA/Dfeff > 2 /!\ on divise par 2 pcq on considère juste la contribution du forebody !!!!!
+CDSF = getCF(real(lf),M) * Sfwet * (1 + phif); % basic fuselage drag 
 CDSbasicF46 = CDSF + CDB * pi/4 * Dfeff^2;
 dabCDSF51 = A1 * abs(sin(af)^3) + A2 * abs(sin(af-B)^3)/cos(B);
 CDSF58 = 1.25 * getCF(real(airEntryLength),M) * Snwet;

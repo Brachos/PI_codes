@@ -1,4 +1,4 @@
-function [Deq_val,a_val,b_val,L_f_val,V_f]=fuselage_design(MTOW,Vw_fuel, net_thrust)
+function [Deq_val,a_val,b_val,L_f_val,V_f,Vf_fuel]=fuselage_design(MTOW,Vw_fuel, net_thrust)
 %thickness of the fuselage
 t_fuselage=0.05; %[m]
 

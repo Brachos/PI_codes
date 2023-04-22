@@ -13,7 +13,7 @@ egress_speed = egress_speed*3.6;
 loiter_time_landing = 0.75; %[hours] %KPP10 O
 loiter2_speed = speed(30000,0.7);
 loiter2_speed = loiter2_speed*3.6;
-TSFC = 0.545 *0.453592 / 4.4482; %[lb/lbf/h] to [kg/h/N], prev 0.58
+TSFC = 0.586 *0.453592 / 4.4482; %[lb/lbf/h] to [kg/h/N], prev 0.58
 % net_thrust = 2200;%[N]
 
 %estimated flying time 

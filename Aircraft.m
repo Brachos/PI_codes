@@ -61,12 +61,12 @@ V_c = speed1;
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
 WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip, CD0, Vw_fuel); 
 %% Fuselage
-[D_f_max,a_el,b_el,l_f,V_f]=fuselage_design(MTOW,Vw_fuel, drag);
+[D_f_max,a_el,b_el,l_f,V_f,Vf_fuel]=fuselage_design(MTOW,Vw_fuel, drag);
 % a and b are the dimensions of the elliptical cross-section, semi-axes, a = long axe horizontal, b = small axe vertical. 
 % V_f is the volume of the fuselage. 
 %h_f_max = 2.888274e-01; %[m]
 %l_f = 7; %[m]
-FUSELAGE = table(D_f_max, a_el, b_el, l_f, V_f);
+FUSELAGE = table(D_f_max, a_el, b_el, l_f, V_f,Vf_fuel);
 %% V-Tail
 l_cg = cg;
 flag = 1;
