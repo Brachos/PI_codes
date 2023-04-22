@@ -13,12 +13,12 @@ function [V_c, V_d] = Placard_diagram()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Data
-T_max = 3.36*10^3;                  %Maximum thrust provided by the engine[N]
-S_w = 119.5/10.764;                 %Surface of the wing[m²]
+T_max = 3600;                  %Maximum thrust provided by the engine[N]
+S_w = 7.986662323478662;             %Surface of the wing[m²]
 AR_w = 7;                           %Aspect ratio of the wing
 C_d0 = 0.017;                      %Drag independant of the lift
 e = 0.8;                            %Oswald efficiency factor
-W = 4228*9.18;                      %Weight [N]
+W = 3.6058e+03*9.18;                 %Weight [N]
 
 rho_0 = 1.225;                      %air density at sea level [kg/m^3]
 rho_design = 0.4594;                %air density at design altitude [kg/m^3] %cfr table florian

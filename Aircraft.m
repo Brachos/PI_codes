@@ -1,4 +1,4 @@
-function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM] = Aircraft(MTOW, cg, prop_lift, drag)
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM,COST] = Aircraft(MTOW, cg, prop_lift, drag)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 %% Figures settings
@@ -59,7 +59,7 @@ V_c = speed1;
 % theta_tip = twist angle in RADIANS
 
 xw_cg = 0.4*cw_MAC;  %for the wing [35%wMAC;42%wMAC] [m]
-WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip, CD0, Vw_fuel); 
+WING = table(A, tap, Sw, bw, CLw_alpha, CLw, CDw, D, cw_root, cw_tip, cw_MAC, sweep, theta_tip, CD0, Vw_fuel, xw_AC,yw_AC); 
 %% Fuselage
 [D_f_max,a_el,b_el,l_f,V_f,Vf_fuel]=fuselage_design(MTOW,Vw_fuel, drag);
 % a and b are the dimensions of the elliptical cross-section, semi-axes, a = long axe horizontal, b = small axe vertical. 
@@ -452,5 +452,30 @@ plot([p1 p1 p2; ...
     [hight_root hight_root hight_tip; hight_root hight_tip hight_tip],'color',[0.9290 0.6940 0.1250])
 title('V-tail geometry')
 axis equal
+
+%% Cost Analysis
+[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0)
+COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
+fprintf('Total Engineering man-hours: %.2dhours\n',HE);
+fprintf('Total Tooling man-hours: %.2dhours\n',HT);
+fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
+fprintf('Number Engineer required: %.2dengineers\n',N_eng);
+fprintf('Average time to manufacture: %.2dhours\n',t_ac);
+fprintf('CPI: %.2ddollars\n',CPI);
+fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
+fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
+fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
+fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
+fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
+fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
+fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
+fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
+fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
+fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
+fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
+fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
+fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
+fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
+fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
 
 end

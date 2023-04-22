@@ -1,7 +1,7 @@
 function[Tx,Ty,Tz,Mx,My,Mz] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rear_land_gear,Payload,Empennage,Fin,aoa,n, Lift_empennage, F_fin, M_fus)
     %STRUCT_LOADS  returns the forces and moments applied at the rear of the fuselage along each direction.
     %The structural loads are computed with respect to the back of the wing
-    %which is called section A.
+    %and with respect to an intermediate section which are called section A.
     % -----
     %
     % Syntax:
@@ -11,10 +11,13 @@ function[Tx,Ty,Tz,Mx,My,Mz] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rea
     %
     % Inputs:
     %
-    % Fuselage:     Fuselage.a_min: Minimum semi major axis of the elliptical fuselage (at the tail) [m]
+    % Fuselage:     Fuselage.x_min: x-position of the minimum cross-section (at tail)[m]
+    %               Fuselage.a_min: Minimum semi major axis of the elliptical fuselage (at the tail) [m]
     %               Fuselage.b_min: Minimum semi minor axis of the elliptical fuselage (at the tail) [m]
-    %               Fuselage.a_max: Semi major axis of the fuselage at section A [m]
-    %               Fuselage.b_max: Semi minor axis of the fuselage at section A [m]
+    %               Fuselage.x_min: x-position of the maximum cross-section (at tail)[m]
+    %               Fuselage.a: Semi major axis of the considered cross-section [m]
+    %               Fuselage.b: Semi-minor axis of the considered cross-section [m]
+    %               Fuselage.A_h: Area of the cross-sections[m²]
     %               Fuselage.L: Total length of the fuselage [m]
     %               Fuselage.W: Total weight of the fuselage [N]
     %   
@@ -79,10 +82,10 @@ function[Tx,Ty,Tz,Mx,My,Mz] = struct_loads(Fuselage,Wing,Tail,Engine,Sensors,Rea
     %   Mz: the momentum around the z-axis at the rear of the fuselage [Nm]
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-x_A = Wing.LE + Wing.root_chord;    %x_A is the distance between the nose of the aircraft and section A.
-L_rear = Fuselage.L - x_A;          %length of the fuselage after the back of the wing 
-Tail_cg_A = Tail.cg - x_A;          %position of the center of gravity of the
-                                    %tail with respect to the back of the wings
+x_A = Wing.LE+Wing.root_chord;%x_A is the distance between the nose of the aircraft and section A.
+L_rear = Fuselage.L-x_A;      %length of the fuselage after the back of the wing
+Tail_cg_A = Tail.cg-x_A;      %position of the center of gravity of the
+                                %tail with respect to the back of the wings
 
 %Computation of the skin area of the fuselage, considering it is uniformly
 %tapered, after the wing
@@ -90,12 +93,12 @@ f1 = @(t1) sqrt(Fuselage.a_max^2 * (cos(t1)).^2 + Fuselage.b_max^2 * (sin(t1)).^
 perim_max =  integral(f1,0,2*pi);
 f2 = @(t2) sqrt(Fuselage.a_min^2 * (cos(t2)).^2 + Fuselage.b_min^2 * (sin(t2)).^2);
 perim_min =  integral(f2,0,2*pi);
-area_skin = 1/2 * (perim_min + perim_max)*L_rear;
+area_skin = 1/2*(perim_min+perim_max)*L_rear;
 
 %self-weight of the fuselage per meter 
-W_rear = Fuselage.W * (L_rear/Fuselage.L);  %weight of the empty fuselage after the wing
-weight_per_meter_min = W_rear * perim_min/area_skin;
-weight_per_meter_max = W_rear * perim_max/area_skin;
+W_rear = Fuselage.W*(L_rear/Fuselage.L);  %weight of the empty fuselage after the wing
+weight_per_meter_min = W_rear* perim_min/area_skin;
+weight_per_meter_max = W_rear*perim_max/area_skin;
 
 %the self-weight induces some shear forces (SF) and bending moments (BM)
 %SF and BM are calculated by equilibrium ('MNT'), it gives here a triangle
@@ -108,14 +111,13 @@ Q1 = L_rear*q1(1)/2;
 Q2 = L_rear*q2;
 
 SF = n*(Q1+Q2+Tail.W+Engine.W+Sensors.W+Rear_land_gear.W+Payload.W);
-BM = n*cos(aoa-Wing.aoa_fuselage)*(Tail_cg_A*Tail.W + 1/3*L_rear*Q1 + 1/2*L_rear*Q2 + Engine.W*(Engine.cg-x_A) + Sensors.W*(Sensors.cg-x_A) + Rear_land_gear.W*(Rear_land_gear.cg-x_A) + Payload.W*(Payload.cg-x_A));
-
+BM = n*cos(aoa-Wing.aoa_fuselage)*(Tail_cg_A*Tail.W + 1/3*L_rear*Q1 + 1/2*L_rear(1)*Q2 + Engine.W*(Engine.cg-x_A) + Sensors.W*(Sensors.cg-x_A) + Rear_land_gear.W*(Rear_land_gear.cg-x_A) + Payload.W*(Payload.cg-x_A));
 %Resultant forces in the section after the wing
 Tx = (-SF+Lift_empennage)*sin(aoa-Wing.aoa_fuselage);
 Ty = -F_fin;
 Tz = (SF-Lift_empennage)*cos(aoa-Wing.aoa_fuselage);
-Mx = -M_fus ;   %it takes into account the fin and the empennage
-My= BM-Lift_empennage*(Empennage.ac-x_A)*cos(aoa-Wing.aoa_fuselage);
-Mz = F_fin*(Fin.ac - x_A);
+Mx = -M_fus;   %it takes into account the fin and the empennage
+My = BM-Lift_empennage*(Empennage.ac-x_A)*cos(aoa-Wing.aoa_fuselage);
+Mz = F_fin*(Fin.ac-x_A);
 
 end
