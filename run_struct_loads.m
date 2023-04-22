@@ -31,8 +31,8 @@ CM_wings=Data_wings.CM;
 a_wings  = 6.015050996705918; %from the wing design
 
 %% Points from the manoeuvre enveloppe
-n = [4.5 -1.5 3 -1.5 2.20]; 
-V = [198.48 198.48 228.25 228.25 97]; %[m/s]
+n = [4.5 -1.5 3 -1.5 3]; 
+V = [198.48 198.48 228.25 228.25 113]; %[m/s]
 
 %% INITIALISATION:
 AoA_envelope=zeros(1,length(n));
@@ -119,10 +119,11 @@ for i = 1 : length(n)
     %%Strucutural loads: Wing 
     Wing_loading.L = L_W(i);
     Wing_loading.D = 1/2 * Flight.rho * Wing.C_D * Flight.V^2 * Wing.S;
-    y_CG = 0.5;% meter TO BE CHECKED
+    y_ac = 1.7168;
+    y_CG = 1.2650;% meter TO BE CHECKED
     Mom_wing= 0.5 * Flight.rho * Flight.V^2 * Wing.S * Wing.MAC * Wing.C_M;
     
-    [Txw(i),Tyw(i),Tzw(i),Mxw(i),Myw(i),Mzw(i)] = wing_load(Aircraft.W, Wing_loading, Flight.aoa, y_CG, y_ac_wing, Mom_wing, Flight.n, Wing);
+    [Txw(i),Tyw(i),Tzw(i),Mxw(i),Myw(i),Mzw(i)] = wing_load(Wing.W/2, Wing_loading, Flight.aoa, y_CG, y_ac, Mom_wing, Flight.n, Wing);
 end
 
 %% FINAL VALUES
