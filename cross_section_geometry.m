@@ -70,6 +70,6 @@ Stringer.position_x = Fuselage.x_max*ones(1, Stringer.nb);
 %     z_min(j) = r*sin((j-1)*theta);
 % end
 
-Stringer.delta_y = (y_min - Stringer.position_y)./(Fuselage.x_min-Fuselage_l_cst - Fuselage.x_max);
-Stringer.delta_z = (z_min - Stringer.position_z)./(Fuselage.x_min-Fuselage_l_cst - Fuselage.x_max);
+Stringer.delta_y = (y_min - Stringer.position_y)./(Fuselage.x_min-Fuselage.l_cst - Fuselage.x_max);
+Stringer.delta_z = (z_min - Stringer.position_z)./(Fuselage.x_min-Fuselage.l_cst - Fuselage.x_max);
 end
