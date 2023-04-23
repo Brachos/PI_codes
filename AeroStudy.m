@@ -85,3 +85,11 @@ box on
 h = legend('1.8 $\%$','1.2 $\%$','1.03 $\%$','interpreter','latex','location','southeast','Fontsize',pt)
 pbaspect([1.5 1 1])
 saveas(e,'.\conv_element_size','epsc')
+
+%% Cp_curve
+chord = linspace(0.1,3.71,25);
+cp_curve_1_1 = load('Converged_mesh_slice_10_MAC_growth_1_1.dat');
+% x, y, z, x/c, Cp
+figure; 
+w = plot(cp_curve_1_1(:,4),cp_curve_1_1(:,5))
+set(gca, 'YDir','reverse')
