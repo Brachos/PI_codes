@@ -30,7 +30,7 @@ function [Lat_der, Lat_dim_deriv, Lat_modes, A_lat] = lat_dyn_stab(a_El, b_El, b
 % bh_tail        = horizontal span of the tail
 % x_w            = wing position from nose
 % AOA            = angle of attack in DEGRESS
-show_prints = 1;
+show_prints = 0;
 %Hypothesis 
 % - no wing dihedral angle
 % - no delfection angle for flaps
@@ -51,7 +51,7 @@ if show_prints
     fprintf('Param for p.1633 : xm_lB = %.2f, lB2_SBs = %.2f, sqrt_h1_h2 = %.2f and h_w = %.2f.\n',...
         cg/l_f, l_f^2/SBs, 1, b_el/a_el); %(? revoir !!)
 end
-KN = 0.0007; %p.1633
+KN = 0.0012; %p.1633
 nu = 0.000032436;
 Re_fus = V_c * l_f/nu;
 if show_prints
@@ -87,7 +87,7 @@ b_param = cos(sweep)*bw; %p.1625
 if show_prints
     fprintf('Param p.1625 lf_b = %.2f.\n', lf_param/b_param);
 end
-Kf = 0.95; %p.1625
+Kf = 0.94; %p.1625
 Clbeta_CL_A = 0.0001; %Figure p.1564
 zW = - b_el/2; %p.1603
 d = sqrt(a_el/2 * b_el/2 * pi/0.7854); %p.1603
@@ -113,7 +113,7 @@ Lambda_beta = atan(tan(sweep)/bbeta);%p.2532
 if show_prints
     fprintf('WING : Param Lambda_beta p.2532 = %.3f and the other is %.3f.\n', Lambda_beta*180/pi, bbeta*A/kappa); %last check, 20.566 and 3.151 (? revoir !!)
 end
-bClp_kappa = -0.235; %p.2550, with param from the "frpintf" just before, per RADIANS
+bClp_kappa = -0.23; %p.2550, with param from the "frpintf" just before, per RADIANS
 % CLalpha_CL = CL_alpha_v%p.566 same as p.549
 CLalpha_CL0 = CL_alpha_v; %here assuming that there's no difference for CL_alpha with CL, per RADIANS
 Clp_Cdl_CL2 = -0.01; %p.2554
