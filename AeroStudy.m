@@ -93,3 +93,55 @@ cp_curve_1_1 = load('Converged_mesh_slice_10_MAC_growth_1_1.dat');
 figure; 
 w = plot(cp_curve_1_1(:,4),cp_curve_1_1(:,5))
 set(gca, 'YDir','reverse')
+%% Compute of aero coefs
+Aero_coefs = readtable("AEROSTUDYCOEFS.csv");
+prop_lift = 0.8004;
+MTOW = 3605.26;
+Mach = 0.7;
+Altitude = 30000; % [ft]
+Mass = 1000;
+AR = 7;
+AOA = -1 : 0.1 : 1;
+CL_vector = zeros(length(AOA),1);
+CD_vector = zeros(length(AOA),1);
+deriv = zeros(length(AOA),1);
+
+for i = 1 : length(AOA)
+    [~,~,~,~,CL_vector(i),CD_vector(i),~,~,~,~,~,~,~,~,~,~,~,~,~,~] = wing(Mach,Altitude,Mass,AOA(i)+2);
+    deriv(i) = 0.5/CL_vector(i)*pi*0.8*AR;
+    if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
+        CL_opt = CL_vector(i);
+        num = i;
+    end
+end
+%%
+%plot AOA vs Cl 
+figure; 
+k = plot(Aero_coefs.AOA(:,1),Aero_coefs.CL(:,1),'Linewidth',2)
+hold on 
+plot(AOA,CL_vector,'LineWidth',2)
+xlabel('AoA [$^{\circ}$]','Interpreter','latex','FontSize',pt);
+ylabel('$C_L$ [-]','Interpreter','latex','FontSize',pt);
+grid on
+box on
+h = legend('DARTFlo','Emperical','interpreter','latex','location','southeast','Fontsize',pt)
+pbaspect([1.5 1 1])
+saveas(k,'.\AOAvsCL','epsc')
+% Plot AOA vs CD
+figure; 
+l = plot(Aero_coefs.AOA(:,1),Aero_coefs.CD(:,1),'LineWidth',2)
+xlabel('AoA [$^{\circ}$]','Interpreter','latex','FontSize',pt);
+ylabel('$C_D$ [-]','Interpreter','latex','FontSize',pt);
+grid on
+box on
+pbaspect([1.5 1 1])
+saveas(l,'.\AOAvsCD','epsc')
+% Plot AOA vs Cm 
+figure; 
+m = plot(Aero_coefs.AOA(:,1),Aero_coefs.cm(:,1),'LineWidth',2)
+xlabel('AoA [$^{\circ}$]','Interpreter','latex','FontSize',pt);
+ylabel('$C_{MAC}$ [-]','Interpreter','latex','FontSize',pt);
+grid on
+box on
+pbaspect([1.5 1 1])
+saveas(m,'.\AOAvsCm','epsc')

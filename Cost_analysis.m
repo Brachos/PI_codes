@@ -1,4 +1,4 @@
-function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(We,Drag,show)
+function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap,Cover,Yearly_cost] = Cost_analysis(We,Drag,show,N)
 %% Data required
 %WE Aircraft empty weight [lb]
 We = We*2,205;
@@ -8,6 +8,7 @@ T = Drag*0.2248; % Cruise thrust in lbf
 %Demander mathias
 speed_cruise = 227,44176; %feet/s
 %% Assumtion 
+%{
 N = 100:1:1000; % Number of aircraft produced in 5 years -> 8 aircraft produced per day
 %%
 pt = 14;
@@ -19,6 +20,7 @@ for i=1:length(F_EXP)
         QDF(i,j) = (F_EXP(i))^(1.4427*log(Number_unit_produced(j)));
     end
 end
+%}
 %% CPI computation
 year = 2013:1:2028;
 CPI = [1.015 1.016 1.001 1.013 1.021 1.024 1.018 1.012 1.047 1.086 1.0237 1.0237 1.0237 1.0237 1.0237 1.0237];
@@ -57,7 +59,7 @@ end
 
 %% General aviation computation 
 for i=1:length(N)
-    [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft] = general_aviation(We,V_max,400,T);
+    [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft] = general_aviation(We,V_max,N,T,CPI_evolution(end));
     cost_per_unit(i) = cost_per_aircraft;
 end
 if show == 1
@@ -81,7 +83,7 @@ F8 = 0; % 14 CFR Part 23
 FMF = 0.3 +F1+F2+F3+F4+F5+F6+F7+F8;
 Rap = 60; %dollar
 Rstor = 250; %Storage price [$]
-Cstor = 12 * Rstor*CPI; %Storage cost (annual) [$]
+Cstor = 12 * Rstor*CPI_evolution(end); %Storage cost (annual) [$]
 
 Rfuel = 2.68; % Price of kerozene per gallon (voir source) [$]
 SFC = 0.545; %Specific fuel consumption at cruise
@@ -92,10 +94,10 @@ Cfuel = BHP_cruise*SFC*Qflght*Rfuel;
 
 Cac = cost_per_aircraft; %Total value assured [$]
 Cins = 500 + 0.015*Cac; % Annual insurance cost [$/year]
-Cinsp = 500*CPI; %Anual inspection cost
+Cinsp = 500*CPI(end); %Anual inspection cost
 Npp = 1; %Number of engine
 Cover = 5*Npp*Qflght; %Engine overhaul fund
-
+Yearly_cost = Cfuel +Cstor + Cap + Cins +Cinsp +Cover
 
 
 

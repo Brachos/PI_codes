@@ -1,4 +1,4 @@
-function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft] = general_aviation(We,V_max,N,T)
+function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft] = general_aviation(We,V_max,N,T,CPI)
     %% Computation of the number of hours page 49 du livre en version pdf 
     Fcert = 1;
     Fcf = 1;
@@ -16,8 +16,6 @@ function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,
     %% Fixed cost and variable cost
     Np = 1; %Number of prototype
     Npp =1; %Number of engine
-    year = 2012:1:2022;
-    CPI = [1.021 1.015 1.016 1.001 1.013 1.021 1.024 1.018 1.012 1.047 1.086];
     Reng = 92; %Rate engineering labour [dollar/hour]
     Rmfg = 53; %Rate of manufacturing labour [dollar/hour]
     Rtool = 61; %Rate of tooling labour [dollar/hour]
@@ -32,7 +30,7 @@ function [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,
     CFT = 0.009646*We^(1.16)*V_max^(1.3718)*Np^(1.281)*CPI*Fcert; %Total flight test operation
     Ctool = 2.0969*HT*Rtool*CPI;
     CMFG = 2.0969*Hmfg*Rmfg*CPI; % Total cost of manufacturing
-    Cqc = 0.13*CMFG*Fcert*Fcomp; % Total cost of quality control
+    Cqc = 0.13*CMFG*Fcert*Fcomp*CPI; % Total cost of quality control
     Cmat = 24.896*We^(0.689)*V_max^(0.624)*N^(0.792)*CPI*Fcert*Fcf*Fpress; %Total cost of materials
     Ccert = Ceng+Cdev+CFT+Ctool; %Total certification cost
     Cpp = 1035.9*Npp*T^(0.8366)*CPI; %Cost of power plant   
