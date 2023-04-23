@@ -78,6 +78,7 @@ airf_tip.XZ_up = airf_tip.XZ_up*R_tip;
 airf_tip.XZ_low = airf_tip.XZ_low*R_tip;
 
 %Translation at the tip by adding sweep angle
+sweep  = sweep*180/pi;
 dx_tip = c_root/4 + tand(sweep)*span/2 - c_tip/4;
 airf_tip.XZ_up(:,1) = airf_tip.XZ_up(:,1) + dx_tip;
 airf_tip.XZ_low(:,1) = airf_tip.XZ_low(:,1) + dx_tip;

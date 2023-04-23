@@ -47,6 +47,7 @@ boom_root.Area(1) = Area*coeff_boom1;
 boom_root.Area(2) = Area;
 stringers_root.Area = Area;
 
+coord_cad = wing_cad(boom_root,boom_tip, stringers_root, stringers_tip,3,airf_root);
 
 %% Skin thickness computation
 
