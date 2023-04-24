@@ -1,4 +1,4 @@
-function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM,COST] = Aircraft(MTOW, cg, prop_lift, drag,N)
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM,COST, LongDeriv, LatDeriv, Long_modes, LatModes] = Aircraft(MTOW, cg, prop_lift, drag)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 %% Figures settings
@@ -322,15 +322,15 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 % Ci-dessous ? revoir !! 
-Ixz = 10.975204;               % Inertia product kg m^2
-Ix = 9448.622823;               % Roll moment of inertia kg m^2
-Iy = 10406.831792;              % Pitch moment of inertia in kg m^2
-Iz = 1382.996188;              % Yaw moment of inertia kg m^2
+Ixz = 246.926465;               % Inertia product kg m^2
+Ix = 9988.932802;               % Roll moment of inertia kg m^2
+Iy = 12392.914225;              % Pitch moment of inertia in kg m^2
+Iz = 3034.062705;              % Yaw moment of inertia kg m^2
 Inertia = table(Ix, Iy, Iz, Ixz);
 V0 = V_c;
 
 % Longitudinal stability
-[Long_derivatives,Long_modes] = long_dyn_stab(MTOW,...
+[LongDeriv,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,bw,Sw,CLw_alpha,rho,V_c,ARw,M,Altitude,CL_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,...
     cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, drag, prop_lift);
@@ -480,28 +480,28 @@ axis auto
 legend({'Empty weight','Payload','Fuel reserve','Fuel'},'Location','west');
 hgexport(gcf,'payload_range.eps');
 %% Cost Analysis
-% [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0)
-% COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
-% fprintf('Total Engineering man-hours: %.2dhours\n',HE);
-% fprintf('Total Tooling man-hours: %.2dhours\n',HT);
-% fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
-% fprintf('Number Engineer required: %.2dengineers\n',N_eng);
-% fprintf('Average time to manufacture: %.2dhours\n',t_ac);
-% fprintf('CPI: %.2ddollars\n',CPI);
-% fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
-% fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
-% fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
-% fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
-% fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
-% fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
-% fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
-% fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
-% fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
-% fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
-% fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
-% fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
-% fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
-% fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
-% fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
+[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0)
+COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
+fprintf('Total Engineering man-hours: %.2dhours\n',HE);
+fprintf('Total Tooling man-hours: %.2dhours\n',HT);
+fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
+fprintf('Number Engineer required: %.2dengineers\n',N_eng);
+fprintf('Average time to manufacture: %.2dhours\n',t_ac);
+fprintf('CPI: %.2ddollars\n',CPI);
+fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
+fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
+fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
+fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
+fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
+fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
+fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
+fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
+fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
+fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
+fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
+fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
+fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
+fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
+fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
 
 end
