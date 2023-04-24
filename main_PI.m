@@ -1,7 +1,7 @@
 clear
-MTOW = 3980.7; %first guess
-cg = 4.3951; %first guess
-drag = 3323.2; %first guess
+MTOW = 3333.0; %first guess
+cg = 4.3443; %first guess
+drag = 2759.4; %first guess
 error = 1;
 prop_lift = 0.7947;
 N_old = 400; %Number of aircraft produced
