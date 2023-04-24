@@ -25,7 +25,7 @@ end
 year = 2013:1:2028;
 CPI = [1.015 1.016 1.001 1.013 1.021 1.024 1.018 1.012 1.047 1.086 1.0237 1.0237 1.0237 1.0237 1.0237 1.0237];
 CPI_evolution = [];
-CPI_evolution(1) = 1; %Correspond à 2012
+CPI_evolution(1) = 1; %Correspond ?? 2012
 for i=2:length(CPI)
     CPI_evolution(i) = CPI_evolution(i-1)*CPI(i);
 end

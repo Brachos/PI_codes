@@ -37,7 +37,7 @@ show_prints = 0;
 % - cruise conditions with AOA of 2.5???
 % - sidewash angle of 2???
 alpha = AOA*pi/180; % assuming an angle of attack of 2.5 degrees
-alphaF = alpha; % assuming AOA of fuselage of alpha
+alphaF = 0*alpha; % assuming AOA of fuselage of alpha
 
 b_el = 2*b_El;
 a_el = 2*a_El;
@@ -177,10 +177,10 @@ Cy_p = Cy_p_WB + 2*(z - zp)/bw * delta_Cy_beta_VWBH; %p.2776
 if show_prints
     fprintf('Param x_bar/c_bar for graph p.2597 is %.2f.\n', x_bar/cw_MAC);
 end
-Cnr_CL2 = -0.01; %see Figure p.2597
-Cnr_CD0 = -0.37; %p.2598
+Cnr_CL2 = -0.008; %see Figure p.2597
+Cnr_CD0 = -0.32; %p.2598
 Cn_r_WB = Cnr_CL2 * CLw^2 + Cnr_CD0 * CD0; %p.2593, per RADIANS
-Cn_r = Cn_r_WB + 2/bw^2 * (lp*cos(alpha) + zp*sin(alpha))^2 * delta_Cy_beta_VWBH; %p.2805
+Cn_r = Cn_r_WB + 2 * Cy_beta * (lp*cos(alpha) + zp*sin(alpha))^2/bw^2; %p.2805
 
 %% Cl_r -> p.2802, p.2714, p.2581
 Clr_CL_CL0_M0 = 0.26; %see Figure p.2589
@@ -192,8 +192,12 @@ Cl_r_WB = CLw * Clr_CL_CL0_M + delta_Clr_CL + 0 + delta_Clr_theta * theta_tip*18
 Cl_r = Cl_r_WB - 2/bw^2 * (lp*cos(alpha) + zp*sin(alpha))*(zp*cos(alpha) - lp*sin(alpha))*delta_Cy_beta_VWBH; %p.2802
 
 %% Cy_r -> p.2799, p.2578
-Cy_r_WB = 0; %p.2459 (very bad approx), neglected
-Cy_r = Cy_r_WB - 2/bw * (lp*cos(alpha) + zp*sin(alpha))*delta_Cy_beta_VWBH; %p.2799
+% Cy_r_WB = 0; %p.2459 (very bad approx), neglected
+% Cy_r = Cy_r_WB - 2/bw * (lp*cos(alpha) + zp*sin(alpha))*delta_Cy_beta_VWBH; %p.2799
+% ds_db = -0.276 + 3.06*Sf/Sw *1/(1+cos(sweep)) + 0.4*zW/d + 0.0009*A; %cours Crovato, slide 13
+l_arm = l_f - cg; 
+Zf = bv_tail/2;
+Cy_r = - 2* Cy_beta * (Zf*cos(alpha) + l_arm*sin(alpha))/bw; %cours Crovato slide 18
 
 %% Cy_beta_dot -> p.2825
 if show_prints
@@ -277,6 +281,7 @@ Ts = -V_c*(Cl_beta*Cn_p - Cl_p*Cn_beta)/(g*(Cl_r*Cn_beta - Cl_beta*Cn_r));
 % Roll subsidence -> p.214
 Tr = -(Ix*Iz - Ixz^2)/(Iz*Lp + Ixz*Np);
 % Dutch roll -> p.217
-omega_d = sqrt(Nr*Yv/(Iz*MTOW) + V_c*Nv/Iz);
-damp_ratio = - (Nr/Iz + Yv/MTOW)*1/(2*omega_d);
-Lat_modes = table(Ts, Tr, omega_d, damp_ratio);
+damp_ratio = sqrt(1/(1 + (imag(eig_lat(1))/real(eig_lat(1)))^2)); %p.18-19 ouvrage de ref for dutch roll
+omega_d = - real(eig_lat(1))/damp_ratio; %idem
+T_DR = 2*pi/(omega_d*sqrt(1-damp_ratio^2));
+Lat_modes = table(Ts, Tr, omega_d, damp_ratio, T_DR);

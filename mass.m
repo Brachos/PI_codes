@@ -102,7 +102,7 @@ W_fuselage = (W_fuselage1 + W_fuselage2)/1.9;
 %% Nose landing gear Raymer
 N_l = 1.5; % nombre de landing gear * 1.5
 W_l = MTOW*pound; %in [lbs]
-L_n = 0.8*inche; %in [in] hauteaur
+L_n = 1*inche; %in [in] hauteaur
 Knp = 1; % =1.15 for kneeling gear, 1 otherwise
 Nnw = 1; % Number of nosewheels
 
@@ -115,7 +115,7 @@ W_landing_gear_nose = 0.032 * Knp * W_l^0.646 * N_l^0.2 * L_n^0.5 * Nnw^0.45;
 W_landing_gear_nose = W_landing_gear_nose/pound;
 
 %% Main landing gear Raymer
-L_m = 0.8*inche; %in [in]
+L_m = 1*inche; %in [in]
 Kmp = 1; % 1.126 for kneeling gear, 1 otherwise
 Nmw = 2; % Number of main wheels
 Nmss = 2; % Number of main gear shock struts

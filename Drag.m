@@ -80,7 +80,7 @@ Dfeff = sqrt(4/pi*Ac); % equivalent diameter of the fuselage.
 %sigmaeff = min(lf/Dfeff,(lN+lA)/Dfeff + 2);
 
 sigmaeff = min((2*lN+lC)/Dfeff,2*(1+lN/Dfeff)); % parameter sigmaeff for the forebody /!\ !!!!!
-phif = 1.1/(sigmaeff^1.5) + 1.9/(sigmaeff^3);% bcse lA/Dfeff > 2 /!\ on divise par 2 pcq on considère juste la contribution du forebody !!!!!
+phif = 1.1/(sigmaeff^1.5) + 1.9/(sigmaeff^3);% bcse lA/Dfeff > 2 /!\ on divise par 2 pcq on consid?re juste la contribution du forebody !!!!!
 CDSF = getCF(real(lf),M) * Sfwet * (1 + phif); % contribution to the profile drag of the forebody !!!! 
 CDSbasicF46 = CDSF + CDB * pi/4 * Dfeff^2;
 dabCDSF51 = A1 * abs(sin(af)^3) + A2 * abs(sin(af-B)^3)/cos(B);
