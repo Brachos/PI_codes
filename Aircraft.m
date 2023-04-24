@@ -461,7 +461,7 @@ title('V-tail geometry')
 axis equal
 
 %% Payload range diagram
-SFC = 0.586 * 0.453592 / 4.4482;
+SFC = 0.7 * 0.453592 / 4.4482;
 max_thrust = 3600; %[N]
 ingress_time = WEIGHT.W_fuel/SFC/drag; %[h]
 range = ingress_time * speed(30000,0.7) * 3.6;
