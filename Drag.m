@@ -3,7 +3,7 @@ R = 7.26*10^6; % reynolds number
 M = PARAM.M; % mach number
 S = WING.Sw; % Surface wing ;
 Snet = WING.Sw - FUSELAGE.a_el*2 * WING.cw_root; % Surface net (wing-fusellage) ??????????
-CL0 = 0.13;% CL at 0 degree angle of attack 
+CL0 = 0.17;% CL at 0 degree angle of attack 
 CLa = WING.CLw_alpha; % CL alpha 
 A = WING.A; %AR of the wing
 et = abs(WING.theta_tip *180/pi); %Twist angle [deg](doit ??tre positif)
@@ -23,8 +23,8 @@ Ac = FUSELAGE.a_el * FUSELAGE.b_el * pi; %Cross section area
 lf = FUSELAGE.l_f; %fuselage length 
 % Sfwet = 30; %fuselage wetted area -> CAD, prev = 24
 Sfwet = 15.76; % wetted area of the FOREBODY
-Snwet = 4.6/2; %nacelle wetted area -> CAD, prev = 5.5/2
-Spwet = 0.8*pi*1.57; %engine wetted area (disq of engine) ->>>>>>>>>>> ENGINE CARACT
+Snwet = 3.35/2; %nacelle wetted area -> CAD, prev = 4.6/2
+Spwet = (0.8/2)^2*pi/2; %engine wetted area (disq of engine) ->>>>>>>>>>> ENGINE CARACT
 Mg = 0.7; %fully extended flow mach number p507
 Minf = 0.7; %Flying mach number
 nf = 2*FUSELAGE.a_el/WING.bw; %fuselage diameter/wingspan
@@ -35,7 +35,7 @@ sweep = WING.sweep; %leading edge sweep angle [deg]
 deda = PARAM.de_dAOA; %Downash slope --<><<<<<<<<<<<<<<<<<<<<<>>>>> ligne 287 AIRCRAFT
 l = WING.cw_MAC; %length p500 (MAC je suppose) 
 SMC = WING.Sw /WING.bw; %Standard mean chord
-airEntryLength = 1.6;  %Longeur entre d'air -> CAD, prev = 3.98
+airEntryLength = 3.5;  %Longeur entre d'air -> CAD, prev = 3.98
 ch = V_TAIL.hMAC; %Htail mean chord ->rajouter depuis aircraft ligne 119
 cv = V_TAIL.vMAC; %Vtail mean chord ->rajouter depuis aircraft ligne 128
 e = 0.8; % Coef d'oswald ?????? 
@@ -43,6 +43,7 @@ CLi = 0.409; % J'ai pas bien compris (mis ?? 0.36 dnas le code de l??o)
 clmax = 1.4; %PARAM.CL; % DEMANDER LEO 
 CLmax = 1.65; %PARAM.CL; % DEMANDER LEO 
 CL = PARAM.CL; %voir si c'est l? le probl?me
+CLw=WING.CLw;
 beta = sqrt(1-Minf^2);
 CD0 = WING.CD0;
 
@@ -59,13 +60,13 @@ lN = 3; %Figure 10 page 524 du PDF + CAD, prev = 2.36
 lA = 4.191; %Figure 10 page 524 du PDF + CAD 
 lC = 1.5;
 %% Vortex
-CDvF9 = (1 + delta)*(CL^2)/pi/A;
-deCdvF21 = et^2 * Col + et * CL * Cll;
+CDvF9 = (1 + delta)*(CLw^2)/pi/A;
+deCdvF21 = et^2 * Col + et * CLw * Cll;
 af = (CL - CL0)/CLa; %in rad
-CDSF24 = 0.15 * af^2 * Vf^(2/3);
+% CDSF24 = 0.15 * af^2 * Vf^(2/3);
 CDSF26 = 1.02 * CLh^2 * Sh / (pi*Ah);
 CDVortexWing = CDvF9 + deCdvF21;
-CDVortexFus = CDSF24/S;
+CDVortexFus = 0;%CDSF24/S;
 CDVortexTail = CDSF26/S;
 CDVortex = CDVortexWing + CDVortexFus +CDVortexTail;
 
@@ -120,6 +121,6 @@ CDOther = CDInterference + CDImperfection;
 
 CDTotal = CDVortex + CDProfileTotal + CDInterference + CDImperfection;
 
-DRAG = table(CDTotal,CDProfileTotal,CDVortex,CDOther,CDProfileWing,CDProfileFuselage,CDProfileNacelles,CDProfileTail);
+DRAG = table(CDTotal,CDProfileTotal,CDVortex,CDOther,CDProfileWing,CDProfileFuselage,CDProfileNacelles,CDProfileTail,CDInterference,CDImperfection,CDVortexWing,CDVortexFus,CDVortexTail);
 
 end 
