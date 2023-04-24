@@ -58,7 +58,6 @@ for j = 1:nb_pts_maneuver
         B(j, t) = abs(sigma_xx_B(Stringer.position_y(t), Stringer.position_z(t)))/Stringer.max_load;
     end
 end
-
 Stringer.B = max(B,[],'all');
 Stringer.I_yy = Stringer.B*I_yy;
 Stringer.I_zz = Stringer.B*I_zz;

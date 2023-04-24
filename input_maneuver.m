@@ -1,13 +1,13 @@
 %%input for the maneuver enveloppe
 
-in.MTOW = 3.605773264758386e+03;%[kg]
+in.MTOW = 3.3330e+03;%[kg]
 
 %extreme load factor:
 n.max = 3;%min(2.1 + 24000/(10000 + in.MTOW),3.8); % KPP19 
 n.min = -1.5;% KPP18
-in.S = 7.98666232347866; %[m^2]
+in.S = 7.3885; %[m^2]
 
-in.cw_MAC = 1.17138719882950; %mean aero chord [m]
+in.cw_MAC = 1.1267; %mean aero chord [m]
 in.C_L_max = 1.6655;   %in cruise
 in.C_L_max0 = -2.2; %at landing
 in.C_L_alpha_plane = 5.99982543977986; %[1/rad]

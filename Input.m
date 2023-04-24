@@ -30,10 +30,10 @@ Aircraft.C_DB = 0.038299150427751;          %Aicraft body drag coefficient[-]
 Aircraft.l_DB = 0.1;                        %Aicraft drag lever arm [m] !!!
 
 % Wing:       
-Wing.S = 7.986662323478662;                                 %Wing surface [m²]
+Wing.S = 7.3885;                                 %Wing surface [m²]
 Wing.W = W(2);                                              %Wing weight [N]
 Wing.AR = 7;                                                %Wing aspect ratio [-]
-Wing.MAC = 1.171387198829498;                               %Wing mean aerodynamic chord [m]
+Wing.MAC = 1.1267;                               %Wing mean aerodynamic chord [m]
 Wing.l = sqrt((y_ac_wing-cg(3))^2 + (x_ac_wing-cg(1))^2);   %Wing lever arm [m]
 Wing.aoa = atan2(y_ac_wing - cg(3), x_ac_wing - cg(1));     %Angle of attack between the wing lever arm and the chord [rad]
 Wing.LE = 2.459;                                            %Position of the leading edge [m]
