@@ -57,7 +57,7 @@ A2 = 5.26; %Figure 13 page 524 du pdf ???? prev = 4.55
 Cci = 4 *cr; %Page 510 du livre ???????????????????????
 lN = 3; %Figure 10 page 524 du PDF + CAD, prev = 2.36
 lA = 4.191; %Figure 10 page 524 du PDF + CAD 
-
+lC = 1.5;
 %% Vortex
 CDvF9 = (1 + delta)*(CL^2)/pi/A;
 deCdvF21 = et^2 * Col + et * CL * Cll;
@@ -76,9 +76,11 @@ cdpminF35 = 2 * getCF(real(SMC),M) * (1 + phiw *cosd(sweep12)^2);
 dlcdpref = 67*clmax/((log(R))^(4.5))- 0.0046 *(1 + 2.75*tc) ; % for Re<10^7
 CDpF36 = cdpminF35 * Snet/S + 0.75 * dlcdpref * ((CL-CLi)/(CLmax-CLi))^2; % profile drag of the wing
 Dfeff = sqrt(4/pi*Ac); % equivalent diameter of the fuselage.
-sigmaeff = min(lf/Dfeff,(lN+lA)/Dfeff + 2);
+%sigmaeff = min(lf/Dfeff,(lN+lA)/Dfeff + 2);
+
+sigmaeff = min((2*lN+lC)/Dfeff,2*(1+lN/Dfeff)); % parameter sigmaeff for the forebody /!\ !!!!!
 phif = 1.1/(sigmaeff^1.5) + 1.9/(sigmaeff^3);% bcse lA/Dfeff > 2 /!\ on divise par 2 pcq on considère juste la contribution du forebody !!!!!
-CDSF = getCF(real(lf),M) * Sfwet * (1 + phif); % basic fuselage drag 
+CDSF = getCF(real(lf),M) * Sfwet * (1 + phif); % contribution to the profile drag of the forebody !!!! 
 CDSbasicF46 = CDSF + CDB * pi/4 * Dfeff^2;
 dabCDSF51 = A1 * abs(sin(af)^3) + A2 * abs(sin(af-B)^3)/cos(B);
 CDSF58 = 1.25 * getCF(real(airEntryLength),M) * Snwet;

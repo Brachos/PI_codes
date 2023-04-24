@@ -25,7 +25,7 @@ W = [445.324212885535 114.260212744617 54.229550268832060 242.800000000000 29.22
 
 %Aircraft:
 Aircraft.W = sum(W)*9.18;                   %Aircraft weight [N]
-Aircraft.I_theta = 13395974401.883000000e-6;%Aircraft inertia [kg.m²]
+Aircraft.I_theta = 12392914225.336000000e-6;%Aircraft inertia [kg.m²]
 Aircraft.C_DB = 0.038299150427751;          %Aicraft body drag coefficient[-]
 Aircraft.l_DB = 0.1;                        %Aicraft drag lever arm [m] !!!
 
