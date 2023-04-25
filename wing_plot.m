@@ -26,39 +26,36 @@ function [] = wing_plot(WING,FUSELAGE)
         pente_tr = (0-wing_x(3))/(b/2);
         fus_l = [-R_fus -R_fus; -0.3*c_root 1.3*c_root];
         fus_r = [R_fus R_fus; -0.3*c_root 1.3*c_root];
-        flap_yl = [-R_fus-0.1 -R_fus/2-b/4 -R_fus/2-b/4 -R_fus-0.1 -R_fus-0.1];
+        flap_yl = [-R_fus-0.1 -R_fus-0.1-b/2*0.4 -R_fus-0.1-b/2*0.4 -R_fus-0.1 -R_fus-0.1];
         flap_yr = -flap_yl;
         fx1 = 0.3*c_root+flap_yl(1)*pente_HL; % First point of the flap
         fx2 = 0.3*c_root+flap_yl(2)*pente_HL;
         fx3 = flap_yl(2)*pente_tr;
         fx4 = flap_yl(1)*pente_tr;
         flap_x = [fx1 fx2 fx3 fx4 fx1];
-        aileron_yl = [-R_fus/2-b/4 -b/2+0.1 -b/2+0.1 -R_fus/2-b/4 -R_fus/2-b/4];
+        aileron_yl = [-R_fus-0.1-b/2*0.4 -b/2+0.1 -b/2+0.1 -R_fus-0.1-b/2*0.4 -R_fus-0.1-b/2*0.4];
         aileron_yr = - aileron_yl;
         ax1 = 0.3*c_root+aileron_yl(1)*pente_HL; % First point of the flap
         ax2 = 0.3*c_root+aileron_yl(2)*pente_HL;
         ax3 = aileron_yl(2)*pente_tr;
         ax4 = aileron_yl(1)*pente_tr;
         aileron_x = [ax1 ax2 ax3 ax4 ax1];
-        % Mesures
-        m_b = [-b/2 b/2;-c_root -c_root];
        
-    
-    figure
-    plot(wing_y,wing_x,'k','linewidth',0.7)
-    hold on
-    plot(SL(2,:),SL(1,:),'--k','linewidth',0.5)
-    plot(SHL(2,:),SHL(1,:),'--k','linewidth',0.5)
-    plot(HL(2,:),HL(1,:),'--k','linewidth',0.5)
-    plot(HHL(2,:),HHL(1,:),'--k','linewidth',0.5)
-    plot(fus_l(1,:),fus_l(2,:),'--','Color',gray,'linewidth',0.3)
-    plot(fus_r(1,:),fus_r(2,:),'--','Color',gray,'linewidth',0.3)
-    plot(flap_yl,flap_x,'k','linewidth',0.7)
-    plot(flap_yr,flap_x,'k','linewidth',0.7)
-    plot(aileron_yl,aileron_x,'k','linewidth',0.7)
-    plot(aileron_yr,aileron_x,'k','linewidth',0.7)
-    axis equal
-    axis off
+        figure
+        plot(wing_y,wing_x,'k','linewidth',0.7)
+        hold on
+        plot(SL(2,:),SL(1,:),'--k','linewidth',0.5)
+        plot(SHL(2,:),SHL(1,:),'--k','linewidth',0.5)
+        plot(HL(2,:),HL(1,:),'--k','linewidth',0.5)
+        plot(HHL(2,:),HHL(1,:),'--k','linewidth',0.5)
+        plot(fus_l(1,:),fus_l(2,:),'--','Color',gray,'linewidth',0.3)
+        plot(fus_r(1,:),fus_r(2,:),'--','Color',gray,'linewidth',0.3)
+        plot(flap_yl,flap_x,'k','linewidth',0.7)
+        plot(flap_yr,flap_x,'k','linewidth',0.7)
+        plot(aileron_yl,aileron_x,'k','linewidth',0.7)
+        plot(aileron_yr,aileron_x,'k','linewidth',0.7)
+        axis equal
+        axis off
     
     % Drag polar
     

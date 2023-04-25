@@ -15,8 +15,8 @@ cont = [c_lower;c_upper];
 
 p_root = c_root*coord;
 p_tip  = c_tip*coord;
-R_root = [cosd(2.5) -sind(2.5);sind(2.5) cosd(2.5)]; % Rotation matrix
-R_tip  = [cosd(0.5) -sind(0.5);sind(0.5) cosd(0.5)]; % Rotation matrix
+R_root = [cosd(2) -sind(2);sind(2) cosd(2)]; % Rotation matrix
+R_tip  = [cosd(1) -sind(1);sind(1) cosd(1)]; % Rotation matrix
 
 % Reduction pf the number of points
 p_root(10:2:100,:) = [];
