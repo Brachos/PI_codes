@@ -40,25 +40,22 @@ function [] = wing_plot(WING,FUSELAGE)
         ax3 = aileron_yl(2)*pente_tr;
         ax4 = aileron_yl(1)*pente_tr;
         aileron_x = [ax1 ax2 ax3 ax4 ax1];
-        % Mesures
-        m_b = [-b/2 b/2;-c_root -c_root];
        
-    
-    figure
-    plot(wing_y,wing_x,'k','linewidth',0.7)
-    hold on
-    plot(SL(2,:),SL(1,:),'--k','linewidth',0.5)
-    plot(SHL(2,:),SHL(1,:),'--k','linewidth',0.5)
-    plot(HL(2,:),HL(1,:),'--k','linewidth',0.5)
-    plot(HHL(2,:),HHL(1,:),'--k','linewidth',0.5)
-    plot(fus_l(1,:),fus_l(2,:),'--','Color',gray,'linewidth',0.3)
-    plot(fus_r(1,:),fus_r(2,:),'--','Color',gray,'linewidth',0.3)
-    plot(flap_yl,flap_x,'k','linewidth',0.7)
-    plot(flap_yr,flap_x,'k','linewidth',0.7)
-    plot(aileron_yl,aileron_x,'k','linewidth',0.7)
-    plot(aileron_yr,aileron_x,'k','linewidth',0.7)
-    axis equal
-    axis off
+        figure
+        plot(wing_y,wing_x,'k','linewidth',0.7)
+        hold on
+        plot(SL(2,:),SL(1,:),'--k','linewidth',0.5)
+        plot(SHL(2,:),SHL(1,:),'--k','linewidth',0.5)
+        plot(HL(2,:),HL(1,:),'--k','linewidth',0.5)
+        plot(HHL(2,:),HHL(1,:),'--k','linewidth',0.5)
+        plot(fus_l(1,:),fus_l(2,:),'--','Color',gray,'linewidth',0.3)
+        plot(fus_r(1,:),fus_r(2,:),'--','Color',gray,'linewidth',0.3)
+        plot(flap_yl,flap_x,'k','linewidth',0.7)
+        plot(flap_yr,flap_x,'k','linewidth',0.7)
+        plot(aileron_yl,aileron_x,'k','linewidth',0.7)
+        plot(aileron_yr,aileron_x,'k','linewidth',0.7)
+        axis equal
+        axis off
     
     % Drag polar
     

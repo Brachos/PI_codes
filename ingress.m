@@ -30,7 +30,7 @@ for i = 1 : length(h)
 
 end
 
-M = [0 0.1 0.2 0.5 0.7 0.9];
+M = [0 0.1 0.2 0.5 0.7];
 T = zeros(length(M),length(h));
 
 figure
@@ -42,6 +42,6 @@ for i = 1 : length(M)
     plot(T(i,:)/1000,h*feet)
 end
 hold off
-legend('M = 0','M = 0.1','M = 0.2','M = 0.5','M = 0.7','M = 0.9')
+legend('M = 0','M = 0.1','M = 0.2','M = 0.5','M = 0.7')
 ylabel('Altitude [ft]')
 xlabel('Thrust [kN]')

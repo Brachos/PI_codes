@@ -50,8 +50,9 @@ k  = beta*cl_alpha/(2*pi);
 a  = 2*pi/(2/(beta*AR)+sqrt((1/(k*cos(L_beta)))^2+(2/(beta*AR))^2))/beta;
 CL_alpha = a;
 CD0 = 0.017; %ca sort d'ou ca ????????
+e = 1.78*(1-0.045*AR^0.68) - 0.64;
 CL = a*(AOA-alpha_L0);
-CD = CD0 + CL^2/(0.8*pi*AR); % CD_0 = 0.017 and e = 0.8 for high subsonic 
+CD = CD0 + CL^2/(e*pi*AR); % CD_0 = 0.017 and e = 0.8 for high subsonic 
 
 CD_alpha = 2*a^2*(AOA-alpha_L0)/(0.8*pi*AR);
 
