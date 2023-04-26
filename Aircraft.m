@@ -208,6 +208,10 @@ xarm = [xcg_f;xw_cg+x_wLE;xcg_h+x_tLE;xcg_e+x_e;xcg_l1;xcg_l2;xcg_p;xcg_fuel;xcg
 % xarm = [4.248;3.5;7.487;7.341;1.905;4.394;4.847;4.25;2.38;0.858]; % cad
 yarm = [0;0;0;0;0;0;0;0;0;0]; %symetric
 zarm = [zcg_fus;zcg_w;zcg_t;zcg_e;zcg_ng;zcg_mg;zcg_p;zcg_f;zcg_sub;zcg_sen];
+disp('xarm =');
+disp(xarm);
+disp('zarm =');
+disp(zarm);
 % zarm = [0.411;0.8328;0.949;0.339;0.182;0.258;0.407;0.6;0.485;0.360];
 % (1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing
 % gears;6.Second Landing Gears;7.Payload;8.Fuel+Installed_Weight;9.Subsystems;10.Sensors)
@@ -277,6 +281,7 @@ rho_mat = 0.48; %[kg/m^3]
 % CL = L/(Sw*1/2*V_c^2*rho_mat);
 % C_L = (CL-CLw)*Sw/S_h;
 CL = CLw + CL_tail*Sh_tail/Sw;
+% fprintf('CL is %.4f\n',CL);
 L = CL*Sw*1/2*V_c^2*rho_mat;
 
 %% Neutral point
@@ -303,6 +308,7 @@ D_ac = 0.26*(M-0.4)^2.5; %Delta X_ac ; aerodynamic center
 X_c4 = 1/4*cw_MAC; %position of the quarter-chord
 X_ac = X_c4 + D_ac*sqrt(Sw);
 wAC = xw_AC + x_wLE; %Position of the wing aerodynamic center from nose
+fprintf('Aerodynamic center is at %.4f\n',wAC);
 hAC = xac_h + x_hLE;
 vAC = xac_v + x_vLE;
 X_w = h*cw_MAC-xw_AC;
@@ -330,16 +336,27 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 %% Derivatives
 % Ci-dessous ? revoir !! 
 Ixz = 246.926465;               % Inertia product kg m^2
-Ix = 9988.932802;               % Roll moment of inertia kg m^2
-Iy = 12392.914225;              % Pitch moment of inertia in kg m^2
-Iz = 3034.062705;              % Yaw moment of inertia kg m^2
+% Ix = 12392914225.336000000/10^6;               % Roll moment of inertia kg m^2
+% Iy = 9988932802.797300000/10^6;              % Pitch moment of inertia in kg m^2
+% Iz = 3034062705.515600000/10^6;              % Yaw moment of inertia kg m^2
+
+% Centroidal
+Ix = 9988937265.827900000/10^6;
+Iy = 3040583576.413700000/10^6;
+Iz = 12386388891.408000000/10^6;
+
+% Work
+% Ix = 68862526142.228000000/10^6;
+% Iy = 4249016484.962000000/10^6;
+% Iz = 70051544985.129000000/10^6;
+
 Inertia = table(Ix, Iy, Iz, Ixz);
 
 % Longitudinal stability
 [LongDeriv,Long_modes] = long_dyn_stab(MTOW,...
-    a_el,b_el,D_f_max,bw,Sw,CLw_alpha,rho,V_c,ARw,AR_T,M,Altitude,CL_alphaT,cl_alphaT,Sh_tail,...
+    a_el,b_el,D_f_max,bw,Sw,CLw_alpha,rho,V_c,ARw,AR_T,tap,M,Altitude,CL_alphaT,cl_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,Lambda_T*pi/180,...
-    cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, drag, prop_lift);
+    cl_alphaw,l_arm,V_hT,cw_MAC,X_w,cw_root,xw_AC,xac_h,cgT(1),Inertia, drag, prop_lift);
 % writetable(Long_derivatives, 'longitudinalStab.txt');
 
 % Lateral stability
@@ -373,7 +390,9 @@ PARAM = table(M, rho, V_c, CL, de_dAOA, kf, k, k2, kp);
 
 %Range 
 x1 = (hn-0.05)*cw_MAC+x_wLE;
+fprintf('x1 is %.4f\n',x1);
 x2 = (hn-0.2)*cw_MAC+x_wLE;
+fprintf('x2 is %.4f\n',x2);
 %K = -dC_m/dC_Lw;
 %K = -static_stability
 
@@ -484,30 +503,30 @@ xlabel('Range [nmi]')
 ylabel('Mass [lbs]')
 axis auto
 legend({'Empty weight','Payload','Fuel reserve','Fuel'},'Location','west');
-hgexport(gcf,'payload_range.eps');
+% hgexport(gcf,'payload_range.eps');
 %% Cost Analysis
 [HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0,1);
 COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
-fprintf('Total Engineering man-hours: %.2dhours\n',HE);
-fprintf('Total Tooling man-hours: %.2dhours\n',HT);
-fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
-fprintf('Number Engineer required: %.2dengineers\n',N_eng);
-fprintf('Average time to manufacture: %.2dhours\n',t_ac);
-fprintf('CPI: %.2ddollars\n',CPI);
-fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
-fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
-fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
-fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
-fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
-fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
-fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
-fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
-fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
-fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
-fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
-fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
-fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
-fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
-fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
+% fprintf('Total Engineering man-hours: %.2dhours\n',HE);
+% fprintf('Total Tooling man-hours: %.2dhours\n',HT);
+% fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
+% fprintf('Number Engineer required: %.2dengineers\n',N_eng);
+% fprintf('Average time to manufacture: %.2dhours\n',t_ac);
+% fprintf('CPI: %.2ddollars\n',CPI);
+% fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
+% fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
+% fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
+% fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
+% fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
+% fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
+% fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
+% fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
+% fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
+% fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
+% fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
+% fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
+% fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
+% fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
+% fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
 
 end
