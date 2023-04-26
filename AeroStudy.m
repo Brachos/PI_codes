@@ -50,7 +50,7 @@ ylabel('Relative Error [%]','Interpreter','latex','FontSize',pt);
 grid on
 box on
 pbaspect([1.5 1 1])
-saveas(c,'.\Error_domain','epsc')
+saveas(b,'.\Error_domain','epsc')
 
 %% Plot convergence growth ratio 
 figure; 
@@ -72,7 +72,7 @@ Number_element_1_2 = [Convergence_growth_1_3.Number_element(8,1),Convergence_gro
 Number_element_1_03 = [Convergence_growth_1_3.Number_element(9,1),Convergence_growth_1_2.Number_element(9,1),Convergence_growth_1_1.Number_element(9,1)];
 Cl_1_8 = [Convergence_growth_1_3.Cl(7,1),Convergence_growth_1_2.Cl(7,1),Convergence_growth_1_1.Cl(7,1)];
 Cl_1_2 = [Convergence_growth_1_3.Cl(8,1),Convergence_growth_1_2.Cl(8,1),Convergence_growth_1_1.Cl(8,1)];
-Cl_1_03 = [Convergence_growth_1_3.Cl(9,1),Convergence_growth_1_2.Cl(9,1),Convergence_growth_1_1.Cl(9,1)];
+Cl_1_03 = [Convergence_growth_1_3.Cl(9  ,1),Convergence_growth_1_2.Cl(9,1),Convergence_growth_1_1.Cl(9,1)];
 figure; 
 e=plot(Number_element_1_8,Cl_1_8,'LineWidth',2)
 hold on 
@@ -86,13 +86,57 @@ h = legend('1.8 $\%$','1.2 $\%$','1.03 $\%$','interpreter','latex','location','s
 pbaspect([1.5 1 1])
 saveas(e,'.\conv_element_size','epsc')
 
-%% Cp_curve
+%% Cp_curve gr= 1.1
+pt = 14;
 chord = linspace(0.1,3.71,25);
-cp_curve_1_1 = load('Converged_mesh_slice_10_MAC_growth_1_1.dat');
+cp_curve_1_1_9 = load('Simulation_far7_element9_slice_21.dat');
+cp_curve_1_1_7 = load('Simulation_far7_element7_slice_21.dat');
+cp_curve_1_1_8 = load('Simulation_far7_element8_slice_21.dat');
 % x, y, z, x/c, Cp
 figure; 
-w = plot(cp_curve_1_1(:,4),cp_curve_1_1(:,5))
+w = plot(cp_curve_1_1_9(:,4),cp_curve_1_1_9(:,5),'LineWidth',2)
+hold on 
+plot(cp_curve_1_1_7(:,4),cp_curve_1_1_7(:,5),'LineWidth',2)
+plot(cp_curve_1_1_8(:,4),cp_curve_1_1_8(:,5),'LineWidth',2)
+h = legend('0.08 $\%$','1.2 $\%$','1 $\%$','interpreter','latex','location','southeast','Fontsize',pt)
+xlabel('x/c [-]','Interpreter','latex','FontSize',pt);
+ylabel('$C_p$ [-]','Interpreter','latex','FontSize',pt);
 set(gca, 'YDir','reverse')
+
+%% Cp_curve gr = 1.2
+pt = 14;
+chord = linspace(0.1,3.71,25);
+cp_curve_1_2_9 = load('Simulation_far5_element9_slice_21.dat');
+cp_curve_1_2_7 = load('Simulation_far5_element7_slice_21.dat');
+cp_curve_1_2_8 = load('Simulation_far5_element8_slice_21.dat');
+% x, y, z, x/c, Cp
+figure; 
+w = plot(cp_curve_1_2_9(:,4),cp_curve_1_2_9(:,5),'LineWidth',2)
+hold on 
+plot(cp_curve_1_2_7(:,4),cp_curve_1_2_7(:,5),'LineWidth',2)
+plot(cp_curve_1_2_8(:,4),cp_curve_1_2_8(:,5),'LineWidth',2)
+h = legend('0.08 $\%$','1.2 $\%$','1 $\%$','interpreter','latex','location','southeast','Fontsize',pt)
+xlabel('x/c [-]','Interpreter','latex','FontSize',pt);
+ylabel('$C_p$ [-]','Interpreter','latex','FontSize',pt);
+set(gca, 'YDir','reverse')
+
+%% Cp_curve gr=1.3
+pt = 14;
+chord = linspace(0.1,3.71,25);
+cp_curve_1_3_9 = load('Simulation_far5_element9_slice_21.dat');
+cp_curve_1_3_7 = load('Simulation_far5_element7_slice_21.dat');
+cp_curve_1_3_8 = load('Simulation_far5_element8_slice_21.dat');
+% x, y, z, x/c, Cp
+figure; 
+w = plot(cp_curve_1_3_9(:,4),cp_curve_1_3_9(:,5),'LineWidth',2)
+hold on 
+plot(cp_curve_1_3_7(:,4),cp_curve_1_3_7(:,5),'LineWidth',2)
+plot(cp_curve_1_3_8(:,4),cp_curve_1_3_8(:,5),'LineWidth',2)
+h = legend('0.08 $\%$','1.2 $\%$','1 $\%$','interpreter','latex','location','southeast','Fontsize',pt)
+xlabel('x/c [-]','Interpreter','latex','FontSize',pt);
+ylabel('$C_p$ [-]','Interpreter','latex','FontSize',pt);
+set(gca, 'YDir','reverse')
+
 %% Compute of aero coefs
 Aero_coefs = readtable("AEROSTUDYCOEFS.csv");
 prop_lift = 0.8004;

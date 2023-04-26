@@ -5,7 +5,7 @@ function [] = main_wing()
 %addpath(genpath('WING'));
 
 %% Structural loads of the wing
-run run_struct_loads
+run run_struct_loads;
 
 save('wing_loads.mat', 'T_wing', 'M_wing')
 %save('fuselage.mat', 'Fuselage')
