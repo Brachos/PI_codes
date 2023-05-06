@@ -1,4 +1,4 @@
-function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM,COST, LongDeriv, LatDeriv, Long_modes, LatModes] = Aircraft(MTOW, cg, prop_lift, drag)
+function [MTOW, cgT, prop_lift, WING, V_TAIL, RUDDER, FUSELAGE, WEIGHT, PARAM,Long_derivatives,Long_modes] = Aircraft(MTOW, cg, prop_lift, drag,N)
 % Script that couple all codes together and determine if the aircraft is
 % stable or not
 %% Figures settings
@@ -258,8 +258,6 @@ for i=1:3
     % the lower weight and the greater weight different coordinates of the 
     % cg for the max weight
 end
-disp('cgT =');
-disp(cgT);
 fprintf('Cg from nose with only fuel, no payload : %.2dm\n',cgf(1));
 fprintf('Cg from nose fully loaded : %.2dm\n',cgT(1));
 fprintf('Cg from nose empty : %.2dm\n',cgt(1));
@@ -288,12 +286,12 @@ a = CLw_alpha; %CL_alpha wing
 beta = sqrt(1-M^2);
 kT = cl_alphaT/(2*pi);
 CL_alphaT = (2*pi*AR_T)/(2 + sqrt(AR_T^2*beta^2/kT^2*(1 + tan(Lambda_T)^2/beta^2) + 4));
-a1 = 4; %CL_alpha tail
+a1 = CL_a; %CL_alpha tail
 r = lwt/(bw/2); 
 m = zwt/(bw/2);
 de_dAOA = 0.45; %Variation de l'angle epsilon en fonction de l'angle d'attaque
 de_dAOA1 = 1.75*a/(pi*7*(2*lwt*0.3/bw)^(1/4)*(1+m));
-% fprintf('de_dAOA1 is %.4f/n',de_dAOA1);
+fprintf('de_dAOA1 is %.4f/n',de_dAOA1);
 hn = h0 + V_hT*a1/a*(1-(de_dAOA1)); %position of the neutral point in %MAC
 x_hn = hn*cw_MAC+x_wLE; %position of the neutral point from nose
 fprintf('Neutral point from nose fully loaded : %.2dm\n', x_hn);
@@ -320,8 +318,8 @@ ds_db = -0.276+3.06*Sv_tail/Sw*1/(1+cosd(Lambda_T))+0.4*Z_w/d+0.009*A; % sidewas
 V_v = 1; %vertical tailplane airspeed
 V = 1; %airspeed
 n_v = (V_v/V)^2;
-%CL_alphaT = 1.1/10 * sin(dihedral_angle);
-%fprintf('CL_alpha tail is %.4f\n',CL_alphaT);
+% CL_alphaT = 1.1/10 * sin(dihedral_angle);
+% fprintf('CL_alpha tail is %.4f\n',CL_alphaT);
 
 %% Directional stability (Elsevier)
 h_f = 0.5;
@@ -329,14 +327,14 @@ Cl_beta_T = - V_vf*h_f/l_arm*CL_alphaT;
 
 %% Derivatives
 % Ci-dessous ? revoir !! 
-Ixz = 246.926465;               % Inertia product kg m^2
-Ix = 9988.932802;               % Roll moment of inertia kg m^2
-Iy = 12392.914225;              % Pitch moment of inertia in kg m^2
-Iz = 3034.062705;              % Yaw moment of inertia kg m^2
+Ixz = 10.975204;               % Inertia product kg m^2
+Ix = 12392914225.336000000/10^6;               % Roll moment of inertia kg m^2
+Iy = 9988932802.797300000/10^6;              % Pitch moment of inertia in kg m^2
+Iz = 3034062705.515600000/10^6;              % Yaw moment of inertia kg m^2
 Inertia = table(Ix, Iy, Iz, Ixz);
 
 % Longitudinal stability
-[LongDeriv,Long_modes] = long_dyn_stab(MTOW,...
+[Long_derivatives,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,D_f_max,bw,Sw,CLw_alpha,rho,V_c,ARw,AR_T,M,Altitude,CL_alphaT,cl_alphaT,Sh_tail,...
     de_dAOA1,static_stability,AOA,alpha_L0,l_f,l_cg,sweep,Lambda_T*pi/180,...
     cl_alphaw,l_arm*feet,V_hT,cw_MAC*feet,X_w*feet,cw_root*feet,xw_AC*feet,Inertia, drag, prop_lift);
@@ -461,7 +459,7 @@ title('V-tail geometry')
 axis equal
 
 %% Payload range diagram
-SFC = 0.7 * 0.453592 / 4.4482;
+SFC = 0.586 * 0.453592 / 4.4482;
 max_thrust = 3600; %[N]
 ingress_time = WEIGHT.W_fuel/SFC/drag; %[h]
 range = ingress_time * speed(30000,0.7) * 3.6;
@@ -486,28 +484,28 @@ axis auto
 legend({'Empty weight','Payload','Fuel reserve','Fuel'},'Location','west');
 hgexport(gcf,'payload_range.eps');
 %% Cost Analysis
-[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0,1);
-COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
-fprintf('Total Engineering man-hours: %.2dhours\n',HE);
-fprintf('Total Tooling man-hours: %.2dhours\n',HT);
-fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
-fprintf('Number Engineer required: %.2dengineers\n',N_eng);
-fprintf('Average time to manufacture: %.2dhours\n',t_ac);
-fprintf('CPI: %.2ddollars\n',CPI);
-fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
-fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
-fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
-fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
-fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
-fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
-fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
-fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
-fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
-fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
-fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
-fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
-fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
-fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
-fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
+%[HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap] = Cost_analysis(WEIGHT.W_empty,drag,0)
+%COST = table(HE,HT,Hmfg,N_eng,t_ac,CPI,Ceng,Cdev,CFT,Ctool,CMFG,Cqc,Cmat,Ccert,Cpp,cost_per_aircraft,Cstor,Cins,Cinsp,Cfuel,Cap);
+% fprintf('Total Engineering man-hours: %.2dhours\n',HE);
+% fprintf('Total Tooling man-hours: %.2dhours\n',HT);
+% fprintf('Total Manufacturing Labor man-hours: %.2dhours\n',Hmfg);
+% fprintf('Number Engineer required: %.2dengineers\n',N_eng);
+% fprintf('Average time to manufacture: %.2dhours\n',t_ac);
+% fprintf('CPI: %.2ddollars\n',CPI);
+% fprintf('Total Cost of Engineering: %.2ddollars\n',Ceng);
+% fprintf('Total Cost of Development Support: %.2ddollars\n',Cdev);
+% fprintf('Total Cost of Flight Test Operations: %.2ddollars\n',CFT);
+% fprintf('Total Cost of Tooling: %.2ddollars\n',Ctool);
+% fprintf('Total Cost of Manufacturing: %.2ddollars\n',CMFG);
+% fprintf('Total Cost of Quality Control: %.2ddollars\n',Cqc);
+% fprintf('Total Cost of Materials: %.2ddollars\n',Cmat);
+% fprintf('Total Cost to Certify: %.2ddollars\n',Ccert);
+% fprintf('Cost of Power Plant: %.2ddollars\n',Cpp);
+% fprintf('Cost to produce one aircraft: %.2ddollars\n',cost_per_aircraft);
+% fprintf('Annual Storage Cost: %.2ddollars_per_year\n',Cstor);
+% fprintf('Annual Insurance Cost: %.2ddollars_per_year\n',Cins);
+% fprintf('Annual Inspection Cost: %.2ddollars_per_year\n',Cinsp);
+% fprintf('Annual Fuel Cost: %.2ddollars_per_year\n',Cfuel);
+% fprintf('Annual Maintenace Cost: %.2ddollars_per_year\n',Cap);
 
 end

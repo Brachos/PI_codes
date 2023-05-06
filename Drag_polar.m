@@ -10,7 +10,7 @@ CD_vector = zeros(length(AOA),1);
 deriv = zeros(length(AOA),1);
 
 for i = 1 : length(AOA)
-    [~,~,~,~,CL_vector(i),CD_vector(i),~,~,~,~,~,~,~,~,~,~,~,~,~,~] = wing(Mach,Altitude,Mass,AOA(i));
+    [~,~,~,~,CL_vector(i),CD_vector(i),~,~,~,~,~,~,~,~,~,~,~,~,~,~] = wing(Mach,Altitude,Mass,clear ));
     deriv(i) = 0.5/CL_vector(i)*pi*0.8*AR;
     if abs(deriv(i)*CD_vector(i)-CL_vector(i)) < 0.005
         CL_opt = CL_vector(i);

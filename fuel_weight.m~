@@ -12,7 +12,9 @@ egress_speed = speed(30000, 0.7); %[mach] to [km/h] at 30 000ft %KPP06 T
 egress_speed = egress_speed*3.6;
 loiter_time_landing = 0.75; %[hours] %KPP10 O
 loiter2_speed = speed(30000,0.7);
-loiter2_speed = loiter2_speed*3.6; 
+loiter2_speed = loiter2_speed*3.6;
+<<<<<<< HEAD
+TSFC = 0.7 *0.453592 / 4.4482; %[lb/lbf/h] to [kg/h/N], prev 0.702 
 TSFC = 0.7 *0.453592 / 4.4482; %[lb/lbf/h] to [kg/h/N], prev 0.702
 % net_thrust = 2200;%[N]
 

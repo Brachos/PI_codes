@@ -1,4 +1,4 @@
-function [CL_max_TO, CL_max_L, fb_ratio, S_flap] = flaps(WING,FUSELAGE)
+function [CL_max_TO, CL_max_L, DCL_max_TO, DCL_max_L, fb_ratio, S_flap] = flaps(WING,FUSELAGE)
 
     % fb_ratio = flap span ratio
     % S_flap = surface of flap
@@ -14,7 +14,7 @@ function [CL_max_TO, CL_max_L, fb_ratio, S_flap] = flaps(WING,FUSELAGE)
     
     pente_lead  = dx_tip/(b/2);
     pente_trail = -(c_root-dx_tip-c_tip)/(b/2);
-    y_flap = [-R_fus-0.1 -R_fus/2-b/4];
+    y_flap = [-R_fus-0.1 -R_fus-0.1-b/2*0.4];
     xf1 = c_root + pente_lead*y_flap(1);
     xf2 = pente_trail*y_flap(1);
     xf3 = c_root + pente_lead*y_flap(2);
