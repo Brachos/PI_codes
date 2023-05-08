@@ -27,7 +27,7 @@ for i = 1 : 3
     
 % Data at sea level
     rho = 1.225; % [kg/m^3] Air density at sea level     
-    % rho =  (1.112 + 0.524*(1.007-1.112)); % [kg/m^3] Air density at 5000 ft
+    rho =  (1.112 + 0.524*(1.007-1.112)); % [kg/m^3] Air density at 5000 ft
     % rho =  (0.9093 + 0.048*(0.8194-0.9093)); % [kg/m^3] Air density at 10000 ft
     % rho =  (0.8194 + 0.572*(0.7364-0.8194)); % [kg/m^3] Air density at 15000 ft
     % rho =  (0.6601 + 0.096*(0.5900-0.6601)); % [kg/m^3] Air density at 20000 ft
@@ -39,11 +39,12 @@ for i = 1 : 3
     
     h_obst = 50/feet;
     W = WEIGHT.W_empty*g;
+%     W = MTOW*g;
 
 % Data of engine (check the engine)
     BPR = 4.1; % By-pass ratio
     T = 13580; % [N] Thrust at sea level
-    % T = 12170; % [N] Thrust at 5000 ft
+    T = 12170; % [N] Thrust at 5000 ft
     % T = 10740; % [N] Thrust at 10000 ft
     % T = 9327; % [N] Thrust at 15000 ft
     % T = 7985; % [N] Thrust at 20000 ft
@@ -57,12 +58,12 @@ for i = 1 : 3
     
 % Distances computation
     gamma = 3*pi/180; % Approach angle
-    h_F = 0.1512*Vs^2*(1-cos(gamma))
+    h_F = 0.1512*Vs^2*(1-cos(gamma));
     S_A(i) = (h_obst-h_F)/tan(gamma);
     S_F(i) = 0.1512*Vs^2*sin(gamma);
     S_FR(i) = 1*V_TD; % Free-roll distance (1 sec for small aircraft)
     
-    T_LDG = -0.4*T;
+    T_LDG = -0.3*T;
     L_LDG = 0.5*rho*CL_LDG*Sw*(V_BR/sqrt(2))^2;
     D_LDG = 0.5*rho*CD_LDG*Sw*(V_BR/sqrt(2))^2;
     
@@ -77,4 +78,5 @@ for i = 1 : 3
     S_LDG(i) = S_LDG(i)*feet; % [ft]
 end
     LDG = table(S_A,S_F,S_FR,S_BR,S_LDG);
+    VV = V_TD*sin(gamma)*feet
 end  

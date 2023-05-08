@@ -1,6 +1,6 @@
 %% Function that plot all graphs and figures relative to the wing design
 
-function [] = wing_plot(WING,FUSELAGE)
+function [] = wing_plot(WING,FUSELAGE,V_TAIL,PARAM)
 
     % Color
         gray = [.8 .8 .8];
@@ -59,6 +59,27 @@ function [] = wing_plot(WING,FUSELAGE)
     
     % Drag polar
     
-    
-    
+        AOA = -10 : 0.05 : 10;
+        [DRAG,CL(1)] = Drag(WING,V_TAIL,FUSELAGE,PARAM,AOA(1));
+        CD(1) = DRAG.CDTotal;
+        for i = 2 : length(AOA)
+            [DRAG,CL(i)] = Drag(WING,V_TAIL,FUSELAGE,PARAM,AOA(i));
+            CD(i) = DRAG.CDTotal;
+            pente(i) = (CL(i)-CL(i-1))/(CD(i)-CD(i-1));
+            if abs(CL(i)-pente(i)*CD(i)) < 1e-3
+                num = i;
+            end
+        end
+        
+        
+        figure
+        plot(CD,CL,'Color',[0 112 127]/256)
+        hold on
+        plot([0 0.05],[0 pente(num)*0.05],'Color',[240 127 60]/256)
+        p2 = plot(CD(num),CL(num),'x','Color',[240 127 60]/256)
+        xlabel('CD [-]')
+        ylabel('CL [-]')
+        legend(p2,'Optimal point')
+        xlim([0 0.05])
+        ylim([0 1])
     % CL vs AOA

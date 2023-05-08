@@ -1,4 +1,5 @@
 feet = 3.28084; % m to ft
+lbf = 0.224809; % N to lbf
 h = (0:10:30000)/feet; % [m] Altitude
 
 A = zeros(1,length(h));
@@ -7,6 +8,7 @@ X = zeros(1,length(h));
 P = zeros(1,length(h)); % [Pa] Pressure(altitude)
 
 T0 = 13580; % [N] Static thrust
+Tm2 = 16100;
 BPR = 4.1;
 G = 1.1;
 Pb = 101325; % [Pa] Pressure at see level
@@ -30,7 +32,7 @@ for i = 1 : length(h)
 
 end
 
-M = [0 0.1 0.2 0.5 0.7];
+M = [0 0.1 0.2 0.7 0.7];
 T = zeros(length(M),length(h));
 
 figure
@@ -39,9 +41,16 @@ for i = 1 : length(M)
     for j = 1 : length(h)
         T(i,j) = T0*(A(j) - 0.377*(1+BPR)*Z(j)/sqrt(G*(1+0.82*BPR))*P(j)/Pb*M(i) + (0.23+0.19*sqrt(BPR))*X(j)*P(j)/Pb*M(i)^2);
     end
-    plot(T(i,:)/1000,h*feet)
+    if i == 5
+        T(i,:) = T(i,:)/T0*Tm2;
+    end
+    if i < 5
+    plot(T(i,:)*lbf,h*feet,'Linewidth',1)
+    end
 end
+
+plot(T(i,:)*lbf,h*feet,'--','Color',[0.4940 0.1840 0.5560],'Linewidth',1)
 hold off
-legend('M = 0','M = 0.1','M = 0.2','M = 0.5','M = 0.7')
+legend('M = 0 (FJ44-3AP)','M = 0.1 (FJ44-3AP)','M = 0.2 (FJ44-3AP)','M = 0.7 (FJ44-3AP)','M = 0.7 (FJ44-4A)')
 ylabel('Altitude [ft]')
-xlabel('Thrust [kN]')
+xlabel('Thrust [lbf]')
