@@ -78,6 +78,8 @@ delta_Cy_beta_VWBH = -k*(CL_alpha_v)*sidewash_and_dyn_press_param*Sf/Sw; %p.1645
 zp = bv_tail/4;
 lp = l_f - cg - 3/4*c_root_tail + zp/tand(Lambda_T); %see graph p.2777
 Cn_beta = Cn_beta_WB - delta_Cy_beta_VWBH*lp/bw; %p.1858, per RADIANS
+fprintf('Cn_betaWB is %.4f\n',Cn_beta_WB);
+fprintf('Cn_betaT is %.4f\n',-delta_Cy_beta_VWBH*lp/bw);
 
 %% Cl_beta -> p.1845, p.1602
 Clbeta_CL_Lambda = -0.001; %p.1563
@@ -95,6 +97,8 @@ delta_Clbeta_zW = 1.2*sqrt(A)/57.3 * (zW/b_param)*(2*d/b_param); %p.1603
 delta_Clbeta_theta_tansweep = -0.0000325; %see figure p.1566
 Cl_beta_WB = (CLw *(Clbeta_CL_Lambda * KM_Lambda * Kf + Clbeta_CL_A) + 0 + delta_Clbeta_zW + theta_tip*180/pi*tan(sweep)*delta_Clbeta_theta_tansweep)*180/pi; %p.1602, per RADIANS
 Cl_beta = Cl_beta_WB + delta_Cy_beta_VWBH*(zp*cos(alpha) - lp*sin(alpha))/bw; %p.1845
+fprintf('Cl_betaWB is %.4f\n',Cl_beta_WB);
+fprintf('Cl_betaT is %.4f\n',delta_Cy_beta_VWBH*(zp*cos(alpha) - lp*sin(alpha))/bw);
 
 %% Cy_beta -> p.1812, p.1582
 Munk = 0.92; %p.834

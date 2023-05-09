@@ -1,7 +1,7 @@
 function [Long_deriv,Long_modes] = long_dyn_stab(MTOW,...
     a_el,b_el,D_f_max,bw,Sw,CLw_alpha,rho,V_c,ARw,ART,tap,M,Altitude,CL_alphaT,cl_alphaT,Sh_tail,de_dAOA1,...
-    static_stability,AOA,alpha_L0,l_f,l_cg,sweep,Lambda_T,cl_alphaw,...
-    l_arm,V_hT,cw_MAC,Xw,cw_root,xw_AC,xac_h,x_cg,Inertia, net_thrust,prop_lift)
+    static_stability,AOA,alpha_L0,l_f,V_f,l_cg,sweep,Lambda_T,cl_alphaw,...
+    l_arm,V_hT,cw_MAC,x_wLE,Xw,cw_root,xw_AC,xac_h,x_cg,Inertia, net_thrust,prop_lift)
 
 feet = 3.28; % meter to feet
 show_prints = 0;
@@ -20,7 +20,7 @@ K_WB = 1 - 0.25*(D_f_max/bw)^2 + 0.025*(D_f_max/bw);
 CL_alphaWB = K_WB*CLw_alpha;
 heta_H = 0.95; %[0.9;1]
 CL_alphaT = (2*pi*ART)/(2 + sqrt(ART^2*beta^2/kT^2*(1 + tan(Lambda_T)^2/beta^2) + 4));
-% fprintf('CL_alphaVT is %.4f\n',CL_alphaT);
+fprintf('CL_alphaVT is %.4f\n',CL_alphaT);
 % [~,~,CLw_alpha0,~,~,~,~,~,~,~,~,~,~,~,~,~] = wing(0,Altitude,0.95*MTOW,AOA);
 % KA = 1/ARw-1/(1+ARw^1.7);
 % KL = (10-3*tap)/7;
@@ -50,8 +50,10 @@ DM_dalpha = 1/2*rho*V_c^2/36.5*somme;
 Dx_acB = -DM_dalpha/(1/2*rho*V_c^2*Sw*cw_MAC*CLw_alpha);
 x_acWB = xw_AC + Dx_acB;
 x_ac = (x_acWB+CL_alphaT/CL_alphaWB*heta_H*Sh_tail/Sw*xac_h*(1-de_dAOA1))/(1+CL_alphaT/CL_alphaWB*heta_H*Sh_tail/Sw*(1-de_dAOA1));
+x_ac = x_ac*cw_MAC + x_wLE;
 fprintf('xac is %.4f\n',x_ac);
 dCM_dCL = x_cg-x_ac;
+dCM_dCL = static_stability;
 fprintf('dCM_dCL is %.4f\n',dCM_dCL);
 
     % CD_u
@@ -125,6 +127,18 @@ Cm_qH = -2*CL_alphaT*heta_H*V_hT*l_arm/cw_MAC;
 CLg = -3.71;
 CL_adotw = 1.5*xw_AC/cw_root*CLw_alpha + 3*CLg;
 CL_adotH = 2*CL_alphaT*heta_H*V_hT*de_dAOA1;
+CL_adot1 = 0.21; % [rad-1] --> DATCOM p.2610
+CL_adot2 = 5.321; % [rad-1] --> DATCOM p.2610
+CL_adotW = M^2/beta^2*CL_adot1 - 1/beta^2*CL_adot2;
+S0 = pi*a_el*b_el;
+k2_k1 = 0.96; % DATCOM p.815
+CL_alpha_body = (2*k2_k1*S0)/V_f^2/3;
+CL_adotBody = 2*CL_alpha_body*(V_f/(S0*l_f)); % DATCOM p.2669
+CL_adot_WB = K_WB*CL_adotW+CL_adotBody*S0/Sw*l_f/cw_root; % DATCOM p.2717
+
+
+
+
 
     % Cm_adot
 Cm_adotw = 0;
@@ -151,8 +165,8 @@ Cm_alpha = static_stability;
 % CL_alpha = 5.046;
 % CD_alpha = 0.113;
 % Cm_alpha = -0.661;
-CM_alpha = dCM_dCL*CL_alpha;
-fprintf('CM_alpha is %.4f\n',CM_alpha);
+Cm_alpha = dCM_dCL*CL_alpha;
+% fprintf('CM_alpha is %.4f\n',CM_alpha);
 CL = CL_alpha*(AOA*pi/180-alpha_L0); % Correct value
 % fprintf('Lift coefficient computed with dynamic stability = %.2f.\n',CL);
 % rho_mat = 0.48; %[kg/m^3]
@@ -177,7 +191,8 @@ Cm_q = Cm_qw + Cm_qH; % pas assez grand ? priori
 % Cm_q = -20.510;
 
 CL_adot = CL_adotw + CL_adotH; % valeur cheloue (-9)
-% CL_adot = 1.2;
+CL_adot = CL_adot_WB ;
+fprintf('CL_adotWB is %.4f\n',CL_adot_WB);
 CD_adot = 0; %usually neglegted
 Cm_adot = Cm_adotw + Cm_adotH; % peut ?tre plus grand
 % Cm_adot = -12;
@@ -248,8 +263,6 @@ M_wdot = Mwdot * (1/2*rho*Sw*cw_MAC^2);
 M_long = [MTOW -X_wdot 0 0;0 (MTOW-Z_wdot) 0 0;0 -M_wdot Inertia.Iy 0;0 0 0 1];
 K_long = [-X_u -X_w -(X_q-MTOW*We) MTOW*g*cos(thetae);-Z_u -Z_w -(Z_q+MTOW*Ue) MTOW*g*sin(thetae);-M_u -M_w -M_q 0;0 0 -1 0];
 A_long = -M_long\K_long;
-disp('A_long')
-disp(A_long)
 
 % The eigenvalues of the matrix A_long determine the dynamic stability of
 % the aircraft : if the real part of its eigenvalues is negative the system
