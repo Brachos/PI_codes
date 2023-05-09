@@ -282,6 +282,7 @@ hp = (cgp(1)-x_wLE)/cw_MAC;
 hf = (cgf(1)-x_wLE)/cw_MAC;
 
 w_arm = cgT(1) - (x_wLE - xw_cg);
+l_T = l_arm;
 prop_lift = l_arm/(w_arm+l_arm);
 %% Lift coefficient
 rho_mat = 0.48; %[kg/m^3]

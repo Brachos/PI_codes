@@ -18,7 +18,7 @@ S_w = 7.986662323478662;             %Surface of the wing[m²]
 AR_w = 7;                           %Aspect ratio of the wing
 C_d0 = 0.017;                      %Drag independant of the lift
 e = 0.8;                            %Oswald efficiency factor
-W = 3.6058e+03*9.18;                 %Weight [N]
+W = 3.3330e+03*9.18;                 %Weight [N]
 
 rho_0 = 1.225;                      %air density at sea level [kg/m^3]
 rho_design = 0.4594;                %air density at design altitude [kg/m^3] %cfr table florian

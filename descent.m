@@ -23,8 +23,10 @@ function [DESCENT] = descent(MTOW,WING,WEIGHT)
     W_TO = MTOW*g;
     W_LDG = WEIGHT.W_empty*g;
     Sw = WING.Sw;
-    CD_0 = 0.017;
+    CD_0 = 0.019;
     e = 1.78*(1-0.045*AR^0.68) - 0.64;
+    
+    % Case of engine failure
     
     V_BR_TO = sqrt(2*W_TO/(rho*Sw)*sqrt(1/(CD_0*pi*e*AR))); % [m/s]
     V_BR_LDG = sqrt(2*W_LDG/(rho*Sw)*sqrt(1/(CD_0*pi*e*AR))); % [m/s]
@@ -40,5 +42,9 @@ function [DESCENT] = descent(MTOW,WING,WEIGHT)
     ROD_LDG = feet*ROD_LDG;
     
     DESCENT = table(V_BR_TO,V_BR_LDG,L_D_max,R_glide,ROD_TO,ROD_LDG);
+    
+    % Normal case
+    
+    
 end
     

@@ -19,7 +19,7 @@ x_ac_thrust = 8.1506;
 %(1.Fuselage;2.Wing;3.Tail;4.Engines+Installed_Weight;5.First Landing gears;6.Second Landing Gears;7.Payload;8.Fuel+Fuel system;9.Subsystem;10.Sensors)
 xarm =[3.4358 4.3555 8.1224 7.5942 1.3000 4.8000 4.5000 4.2780 1.800 0.8000]; %[m]
     
-W = [445.324212885535 114.260212744617 60.9058010298828 242.800000000000 29.2282889652049 100.518080161912 150 2322.03916274679 100.697506224444 40];%kg   
+W = [445.324212885535 114.260212744617 54.229550268832060 242.800000000000 29.2282889652049 100.518080161912 150 2322.03916274679 100.697506224444 40];%kg   
 %All positions are computed with respect to the nose of the aircraft
 %The back of the wing is referred as section A 
 
@@ -30,10 +30,10 @@ Aircraft.C_DB = 0.038299150427751;          %Aicraft body drag coefficient[-]
 Aircraft.l_DB = 0.1;                        %Aicraft drag lever arm [m] !!!
 
 % Wing:       
-Wing.S = 7.986662323478662;                                 %Wing surface [m²]
+Wing.S = 7.3885;                                 %Wing surface [m²]
 Wing.W = W(2);                                              %Wing weight [N]
 Wing.AR = 7;                                                %Wing aspect ratio [-]
-Wing.MAC = 1.171387198829498;                               %Wing mean aerodynamic chord [m]
+Wing.MAC = 1.1267;                               %Wing mean aerodynamic chord [m]
 Wing.l = sqrt((y_ac_wing-cg(3))^2 + (x_ac_wing-cg(1))^2);   %Wing lever arm [m]
 Wing.aoa = atan2(y_ac_wing - cg(3), x_ac_wing - cg(1));     %Angle of attack between the wing lever arm and the chord [rad]
 Wing.LE = 2.459;                                            %Position of the leading edge [m]
@@ -42,12 +42,12 @@ Wing.aoa_fuselage = 1.59 * pi/180;                           %Angle of attack be
 
 
 %Empennage:  
-Empennage.S = 1.502493233419805;                                        %Empennage surface [m²]
+Empennage.S = 1.358327062320847;                                        %Empennage surface [m²]
 Empennage.W = 24.6516*9.81;                                             %Empennage weight [N]
-Empennage.MAC = 0.875342478575083;                                      %Empennage mean aerodynamic chord [m]
-Empennage.b = 2.398819063189448;                                        %Empennage span [m]
+Empennage.MAC = 0.832415045643693;                                      %Empennage mean aerodynamic chord [m]
+Empennage.b = 2.281179228530410;                                        %Empennage span [m]
 Empennage.l = sqrt((y_ac_empennage-cg(3))^2 + (x_ac_empennage-cg(1))^2);%Empennage lever arm [m]
-Empennage.T = 3298.22248722500;                                         %Thrust placed on Empennage [N] 
+Empennage.T = 2.7480e+03;                                         %Thrust placed on Empennage [N] 
 Empennage.l_T = sqrt((y_ac_thrust - cg(3))^2 + (x_ac_thrust - cg(1))^2);%Empennage thrust lever arm [m]
 Empennage.aoa = atan2(y_ac_empennage - cg(3), x_ac_empennage - cg(1));  %Angle of attack between the empennage lever arm and the chord [rad]
 Empennage.aoa_T = atan2(y_ac_thrust - cg(3), x_ac_thrust - cg(1));      %Angle of attack between the thrust lift lever arm and the chord [rad]
@@ -57,7 +57,7 @@ Empennage.AR = 4;                                                       %Aspect 
 
 %Fin:
 Fin.AR = 4;                                                 %Fin aspect ratio [-]
-Fin.S = 1.438583224480276;                                  %Fin surface [m²]
+Fin.S = 1.300549301486517;                                  %Fin surface [m²]
 Fin.l = sqrt((y_ac_fin - cg(3))^2 + (x_ac_fin - cg(1))^2);  %Fin lever arm [m]
 Fin.ac = x_ac_fin;                                              %Aerodynamic centre of the fin [m]
 

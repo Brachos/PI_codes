@@ -36,10 +36,10 @@ function [Tx,Ty,Tz,Mx,My,Mz] = wing_load(W,Wing_loading,i,y_cg,y_ac,Mom_wing,n,W
     %   Only half of the wing is considered.
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Tx = (Wing_loading.L/2)*sin(i) + 0.5*(Wing_loading.D)*cos(i);
+Tx = -(Wing_loading.L/2)*sin(i) + 0.5*(Wing_loading.D)*cos(i);
 Ty = 0;
 Tz = (Wing_loading.L/2)*cos(i) + 0.5*(Wing_loading.D)*sin(i) - n*W*cos(i);
 Mx = -((Wing_loading.L/2*cos(i) + Wing_loading.D/2*sin(i))*y_ac + n*W*cos(i)*y_cg);
-My = Wing_loading.L/2*Wing.MAC/4 + Mom_wing/2 + (n*W*Wing.MAC/2);
+My = -Wing_loading.L/2*Wing.MAC/4 + Mom_wing/2 + (n*W*Wing.MAC/2);
 Mz = (-Wing_loading.D/2*cos(i) + Wing_loading.L/2*sin(i))*y_ac - n*W*sin(i)*y_cg;
 end
